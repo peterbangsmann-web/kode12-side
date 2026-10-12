@@ -1,0 +1,35 @@
+KODE12 — C# og .NET fra nul til eksamen
+========================================
+
+SÅDAN ÅBNER DU DEN
+  Dobbeltklik på filen index.html. Den åbner i din browser (Chrome, Edge eller Safari).
+  Du behøver ikke internet for at bruge den.
+
+  Sidder du ved en Mac, så vælg "Mac · Rider" med knappen øverst til højre.
+
+DIT FREMSKRIDT
+  Gemmes i browseren på den computer, du sidder ved. Hver person og hver computer har sit eget.
+  Vil du flytte det til en anden computer: Indstillinger -> "Gem fremskridt som fil",
+  og "Hent fremskridt fra fil" på den anden.
+
+SÅDAN FÅR DU NYE RETTELSER
+  Mac:      dobbeltklik på Opdater.command
+            (første gang: højreklik -> Åbn, og sig ja til, at filen må køre)
+  Windows:  dobbeltklik på Opdater.bat
+  Kræver internet i det øjeblik og programmet git. På Mac spørger computeren selv,
+  om den må installere "command line developer tools", første gang git bruges — sig ja.
+
+  Opdater-filerne virker kun, hvis mappen er hentet med git (se nedenfor).
+  Har du fået mappen som zip-fil, skal du have en ny zip-fil for at få rettelserne.
+
+SÅDAN HENTER DU MAPPEN MED GIT (én gang pr. computer)
+  Åbn Terminal (Mac) eller Kommandoprompt (Windows), og skriv:
+
+      cd Desktop
+      git clone https://github.com/peterbangsmann-web/kode12-side.git Kode12
+
+  Så ligger mappen Kode12 på skrivebordet.
+
+UDEN AT HENTE NOGET
+  Siden kan også åbnes direkte i browseren (kræver internet):
+      https://peterbangsmann-web.github.io/kode12-side/

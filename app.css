@@ -1,0 +1,425 @@
+/* Kode12 — udseende. Temaet styres af tre data-attributter på <html>:
+   data-farve (tema), data-mode (lys/moerk/auto) og data-skrift (normal/stor/kaempe).
+   Hvert tema har sin egen baggrundstone (--h, --bs) og sin egen accentfarve (--ah, --as, --al). */
+
+:root {
+  --h: 36; --bs: 48%;
+  --ah: 14; --as: 68%; --al: 45%;
+  --r: 14px;
+  --fs: 18px;
+}
+html[data-farve="skov"]     { --h: 105; --bs: 26%; --ah: 152; --as: 58%; --al: 30%; }
+html[data-farve="lavendel"] { --h: 262; --bs: 50%; --ah: 268; --as: 58%; --al: 50%; }
+html[data-farve="rose"]     { --h: 345; --bs: 60%; --ah: 338; --as: 68%; --al: 46%; }
+html[data-farve="hav"]      { --h: 172; --bs: 36%; --ah: 186; --as: 80%; --al: 28%; }
+html[data-farve="sol"]      { --h: 50;  --bs: 78%; --ah: 30;  --as: 92%; --al: 36%; }
+html[data-farve="papir"]    { --h: 40;  --bs: 8%;  --ah: 220; --as: 12%; --al: 24%; }
+
+html[data-skrift="stor"]   { --fs: 21px; }
+html[data-skrift="kaempe"] { --fs: 25px; }
+
+html {
+  --bg: hsl(var(--h) var(--bs) 94%);
+  --flade: hsl(var(--h) var(--bs) 98.5%);
+  --flade2: hsl(var(--h) var(--bs) 91%);
+  --kant: hsl(var(--h) calc(var(--bs) * .7) 80%);
+  --tekst: hsl(var(--h) 25% 13%);
+  --svag: hsl(var(--h) 12% 38%);
+  --accent: hsl(var(--ah) var(--as) var(--al));
+  --accent-tekst: #ffffff;
+  --accent-svag: hsl(var(--ah) var(--as) 91%);
+  --accent-kant: hsl(var(--ah) var(--as) 76%);
+  --ok: hsl(150 62% 28%);
+  --ok-bg: hsl(140 50% 90%);
+  --fejl: hsl(4 70% 44%);
+  --fejl-bg: hsl(4 80% 94%);
+  --gul-bg: hsl(45 95% 88%);
+  --gul: hsl(36 80% 26%);
+  --kode-bg: hsl(var(--h) 18% 13%);
+  --kode-flade: hsl(var(--h) 16% 24%);
+  --kode-tekst: hsl(var(--h) 25% 90%);
+  --k-kw: hsl(280 85% 78%);
+  --k-str: hsl(95 55% 68%);
+  --k-tal: hsl(28 95% 70%);
+  --k-kom: hsl(var(--h) 10% 60%);
+  --k-typ: hsl(185 70% 66%);
+  --k-fn: hsl(48 90% 70%);
+  --skygge: 0 1px 2px hsl(var(--h) 30% 20% / .07), 0 6px 20px hsl(var(--h) 30% 20% / .07);
+}
+html[data-mode="lys"] { color-scheme: light; }
+/* Siden står på "Følg computeren", og værten (claude.ai) har valgt mørk: */
+html[data-mode="auto"][data-theme="dark"] {
+  color-scheme: dark;
+  --bg: hsl(var(--h) 16% 9%);
+  --flade: hsl(var(--h) 14% 13%);
+  --flade2: hsl(var(--h) 14% 18%);
+  --kant: hsl(var(--h) 12% 27%);
+  --tekst: hsl(var(--h) 20% 92%);
+  --svag: hsl(var(--h) 12% 68%);
+  --accent: hsl(var(--ah) var(--as) 70%);
+  --accent-tekst: hsl(var(--ah) 40% 9%);
+  --accent-svag: hsl(var(--ah) 32% 19%);
+  --accent-kant: hsl(var(--ah) 32% 36%);
+  --ok: hsl(150 55% 62%);
+  --ok-bg: hsl(150 40% 15%);
+  --fejl: hsl(4 85% 74%);
+  --fejl-bg: hsl(4 45% 17%);
+  --gul-bg: hsl(45 45% 17%);
+  --gul: hsl(45 85% 72%);
+  --kode-bg: hsl(var(--h) 16% 5%);
+  --kode-flade: hsl(var(--h) 14% 20%);
+  --skygge: 0 1px 2px #0006, 0 6px 20px #0004;
+}
+html[data-mode="moerk"] {
+  color-scheme: dark;
+  --bg: hsl(var(--h) 16% 9%);
+  --flade: hsl(var(--h) 14% 13%);
+  --flade2: hsl(var(--h) 14% 18%);
+  --kant: hsl(var(--h) 12% 27%);
+  --tekst: hsl(var(--h) 20% 92%);
+  --svag: hsl(var(--h) 12% 68%);
+  --accent: hsl(var(--ah) var(--as) 70%);
+  --accent-tekst: hsl(var(--ah) 40% 9%);
+  --accent-svag: hsl(var(--ah) 32% 19%);
+  --accent-kant: hsl(var(--ah) 32% 36%);
+  --ok: hsl(150 55% 62%);
+  --ok-bg: hsl(150 40% 15%);
+  --fejl: hsl(4 85% 74%);
+  --fejl-bg: hsl(4 45% 17%);
+  --gul-bg: hsl(45 45% 17%);
+  --gul: hsl(45 85% 72%);
+  --kode-bg: hsl(var(--h) 16% 5%);
+  --kode-flade: hsl(var(--h) 14% 20%);
+  --skygge: 0 1px 2px #0006, 0 6px 20px #0004;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-mode="auto"]:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: hsl(var(--h) 16% 9%);
+    --flade: hsl(var(--h) 14% 13%);
+    --flade2: hsl(var(--h) 14% 18%);
+    --kant: hsl(var(--h) 12% 27%);
+    --tekst: hsl(var(--h) 20% 92%);
+    --svag: hsl(var(--h) 12% 68%);
+    --accent: hsl(var(--ah) var(--as) 70%);
+    --accent-tekst: hsl(var(--ah) 40% 9%);
+    --accent-svag: hsl(var(--ah) 32% 19%);
+    --accent-kant: hsl(var(--ah) 32% 36%);
+    --ok: hsl(150 55% 62%);
+    --ok-bg: hsl(150 40% 15%);
+    --fejl: hsl(4 85% 74%);
+    --fejl-bg: hsl(4 45% 17%);
+    --gul-bg: hsl(45 45% 17%);
+    --gul: hsl(45 85% 72%);
+    --kode-bg: hsl(var(--h) 16% 5%);
+    --kode-flade: hsl(var(--h) 14% 20%);
+    --skygge: 0 1px 2px #0006, 0 6px 20px #0004;
+  }
+}
+
+* { box-sizing: border-box; }
+html { font-size: var(--fs); }
+body {
+  margin: 0; background: var(--bg); color: var(--tekst);
+  font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6; -webkit-text-size-adjust: 100%;
+}
+a { color: var(--accent); }
+button { font: inherit; color: inherit; cursor: pointer; }
+h1, h2, h3 { line-height: 1.25; margin: 0 0 .5rem; text-wrap: balance; }
+h1 { font-size: 1.7rem; } h2 { font-size: 1.3rem; } h3 { font-size: 1.05rem; }
+p { margin: 0 0 .8rem; }
+ul, ol { margin: 0 0 .8rem; padding-left: 1.4rem; }
+li { margin-bottom: .25rem; }
+code, pre, textarea.kode, .udf input {
+  font-family: "Cascadia Code", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+p code, li code, .svar code, td code {
+  background: var(--accent-svag); border: 1px solid var(--accent-kant);
+  padding: .05em .35em; border-radius: 6px; font-size: .9em; white-space: pre-wrap;
+}
+
+/* ---------- top ---------- */
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--flade);
+  border-bottom: 1px solid var(--kant);
+}
+.top .ind { max-width: 1060px; margin: 0 auto; padding: .55rem 1rem; display: flex; gap: .4rem; align-items: center; flex-wrap: wrap; }
+.logo { font-weight: 800; font-size: 1.15rem; text-decoration: none; color: var(--tekst); margin-right: auto; letter-spacing: -.01em; }
+.logo span { color: var(--accent); }
+.nav a {
+  text-decoration: none; color: var(--svag); padding: .35rem .7rem; border-radius: 999px; font-weight: 600; font-size: .92rem;
+}
+.nav a:hover { background: var(--flade2); color: var(--tekst); }
+.nav a.aktiv { background: var(--accent-svag); color: var(--accent); }
+.nav .tal { background: var(--accent); color: var(--accent-tekst); border-radius: 999px; padding: 0 .45em; font-size: .78rem; margin-left: .25rem; }
+.osknap {
+  border: 1px solid var(--kant); background: var(--flade2); border-radius: 999px; padding: .3rem .75rem; font-size: .85rem; font-weight: 600;
+}
+
+main { max-width: 1180px; margin: 0 auto; padding: 1.4rem 1.2rem 5rem; }
+main.smal { max-width: 860px; }
+main.mellem { max-width: 980px; }
+
+/* Lektionen: indholdsoversigt til venstre, stor læseflade til højre */
+main.lektion { max-width: 1400px; display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 1.6rem; align-items: start; }
+main.lektion.uden-sti { display: block; max-width: 1000px; }
+.laeseflade { min-width: 0; max-width: 1020px; }
+.sti { position: sticky; top: 4.2rem; max-height: calc(100vh - 5rem); overflow-y: auto; background: var(--flade); border: 1px solid var(--kant); border-radius: var(--r); padding: 1rem .8rem; }
+.sti-modul { display: block; font-size: .8rem; color: var(--svag); text-decoration: none; margin: 0 .4rem .3rem; }
+.sti-modul:hover { color: var(--accent); }
+.sti-titel { font-weight: 800; line-height: 1.25; margin: 0 .4rem .7rem; }
+.sti ol { list-style: none; margin: 0; padding: 0; }
+.sti li { margin: 0; }
+.sti li a { display: flex; gap: .55rem; align-items: baseline; padding: .32rem .5rem; border-radius: 9px; text-decoration: none; color: var(--svag); font-size: .86rem; line-height: 1.3; border-left: 3px solid transparent; }
+.sti li a:hover { background: var(--flade2); color: var(--tekst); }
+.sti li .ik { flex: none; font-size: .85rem; width: 1.2rem; text-align: center; }
+.sti li.set a { color: var(--tekst); }
+.sti li.ok a { color: var(--ok); }
+.sti li.nej a { color: var(--fejl); }
+.sti li.nu a { background: var(--accent-svag); color: var(--accent); font-weight: 700; border-left-color: var(--accent); }
+@media (max-width: 980px) { main.lektion { display: block; } .sti { display: none; } }
+
+.kort { background: var(--flade); border: 1px solid var(--kant); border-radius: var(--r); padding: 1.2rem 1.3rem; box-shadow: var(--skygge); }
+.svag { color: var(--svag); }
+.lille { font-size: .88rem; }
+.rk { display: flex; gap: .8rem; flex-wrap: wrap; align-items: center; }
+.mt { margin-top: 1.2rem; }
+
+.knap {
+  border: 1px solid var(--kant); background: var(--flade); border-radius: 12px; padding: .6rem 1.15rem; font-weight: 700;
+  text-decoration: none; color: var(--tekst); display: inline-block;
+}
+.knap:hover { border-color: var(--accent); }
+.knap.pri { background: var(--accent); border-color: var(--accent); color: var(--accent-tekst); }
+.knap.pri:hover { filter: brightness(1.08); }
+.knap:disabled { opacity: .45; cursor: default; }
+.knap.stor { padding: .8rem 1.5rem; font-size: 1.05rem; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- forside ---------- */
+.helt { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1rem; }
+@media (max-width: 760px) { .helt { grid-template-columns: 1fr; } }
+.helt .stort { background: linear-gradient(135deg, var(--accent-svag), var(--flade)); }
+.tal3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+.tal3 div { background: var(--flade2); border-radius: 12px; padding: .7rem .5rem; text-align: center; }
+.tal3 b { display: block; font-size: 1.5rem; line-height: 1.1; color: var(--accent); }
+.tal3 span { font-size: .78rem; color: var(--svag); }
+.frist { display: flex; justify-content: space-between; gap: 1rem; padding: .45rem 0; border-bottom: 1px dashed var(--kant); }
+.frist:last-child { border-bottom: 0; }
+.frist b { color: var(--accent); white-space: nowrap; }
+
+.blok-h { margin: 2rem 0 .7rem; display: flex; align-items: baseline; gap: .7rem; flex-wrap: wrap; }
+.blok-h h2 { margin: 0; }
+.moduler { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: .8rem; }
+.modul {
+  display: flex; gap: .9rem; align-items: center; text-decoration: none; color: var(--tekst);
+  background: var(--flade); border: 1px solid var(--kant); border-radius: var(--r); padding: .9rem 1rem; box-shadow: var(--skygge);
+}
+.modul:hover { border-color: var(--accent); transform: translateY(-1px); }
+.modul.tom { opacity: .55; box-shadow: none; }
+.modul .ikon { font-size: 1.7rem; width: 2.9rem; height: 2.9rem; display: grid; place-items: center; background: var(--accent-svag); border-radius: 12px; flex: none; }
+.modul .t { font-weight: 700; line-height: 1.25; }
+.modul .d { font-size: .8rem; color: var(--svag); }
+.bar { height: 7px; background: var(--flade2); border-radius: 99px; overflow: hidden; margin-top: .45rem; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+.modul .bar { width: 100%; }
+.modul .midt { flex: 1; min-width: 0; }
+
+/* ---------- modulside ---------- */
+.lekliste { display: grid; gap: .6rem; margin-top: 1rem; }
+.lek {
+  display: flex; align-items: center; gap: .9rem; text-decoration: none; color: var(--tekst);
+  background: var(--flade); border: 1px solid var(--kant); border-radius: var(--r); padding: .85rem 1rem;
+}
+.lek:hover { border-color: var(--accent); }
+.lek .nr { width: 2.2rem; height: 2.2rem; border-radius: 50%; display: grid; place-items: center; font-weight: 800; background: var(--flade2); flex: none; }
+.lek.faerdig .nr { background: var(--ok-bg); color: var(--ok); }
+.lek.naeste { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-svag); }
+.lek .t { font-weight: 700; }
+.lek .d { font-size: .82rem; color: var(--svag); }
+.lek.vaerksted { background: var(--accent-svag); border-color: var(--accent-kant); }
+.lek.vaerksted .nr { background: var(--flade); }
+.lek .hoejre { margin-left: auto; font-size: .82rem; color: var(--svag); white-space: nowrap; }
+.video { background: var(--gul-bg); color: var(--gul); border-radius: 12px; padding: .7rem 1rem; margin-top: 1rem; font-size: .92rem; }
+
+/* ---------- lektionsafspiller ---------- */
+.spilhoved { display: flex; align-items: center; gap: .8rem; margin-bottom: 1rem; }
+.spilhoved a { text-decoration: none; font-size: 1.3rem; color: var(--svag); padding: .1rem .5rem; border-radius: 8px; }
+.spilhoved a:hover { background: var(--flade2); }
+.spilhoved .bar { flex: 1; height: 10px; margin: 0; }
+.spilhoved .taeller { font-size: .85rem; color: var(--svag); white-space: nowrap; }
+.trin { min-height: 24rem; padding: 1.8rem 2.2rem 1.6rem; }
+.trin h2 { font-size: 1.65rem; margin: .2rem 0 .9rem; }
+#trin > p, #trin > ul, #trin > ol { font-size: 1.04rem; max-width: 48rem; }
+@media (max-width: 700px) { .trin { padding: 1.2rem 1.1rem; } }
+.maerke { display: inline-block; font-size: .74rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: var(--accent-svag); padding: .15rem .6rem; border-radius: 99px; margin-bottom: .6rem; }
+.q { font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; max-width: 48rem; }
+.q p:last-child { margin-bottom: 0; }
+
+pre.kode {
+  background: var(--kode-bg); color: var(--kode-tekst); border-radius: 12px; padding: 1.1rem 1.3rem; margin: 0 0 1.1rem;
+  overflow-x: auto; font-size: 1rem; line-height: 1.6; tab-size: 4; white-space: pre;
+}
+pre.kode .kw { color: var(--k-kw); } pre.kode .str { color: var(--k-str); } pre.kode .tal { color: var(--k-tal); }
+pre.kode .kom { color: var(--k-kom); font-style: italic; } pre.kode .typ { color: var(--k-typ); } pre.kode .fn { color: var(--k-fn); }
+pre.kode.ramme { border: 1px dashed var(--k-kom); opacity: .85; margin-bottom: .4rem; }
+pre.ud {
+  background: #0c0c0c; color: #e8e8e8; border-radius: 12px; padding: .7rem 1rem; margin: 0 0 .9rem; overflow-x: auto;
+  font-size: 1rem; line-height: 1.55; border-left: 5px solid var(--accent); white-space: pre-wrap;
+}
+.udlabel { font-size: .76rem; font-weight: 700; color: var(--svag); text-transform: uppercase; letter-spacing: .05em; margin-bottom: .25rem; }
+
+.noter { display: grid; gap: .4rem; margin: 0 0 .9rem; }
+.noter div { display: grid; grid-template-columns: minmax(7rem, auto) 1fr; gap: .8rem; background: var(--flade2); border-radius: 10px; padding: .45rem .7rem; align-items: baseline; }
+.noter code { color: var(--accent); font-weight: 700; font-size: .88rem; white-space: pre-wrap; }
+@media (max-width: 600px) { .noter div { grid-template-columns: 1fr; gap: .1rem; } }
+
+.osboks { border: 1px solid var(--accent-kant); background: var(--accent-svag); border-radius: 12px; padding: .7rem 1rem; margin: 0 0 .9rem; }
+.osboks .osnavn { font-size: .76rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); }
+.osboks ol { margin: .3rem 0 0; }
+.osboks p:last-child, .osboks ol:last-child { margin-bottom: 0; }
+
+.valg { display: grid; gap: .5rem; margin-bottom: .9rem; }
+.valg button {
+  text-align: left; border: 2px solid var(--kant); background: var(--flade); border-radius: 12px; padding: .65rem .9rem; display: flex; gap: .7rem; align-items: baseline;
+}
+.valg button:hover:not(:disabled) { border-color: var(--accent); }
+.valg button.valgt { border-color: var(--accent); background: var(--accent-svag); }
+.valg button.rigtig { border-color: var(--ok); background: var(--ok-bg); }
+.valg button.forkert { border-color: var(--fejl); background: var(--fejl-bg); }
+.valg button .bog { font-weight: 800; color: var(--svag); flex: none; }
+.valg button code { background: transparent; border: 0; padding: 0; font-size: .92em; }
+
+textarea.kode, textarea.fri {
+  width: 100%; border: 2px solid var(--kant); border-radius: 12px; padding: .8rem 1rem; resize: vertical; margin-bottom: .6rem;
+}
+textarea.kode { background: var(--kode-bg); color: var(--kode-tekst); font-size: 1rem; line-height: 1.6; min-height: 9rem; padding: 1rem 1.3rem; tab-size: 4; white-space: pre; overflow-wrap: normal; overflow-x: auto; caret-color: #fff; }
+textarea.fri { background: var(--flade); color: var(--tekst); font: inherit; }
+textarea:focus { outline: none; border-color: var(--accent); }
+textarea.ok { border-color: var(--ok); } textarea.nej { border-color: var(--fejl); }
+
+pre.udf { line-height: 2.1; }
+.udf input {
+  background: #fff; color: #111; border: 2px solid var(--accent); border-radius: 7px; padding: .05rem .4rem; font-size: .92rem; text-align: center;
+}
+.udf input.ok { background: hsl(150 60% 88%); border-color: hsl(150 60% 35%); }
+.udf input.nej { background: hsl(4 90% 92%); border-color: hsl(4 70% 50%); }
+
+.orden { display: grid; gap: .35rem; margin-bottom: .9rem; }
+.orden .linje { display: flex; align-items: center; gap: .5rem; background: var(--kode-bg); color: var(--kode-tekst); border-radius: 10px; padding: .3rem .5rem .3rem .8rem; border: 2px solid transparent; cursor: grab; }
+.orden .linje.traek { opacity: .4; }
+.orden .linje.over { border-color: var(--accent); }
+.orden .linje.ok { border-color: var(--ok); } .orden .linje.nej { border-color: var(--fejl); }
+.orden pre { margin: 0; flex: 1; font-size: .9rem; white-space: pre; overflow-x: auto; background: none; padding: 0; }
+.orden .pile { display: flex; gap: .2rem; flex: none; }
+.orden .pile button { border: 0; background: var(--kode-flade); color: #fff; border-radius: 7px; width: 2rem; height: 1.9rem; font-size: .8rem; }
+.orden .pile button:hover { background: var(--accent); color: var(--accent-tekst); }
+
+.fejlkode { background: var(--kode-bg); border-radius: 12px; padding: .5rem; margin-bottom: .9rem; overflow-x: auto; }
+.fejlkode button { display: flex; gap: .8rem; width: 100%; text-align: left; background: none; border: 2px solid transparent; border-radius: 8px; padding: .1rem .5rem; color: var(--kode-tekst); }
+.fejlkode button:hover:not(:disabled) { background: var(--kode-flade); }
+.fejlkode button .ln { color: var(--k-kom); width: 1.6rem; text-align: right; flex: none; user-select: none; font-family: Consolas, monospace; font-size: .85rem; }
+.fejlkode button pre { margin: 0; font-size: .9rem; white-space: pre; background: none; padding: 0; }
+.fejlkode button.valgt { border-color: var(--accent); }
+.fejlkode button.rigtig { border-color: hsl(150 60% 50%); background: hsl(150 40% 16%); }
+.fejlkode button.forkert { border-color: hsl(4 80% 60%); background: hsl(4 40% 18%); }
+
+.svar { border-radius: 12px; padding: .8rem 1rem; margin: .2rem 0 .9rem; border: 1px solid; }
+.svar.ok { background: var(--ok-bg); border-color: var(--ok); }
+.svar.nej { background: var(--fejl-bg); border-color: var(--fejl); }
+.svar.info { background: var(--flade2); border-color: var(--kant); }
+.svar .hoved { font-weight: 800; margin-bottom: .2rem; }
+.svar.ok .hoved { color: var(--ok); } .svar.nej .hoved { color: var(--fejl); }
+.svar p:last-child, .svar ul:last-child, .svar pre:last-child { margin-bottom: 0; }
+.tjekliste { list-style: none; padding: 0; margin: .3rem 0 .6rem; }
+.tjekliste li { padding-left: 1.5rem; position: relative; }
+.tjekliste li::before { position: absolute; left: 0; font-weight: 800; }
+.tjekliste li.ok::before { content: "✓"; color: var(--ok); }
+.tjekliste li.nej::before { content: "✗"; color: var(--fejl); }
+
+.fod { display: flex; gap: .6rem; align-items: center; margin-top: 1rem; flex-wrap: wrap; }
+.fod .hoejre { margin-left: auto; display: flex; gap: .6rem; flex-wrap: wrap; }
+.tast { font-size: .78rem; color: var(--svag); }
+
+.afkryds { display: flex; gap: .6rem; align-items: center; background: var(--flade2); border-radius: 12px; padding: .7rem 1rem; margin-bottom: .6rem; font-weight: 600; cursor: pointer; }
+.afkryds input { width: 1.3rem; height: 1.3rem; accent-color: var(--accent); }
+
+.noegler span { display: inline-block; border-radius: 99px; padding: .05rem .6rem; margin: 0 .3rem .3rem 0; font-size: .85rem; border: 1px solid var(--kant); }
+.noegler span.ok { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
+
+.fest { text-align: center; padding: 2rem 1rem; }
+.fest .stor { font-size: 3.2rem; line-height: 1; margin-bottom: .6rem; }
+
+/* ---------- indstillinger / ordbog ---------- */
+.felt { margin-bottom: 1.3rem; }
+.felt > b { display: block; margin-bottom: .4rem; }
+.vaelg { display: flex; gap: .5rem; flex-wrap: wrap; }
+.vaelg button { border: 2px solid var(--kant); background: var(--flade); border-radius: 12px; padding: .5rem .9rem; font-weight: 600; }
+.vaelg button.aktiv { border-color: var(--accent); background: var(--accent-svag); color: var(--accent); }
+.prik { display: inline-block; width: .9rem; height: .9rem; border-radius: 50%; vertical-align: -1px; margin-right: .35rem; }
+.soeg { width: 100%; padding: .7rem 1rem; border-radius: 12px; border: 2px solid var(--kant); background: var(--flade); color: var(--tekst); font: inherit; margin-bottom: 1rem; }
+.soeg:focus { outline: none; border-color: var(--accent); }
+dl.ord { margin: 0; }
+dl.ord div { padding: .6rem 0; border-bottom: 1px solid var(--kant); }
+dl.ord dt { font-weight: 800; }
+dl.ord dt small { font-weight: 400; color: var(--svag); margin-left: .5rem; }
+dl.ord dd { margin: 0; }
+
+/* ---------- opgaver, hvor man selv skriver hele programmet i Visual Studio / Rider ---------- */
+.t-opgave { border-top: 6px solid var(--accent); }
+.opg-intro { font-size: 1.08rem; max-width: 50rem; }
+.krav { background: var(--flade2); border-radius: 12px; padding: 1rem 1.2rem; margin: 0 0 1.1rem; }
+.krav-h { font-weight: 800; margin-bottom: .5rem; }
+.krav label { display: flex; gap: .7rem; align-items: baseline; padding: .28rem 0; cursor: pointer; }
+.krav input { width: 1.15rem; height: 1.15rem; accent-color: var(--accent); flex: none; position: relative; top: .15rem; }
+.krav input:checked + span { color: var(--svag); text-decoration: line-through; }
+.opg-knapper { margin: .4rem 0 1rem; }
+.ekstra { border: 1px dashed var(--accent-kant); border-radius: 12px; padding: .9rem 1.2rem; margin-top: 1rem; }
+.ekstra ul { margin: .4rem 0 0; }
+
+/* ---------- fagord, der forklares, når man peger på dem ---------- */
+.ordtip { border-bottom: 2px dotted var(--accent-kant); cursor: help; position: relative; }
+.ordtip:hover::after, .ordtip:focus::after {
+  content: attr(data-d); position: absolute; left: 0; top: 1.7em; z-index: 40; width: max-content; max-width: min(26rem, 80vw);
+  background: var(--tekst); color: var(--bg); padding: .55rem .8rem; border-radius: 10px; font-size: .86rem; font-weight: 400; line-height: 1.45;
+  white-space: normal; text-align: left; box-shadow: var(--skygge);
+}
+.ordtip:focus { outline: none; background: var(--accent-svag); }
+
+/* ---------- sporingsskema ---------- */
+.sporwrap { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 1.2rem; align-items: start; margin-bottom: .8rem; }
+@media (max-width: 860px) { .sporwrap { grid-template-columns: 1fr; } }
+pre.kode.nummer .ln { display: inline-block; width: 1.6rem; margin-right: .9rem; text-align: right; color: var(--k-kom); user-select: none; }
+table.spor { border-collapse: collapse; width: 100%; background: var(--flade); }
+table.spor th, table.spor td { border: 1px solid var(--kant); padding: .4rem .5rem; text-align: center; }
+table.spor th { background: var(--flade2); font-size: .85rem; }
+table.spor td:first-child { font-weight: 700; color: var(--svag); }
+table.spor input { width: 100%; min-width: 3.5rem; border: 2px solid var(--accent-kant); border-radius: 7px; padding: .2rem .3rem; text-align: center; font: inherit; font-family: Consolas, Menlo, monospace; background: var(--flade); color: var(--tekst); }
+table.spor input:focus { outline: none; border-color: var(--accent); }
+table.spor input.ok { background: var(--ok-bg); border-color: var(--ok); }
+table.spor input.nej { background: var(--fejl-bg); border-color: var(--fejl); }
+table.spor .givet { font-family: Consolas, Menlo, monospace; color: var(--svag); }
+
+/* ---------- opslag (hele modulet på én side) ---------- */
+.ark h2 { font-size: 1.4rem; border-bottom: 2px solid var(--accent-kant); padding-bottom: .3rem; margin-bottom: .9rem; }
+.ark h3 { margin-top: 1.4rem; }
+.top .ind { max-width: 1400px; }
+
+/* ---------- studieplan og søgning ---------- */
+.plan { border-left: 6px solid var(--accent); }
+.plan h2 { margin-top: .5rem; }
+.plan-bagud { margin: .9rem 0 0; background: var(--gul-bg); color: var(--gul); border-radius: 10px; padding: .6rem .9rem; font-size: .92rem; }
+.plan-bagud a { color: inherit; font-weight: 700; }
+.planfase.ovre { opacity: .7; }
+.planfase.nu { border: 2px solid var(--accent); }
+.planfase h2 { margin-top: .5rem; }
+.uddrag { font-size: .85rem; color: var(--svag); margin-top: .25rem; }
+.uddrag mark, mark { background: var(--gul-bg); color: var(--gul); border-radius: 4px; padding: 0 .15em; }
+
+/* ---------- videoguide ---------- */
+.videoguide summary { cursor: pointer; font-weight: 700; }
+.videoguide h3 { margin-top: 1.1rem; font-size: 1rem; }
+table.tider { border-collapse: collapse; width: 100%; }
+table.tider td { padding: .3rem .6rem .3rem 0; vertical-align: top; border-bottom: 1px solid var(--kant); }
+table.tider td:first-child { font-family: Consolas, Menlo, monospace; font-weight: 700; color: var(--accent); white-space: nowrap; width: 4.5rem; }

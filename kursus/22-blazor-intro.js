@@ -116,7 +116,7 @@ window.KURSUS.push({
       { t: "laes", h: "Modulets app: Indkøbsliste",
         md: "Gennem hele modulet bygger du **én** app, der hedder **Indkoeb**. Til sidst kan den:\n\n- vise en indkøbsliste med en linje pr. vare\n- markere en vare som købt og vise, hvor mange der mangler\n- fjerne en vare\n- tilføje en vare gennem en formular med validering\n- søge i listen, mens du skriver\n- hente startlisten, når siden åbnes\n\nHver lektion tilføjer ét stykke. Byg med, mens du læser: det er sådan, du lærer det, og det er sådan, du skal arbejde i dit eksamensprojekt.\n\nAppen har ingen database. Listen ligger i hukommelsen, så den starter forfra, når du genindlæser siden. Databasen kommer på i modul 23." },
       { t: "ide", h: "Opret projektet Indkoeb",
-        md: "Lav projektet nu, og kør det, før du ændrer noget.",
+        md: "Lav projektet nu, og kør det, før du ændrer noget. Du har allerede en mappe, der hedder `Indkoeb`, fra modul 1. Læg derfor det nye projekt i en ny mappe, fx `Modul22`: {{skriv den i feltet **Location**, når du opretter projektet||lav mappen, og åbn terminalen i den, før du skriver kommandoen}}.",
         win: [
           "Start Visual Studio, og vælg **Create a new project**.",
           "Skriv `blazor` i søgefeltet, vælg **Blazor Web App**, og klik **Next**.",
@@ -1157,7 +1157,7 @@ void Vis()
         svar: ["Fordi komponenten renderes første gang, før OnInitializedAsync er færdig, og da er varer null", "Fordi @foreach ikke kan bruges uden @if", "Fordi listen bliver null, hver gang man klikker", "Fordi Blazor kræver, at alle felter kan være null"],
         ret: 0, fordi: "Blazor venter ikke på `await` med at vise siden. Den renderer med det samme og igen, når dataene er kommet. Imens skal siden kunne klare, at der ingen liste er endnu. Det samme mønster står i skabelonens `Weather.razor`: `@if (forecasts == null)` → **Loading...**." },
       { t: "laes", h: "Hvorfor kører OnInitializedAsync to gange?",
-        md: "Kører du appen, ser du noget mærkeligt: listen står der med det samme, så står der **Henter listen …** et sekund, og så kommer listen igen.\n\nÅrsagen er **prerendering**. For at brugeren skal se noget med det samme, laver serveren først sidens HTML **én gang** og sender den — her kører `OnInitializedAsync` første gang. Derefter åbnes SignalR-forbindelsen, og komponenten starter **forfra** som interaktiv — og `OnInitializedAsync` kører igen.",
+        md: "Kører du appen, ser du noget mærkeligt: siden er cirka et sekund om at komme frem, og så står listen der. Derefter står der **Henter listen …** i et sekund, og så kommer listen igen.\n\nÅrsagen er **prerendering**. For at brugeren skal se noget med det samme, laver serveren først sidens HTML **én gang** og sender den — her kører `OnInitializedAsync` første gang. Derefter åbnes SignalR-forbindelsen, og komponenten starter **forfra** som interaktiv — og `OnInitializedAsync` kører igen.",
         noter: [
           ["Første kørsel", "Prerendering: serveren laver HTML'en til den første visning. Knapperne virker endnu ikke."],
           ["Anden kørsel", "Den interaktive komponent starter. Felterne er nye, så `varer` er `null` igen, indtil dataene er hentet."],

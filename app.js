@@ -139,6 +139,32 @@
     });
     return s.replace(/\u0001(\d+)\u0001/g, function (_, n) { return "<code>" + kode[+n] + "</code>"; });
   }
+  // Er opgavens projektnavn brugt i en tidligere lektion? Så giv et forslag til en ny mappe ("Modul16"); ellers "".
+  // Kun den første opgave i en lektion med det navn får forslaget — de næste arbejder videre i samme projekt.
+  var _mappeForslag = null;
+  function mappeForslag(st) {
+    if (!st || !st.projekt) return "";
+    if (!_mappeForslag) {
+      _mappeForslag = [];
+      var set = {}, OPRET = [/dotnet new [a-z]+(?: [^`"\n]*?)? -(?:n|o) ([A-Za-z0-9.]+)/g, /Project name:?\*{0,2}:? `([A-Za-z0-9.]+)`/g, /Skriv `([A-Za-z0-9.]+)` som (?:projektnavn|\*\*Project name\*\*|navn)/g,
+        /Navn: `([A-Za-z0-9.]+)`/g, /Kald (?:projektet|den|det) `([A-Za-z0-9.]+)`/g, /(?:projekt|-app|projektet),? (?:der hedder )?`([A-Za-z0-9.]+)`/g, /der hedder \*\*([A-Za-z0-9.]+)\*\*/g];
+      (window.KURSUS || []).forEach(function (m) {
+        (m.lektioner || []).forEach(function (l) {
+          var her = {}, haft = {};
+          l.trin.forEach(function (t) {
+            if (t.t === "opgave" && t.projekt && !haft[t.projekt] && set[t.projekt]) _mappeForslag.push([t, (l.vaerksted ? "Vaerksted" : "Modul") + String(m.id).replace(/\D/g, "")]);
+            if (t.projekt) { her[t.projekt] = 1; haft[t.projekt] = 1; }
+            var tekst = [t.md, t.md2].concat(t.win || [], t.mac || []).join(" ");
+            OPRET.forEach(function (re) { var x; re.lastIndex = 0; while ((x = re.exec(tekst))) her[x[1]] = 1; });
+          });
+          Object.keys(her).forEach(function (n) { set[n] = 1; });
+        });
+      });
+    }
+    for (var i = 0; i < _mappeForslag.length; i++) if (_mappeForslag[i][0] === st) return _mappeForslag[i][1];
+    return "";
+  }
+
   function md(s) {
     if (!s) return "";
     s = String(s).replace(/\{\{([\s\S]*?)\|\|([\s\S]*?)\}\}/g, function (_, w, m) { return erMac() ? m : w; });
@@ -445,6 +471,11 @@
       var konsol = cs && !!st.projekt && (st.konsol === true || (st.konsol == null && kanTjekkes));
       var hvor = konsol ? "<p>Lav et nyt <b>Console</b>-projekt, der hedder <code>" + esc(st.projekt) + "</code>" + (erMac() ? " (File → New Solution → Console)." : " (File → New → Project → Console App).") + " Skriv programmet selv — helt fra en tom fil.</p>"
         : st.projekt ? "<p>Arbejd i <code>" + esc(st.projekt) + "</code>. Opgaveteksten ovenfor siger, hvad det er, og om det skal oprettes først.</p>" : "";
+      // Projektnavnet er brugt i en tidligere lektion: sig, hvad man gør, når mappen findes i forvejen (to projekter med samme navn kan ikke ligge i samme mappe).
+      var nyMappe = mappeForslag(st);
+      if (nyMappe && String(st.md || "").indexOf("Du har allerede en mappe") < 0)
+        hvor += '<p class="lille">Har du allerede en mappe, der hedder <code>' + esc(st.projekt) + "</code>, fra tidligere i kurset — og siger opgaveteksten ikke, at du skal arbejde videre i den? Behold navnet, men læg det nye projekt et andet sted: skriv en ny mappe (fx <code>" +
+          esc(nyMappe) + "</code>) i feltet <b>" + (erMac() ? "Solution directory" : "Location") + "</b>, når du opretter det.</p>";
       var koer = sp === "sql" ? (erMac() ? "Skriv SQL'en i en <b>Query Console</b> i Rider (Database-vinduet). Markér sætningerne, og kør dem med den grønne pil ▶." : "Skriv SQL'en i et query-vindue til databasen (SQL Server Object Explorer → højreklik på databasen → <b>New Query</b>). Kør med den grønne pil ▶.")
         : sp === "html" || sp === "css" ? "Gem filen, og åbn den i browseren. Fejl giver ingen besked — se dem i udviklerværktøjerne (" + (erMac() ? "⌥⌘I" : "F12") + ")."
         : sp === "js" ? "Start appen fra terminalen, som lektionerne viser. Fejl står i terminalen og i browserens konsol (" + (erMac() ? "⌥⌘I" : "F12") + " → Console)."

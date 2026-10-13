@@ -862,7 +862,7 @@ const sange = await svar.json();` },
   { id: "m27v", titel: "Værksted: fem små HTML5-apps", vaerksted: true, min: 90, ord: [],
     trin: [
       { t: "laes", h: "Sådan arbejder du i værkstedet",
-        md: "Du bygger fem små sider, der hver bruger et eller flere HTML5-API'er. Den første er let. Den tredje er en fejlfinding med browserens debugger. Den sidste samler det hele i en musikafspiller.\n\nLæg alle filerne i `wwwroot` i projektet `HtmlSider` fra lektion 3, kør projektet, og gå til fx `/karrusel.html`. Genindlæs med {{**F5**||**⌘R**}}, hver gang du har gemt.\n\nBoksen under hver opgave taler om at sammenligne output. Her er der ikke noget at sætte ind: krav-listen er dit facit, og eksemplet viser, hvad du skal kunne se.",
+        md: "Du bygger fem små sider, der hver bruger et eller flere HTML5-API'er. Den første er let. Den tredje er en fejlfinding med browserens debugger. Den sidste samler det hele i en musikafspiller.\n\nLæg alle filerne i `wwwroot` i projektet `HtmlSider` fra lektion 3, kør projektet, og gå til fx `/karrusel.html`. Genindlæs med {{**F5**||**⌘R**}}, hver gang du har gemt.\n\nDer er ikke noget output at sætte ind i disse opgaver: krav-listen er dit facit, og eksemplet viser, hvad du skal kunne se.",
         noter: [
           ["Skriv selv", "Skriv koden med dine egne fingre. Kopiér ikke fra lektionerne."],
           ["Konsollen er altid åben", "Hav udviklerværktøjet åbent ({{**F12**||**⌥⌘I**}}) med fanen **Console**. En fejl i JavaScript vises kun der, med rødt og et linjenummer."],

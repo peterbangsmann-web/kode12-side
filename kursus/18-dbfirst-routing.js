@@ -43,7 +43,7 @@ window.KURSUS.push({
       { t: "valg", q: "Projektet er lavet med database first. Kunderne skal nu også have et telefonnummer. Hvad gør du?",
         svar: ["Tilføjer kolonnen i databasen med `ALTER TABLE` og kører scaffold-kommandoen igen", "Skriver `Add-Migration Telefon` i Package Manager Console", "Tilføjer en property i `Customer.cs` og håber, databasen følger med", "Laver en ny tabel med telefonnumre og sletter den gamle"],
         ret: 0, fordi: "I database first er databasen det rigtige. Ændringen laves dér, og klasserne skrives igen ud fra den. Migrations hører til code first." },
-      { t: "orden", sprog: "text", q: "Sæt de fem trin i database first i rækkefølge (det er lærerens liste fra kursusdag 15).",
+      { t: "orden", sprog: "text", q: "Sæt de fem skridt i database first i rækkefølge (det er lærerens liste fra kursusdag 15).",
         linjer: [
           "Installér Entity Framework-pakkerne",
           "Kør Scaffold-DbContext mod databasen",
@@ -70,7 +70,7 @@ window.KURSUS.push({
           ["Paid", "0 = ikke betalt, 1 = betalt, 2 = delvist betalt. Tallet laves om til tekst i lektion 5."]
         ] },
       { t: "ide", h: "Opret projektet Butik",
-        md: "Først projektet. Det er det samme som i modul 16.",
+        md: "Først projektet. Det er det samme som i modul 16. Du har allerede en mappe, der hedder `Butik`, fra modul 4: skriv derfor en ny mappe, fx `Modul18`, i feltet {{**Location**||**Solution directory**}}, når du opretter projektet.",
         win: ["Åbn Visual Studio, og vælg **Create a new project**.", "Vælg **ASP.NET Core Web App (Model-View-Controller)**, og klik Next.", "Kald projektet `Butik`. Klik Next.", "Vælg **.NET 10** og Authentication type **None**. Klik Create.", "Kør projektet med den grønne pil ▶, og se forsiden i browseren."],
         mac: ["Åbn Rider, og lav en ny løsning af typen **ASP.NET Core Web Application** med skabelonen til **MVC** (Model-View-Controller), som i modul 16.", "Kald den `Butik`, og vælg .NET 10.", "Kør projektet med den grønne pil ▶, og se forsiden i browseren."] },
       { t: "ide", h: "Windows: lav ButikDB i LocalDB",
@@ -176,11 +176,11 @@ INSERT INTO Orders (CustomerId, ProductId, Quantity, OrderDate, Paid) VALUES
       ["OnModelCreating", "Metoden i databaseklassen, hvor nøgler, kolonnetyper og relationer er beskrevet som metodekald."]
     ],
     trin: [
-      { t: "ide", h: "Trin 1: pakkerne",
+      { t: "ide", h: "Skridt 1: pakkerne",
         md: "Scaffold-kommandoen findes i Entity Frameworks værktøjspakker. Installér dem i projektet `Butik`.",
-        win: ["Menuen **Tools** → **NuGet Package Manager** → **Package Manager Console**.", "Skriv de fire linjer én ad gangen, og tryk Enter efter hver:", "`Install-Package Microsoft.EntityFrameworkCore`", "`Install-Package Microsoft.EntityFrameworkCore.SqlServer`", "`Install-Package Microsoft.EntityFrameworkCore.Tools`", "`Install-Package Microsoft.EntityFrameworkCore.Design`"],
-        mac: ["Åbn Terminal i projektmappen (der hvor `Butik.csproj` ligger).", "`dotnet add package Microsoft.EntityFrameworkCore.Sqlite`", "`dotnet add package Microsoft.EntityFrameworkCore.Design`", "`dotnet add package Microsoft.EntityFrameworkCore.Tools` (uden den nægter værktøjet i trin 5 at lave controllerne og skriver \"install Entity Framework core packages and try again\")","`dotnet add package Microsoft.EntityFrameworkCore.SqlServer` (den skal ikke bruges til databasen, men værktøjet, der laver controllere på Mac, kræver den)", "`dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design`", "Har du ikke værktøjerne fra modul 17: `dotnet tool install --global dotnet-ef` og `dotnet tool install --global dotnet-aspnet-codegenerator`."] },
-      { t: "laes", h: "Trin 2: én kommando", sprog: "text",
+        win: ["Menuen **Tools** → **NuGet Package Manager** → **Package Manager Console**.", "Skriv de fire linjer én ad gangen, og tryk Enter efter hver:", "`Install-Package Microsoft.EntityFrameworkCore -Version 10.0.12`", "`Install-Package Microsoft.EntityFrameworkCore.SqlServer -Version 10.0.12`", "`Install-Package Microsoft.EntityFrameworkCore.Tools -Version 10.0.12`", "`Install-Package Microsoft.EntityFrameworkCore.Design -Version 10.0.12`"],
+        mac: ["Åbn Terminal i projektmappen (der hvor `Butik.csproj` ligger).", "`dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 10.0.12`", "`dotnet add package Microsoft.EntityFrameworkCore.Design --version 10.0.12`", "`dotnet add package Microsoft.EntityFrameworkCore.Tools --version 10.0.12` (uden den nægter værktøjet i skridt 5 at lave controllerne og skriver \"install Entity Framework core packages and try again\")","`dotnet add package Microsoft.EntityFrameworkCore.SqlServer --version 10.0.12` (den skal ikke bruges til databasen, men værktøjet, der laver controllere på Mac, kræver den)", "`dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design --version 10.0.2`", "Værktøjerne fra modul 17 blev kun hentet til mappen med FirmaApp (det er det, `dotnet new tool-manifest` gjorde). Hent dem nu til hele maskinen, så de virker i alle projekter: `dotnet tool install --global dotnet-ef --version 10.0.12` og `dotnet tool install --global dotnet-aspnet-codegenerator --version 10.0.2`."] },
+      { t: "laes", h: "Skridt 2: én kommando", sprog: "text",
         md: "Hele nyheden i database first er én kommando. Den har fem dele, som skal stå på **én lang linje**:",
         kode: R`Scaffold-DbContext "Server=(localdb)\MSSQLLocalDB;Database=ButikDB;Trusted_Connection=True;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context ButikContext -Tables Customers, Products, Orders -NoOnConfiguring`,
         noter: [
@@ -313,8 +313,8 @@ partial class Kunde
       { t: "valg", q: "Hvad betyder `entity.HasOne(d => d.Product).WithMany(p => p.Orders).HasForeignKey(d => d.ProductId)`?",
         svar: ["Hver ordre har én vare, en vare kan have mange ordrer, og de er forbundet med fremmednøglen ProductId", "Hver vare har én ordre", "Der skal oprettes en ny tabel, der hedder ProductId", "Ordren må kun indeholde én vare, og varen skal slettes bagefter"],
         ret: 0, fordi: "Læs det som en sætning: ordren **har én** vare, varen **har mange** ordrer, **med fremmednøglen** ProductId. Det er en en-til-mange-relation (modul 12)." },
-      { t: "ide", h: "Trin 3 og 4: forbindelsen",
-        md: "Fordi du skrev `-NoOnConfiguring`, ved databaseklassen ikke, hvor databasen er. Det skal stå i `appsettings.json` (trin 3) og registreres i `Program.cs` (trin 4), præcis som i modul 17. Navnet `Butik` i de to filer skal være ens.",
+      { t: "ide", h: "Skridt 3 og 4: forbindelsen",
+        md: "Fordi du skrev `-NoOnConfiguring`, ved databaseklassen ikke, hvor databasen er. Det skal stå i `appsettings.json` (skridt 3) og registreres i `Program.cs` (skridt 4), præcis som i modul 17. Navnet `Butik` i de to filer skal være ens.",
         kode: R`// Program.cs, øverst:
 using Butik.Models;
 using Microsoft.EntityFrameworkCore;
@@ -338,7 +338,7 @@ builder.Services.AddDbContext<ButikContext>(options =>
         loesning: R`builder.Services.AddDbContext<ButikContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Butik")));`,
         fordi: "Skriver du bare `\"Butik\"`, prøver Entity Framework at bruge ordet Butik som connection string, og det går galt, første gang en side henter data." },
-      { t: "ide", h: "Trin 5: controllere med views",
+      { t: "ide", h: "Skridt 5: controllere med views",
         md: "Lav en controller med views til hver af de tre modeller: `CustomersController`, `ProductsController` og `OrdersController`. Det er det samme som i modul 17.",
         win: ["Højreklik på mappen **Controllers** → **Add** → **Controller…**.", "Vælg **MVC Controller with views, using Entity Framework** → Add.", "Model class: `Customer`. DbContext class: `ButikContext`. Controller name: `CustomersController`. Klik Add.", "Gør det samme for `Product` (ProductsController) og `Order` (OrdersController).", "Kør projektet, og skriv `/Customers`, `/Products` og `/Orders` efter adressen i browseren."],
         mac: ["Kør disse tre linjer i Terminal i projektmappen, én ad gangen:", "`dotnet aspnet-codegenerator controller -name CustomersController -m Customer -dc ButikContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries`", "Det samme med `-name ProductsController -m Product` og med `-name OrdersController -m Order`.", "Kør projektet, og skriv `/Customers`, `/Products` og `/Orders` efter adressen i browseren."],
@@ -376,7 +376,8 @@ if (ModelState.IsValid)
         md: "Når browseren beder om en adresse, skal ASP.NET Core finde ud af, hvilken action der skal køre. Det hedder **routing**. Reglerne står nederst i `Program.cs`. Den rute, der følger med projektet, ser sådan ud:",
         kode: R`app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");`,
+    pattern: "{controller=Home}/{action=Index}/{id?}")
+    .WithStaticAssets();`,
         frag: true,
         noter: [
           ["{controller=Home}", "Første del af adressen er controllerens navn (uden \"Controller\"). Mangler den, bruges Home."],
@@ -812,15 +813,15 @@ public decimal Total { get; set; }`,
         svar: ["I dansk er punktum tusindtalsadskiller, så 12.50 bliver læst som 1250", "Databasen kan ikke gemme decimaler", "Fordi prisen er en int", "Fordi jQuery ganger med 100"],
         ret: 0, fordi: "Afprøvet i Butik. Dansk skrives tolv en halv som 12,50. Problemet er, at jQuery Validation i browseren som standard kun godtager punktum, så 12,50 bliver afvist. Det retter du i næste trin, så browseren godtager komma." },
       { t: "ide", h: "Ordrelisten med view model",
-        md: "Byg det hele ind i Butik. Viewet `Views/Orders/Index.cshtml` skal nu have `@model IEnumerable<Butik.ViewModels.OrdreLinje>`, og cellerne bliver fx `@Html.DisplayFor(modelItem => item.Total)` og `@item.Status`. Til sidst skal browseren godtage danske decimaltal: tilføj nederst i `Views/Shared/_ValidationScriptsPartial.cshtml`:",
+        md: "Byg det hele ind i Butik. Viewet `Views/Orders/Index.cshtml` skal nu have `@model IEnumerable<Butik.ViewModels.OrdreLinje>`, og cellerne bliver fx `@Html.DisplayFor(modelItem => item.Total)` og `@item.Status`. Til sidst skal browseren godtage danske decimaltal: tilføj scriptet, der står under trinene, nederst i `Views/Shared/_ValidationScriptsPartial.cshtml`.",
         sprog: "razor",
         kode: R`<script>
     $.validator.methods.number = function (value, element) {
         return this.optional(element) || /^-?\d+(,\d+)?$/.test(value);
     };
 </script>`,
-        win: ["Lav mappen `ViewModels` og klassen `OrdreLinje`.", "Skriv den nye `Index`-action i `OrdersController` (husk `using Butik.ViewModels;`). Gør det samme i `Maaned` fra lektion 3.", "Ret `Views/Orders/Index.cshtml` til view modellen: kolonnerne Dato, Kunde, Vare, Antal, I alt og Betaling.", "Tilføj `app.UseRequestLocalization(\"da-DK\");` i `Program.cs` og scriptet ovenfor.", "Kør, og se `/Orders`. Prøv også at lave en vare med prisen `12,50`."],
-        mac: ["Lav mappen `ViewModels` og klassen `OrdreLinje`.", "Skriv den nye `Index`-action i `OrdersController` (husk `using Butik.ViewModels;`). Gør det samme i `Maaned` fra lektion 3.", "Ret `Views/Orders/Index.cshtml` til view modellen: kolonnerne Dato, Kunde, Vare, Antal, I alt og Betaling.", "Tilføj `app.UseRequestLocalization(\"da-DK\");` i `Program.cs` og scriptet ovenfor.", "Kør, og se `/Orders`. Prøv også at lave en vare med prisen `12,50`."],
+        win: ["Lav mappen `ViewModels` og klassen `OrdreLinje`.", "Skriv den nye `Index`-action i `OrdersController` (husk `using Butik.ViewModels;`). Gør det samme i `Maaned` fra lektion 3.", "Ret `Views/Orders/Index.cshtml` til view modellen: kolonnerne Dato, Kunde, Vare, Antal, I alt og Betaling.", "Tilføj `app.UseRequestLocalization(\"da-DK\");` i `Program.cs` og scriptet nedenfor.", "Kør, og se `/Orders`. Prøv også at lave en vare med prisen `12,50`."],
+        mac: ["Lav mappen `ViewModels` og klassen `OrdreLinje`.", "Skriv den nye `Index`-action i `OrdersController` (husk `using Butik.ViewModels;`). Gør det samme i `Maaned` fra lektion 3.", "Ret `Views/Orders/Index.cshtml` til view modellen: kolonnerne Dato, Kunde, Vare, Antal, I alt og Betaling.", "Tilføj `app.UseRequestLocalization(\"da-DK\");` i `Program.cs` og scriptet nedenfor.", "Kør, og se `/Orders`. Prøv også at lave en vare med prisen `12,50`."],
         md2: "Forventet første linje i ordrelisten: `01-09-2026 · Anna · Kaffe · 2 · 91,00 kr. · Betalt` (på Mac står datoen som `01.09.2026`). Afprøvet: med scriptet bliver `12,50` gemt som 12,5, og `12.50` bliver afvist med en fejlbesked i stedet for at blive til 1250." },
       { t: "forklar", q: "Forklar med dine egne ord: Hvad er en view model, og hvorfor bruger man den i stedet for at sende entities direkte til viewet?",
         svar: "En **view model** er en klasse, der er lavet til **ét bestemt view**, med præcis de felter, viewet skal vise, fx kundens navn i stedet for `CustomerId` og en status-tekst i stedet for et tal. Controlleren laver entities om til view models med **`Select`**. Fordelene er, at viewet kun får det, det skal bruge, at jeg kan sætte **`[Display]`** og **`[DataType]`** på uden at røre de **genererede klasser**, som bliver skrevet forfra ved næste scaffold, og at databasens struktur ikke er bundet direkte til siden.",
@@ -858,7 +859,7 @@ public decimal Total { get; set; }`,
       { t: "ide", h: "Ny kolonne, nyt scaffold",
         md: "Tilføj kolonnen, og kør scaffold-kommandoen igen med `-Force`, så modellerne bliver skrevet forfra ud fra den nye database.",
         win: ["SQL Server Object Explorer: højreklik på `ButikDB` → **New Query…**, kør `ALTER TABLE`-linjen.", "Package Manager Console: kør den samme `Scaffold-DbContext`-kommando som i lektion 2, med ` -Force` til sidst.", "Åbn `Models/Product.cs`: der er en ny linje `public bool IsDeleted { get; set; }`."],
-        mac: ["Terminal i projektmappen: `sqlite3 butik.db \"ALTER TABLE Products ADD IsDeleted BIT NOT NULL DEFAULT 0;\"`", "Kør den samme `dotnet ef dbcontext scaffold`-kommando som i lektion 2, med ` --force` til sidst.", "Åbn `Models/Product.cs`: der er en ny linje `public bool IsDeleted { get; set; }`.", "Tjek også, at der stadig står `public decimal Price`. SQLite gemmer en pris som 1250 uden decimaler, og værktøjet gætter typen ud fra den **højeste** pris i tabellen. Står der `public int Price`, har du en vare med en hel pris, der er højere end 79,95 (fx 1250 fra prøven med `12.50` i lektion 5). Slet den vare under `/varer` (Delete sletter stadig rigtigt her), og kør kommandoen igen."],
+        mac: ["Terminal i projektmappen: `sqlite3 butik.db \"ALTER TABLE Products ADD IsDeleted BIT NOT NULL DEFAULT 0;\"`", "Kør den samme `dotnet ef dbcontext scaffold`-kommando som i lektion 2, med ` --force` til sidst.", "Åbn `Models/Product.cs`: der er en ny linje `public bool IsDeleted { get; set; }`.", "Tjek også, at der stadig står `public decimal Price`. SQLite gemmer en pris som 1250 uden decimaler, og værktøjet gætter typen ud fra den **højeste** pris i tabellen. Står der `public int Price`, har du en vare med en hel pris, der er højere end 79,95 (fx 1250, hvis du prøvede prisen `12.50`, før scriptet fra lektion 5 var på plads). Slet den vare under `/varer` (Delete sletter stadig rigtigt her), og kør kommandoen igen."],
         md2: "Kun filerne i `Models`, som værktøjet skrev, er lavet om. Dine controllere, views og view models er ikke rørt. Det er grunden til, at egne rettelser hører hjemme dér og ikke i de genererede filer." },
       { t: "spor", q: "Soft delete i lille format. Klassen `Vare` har to properties: `string Navn` og `bool IsDeleted` (starter som `false`). Følg programmet, og skriv værdierne ned efter hver linje.",
         kode: R`List<Vare> varer = new List<Vare>();
@@ -980,8 +981,8 @@ else
 
 <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Til forsiden</a>`,
         sprog: "razor",
-        win: ["Ret `Index` og `DeleteConfirmed` i `ProductsController`, og filtrér dropdownen i `OrdersController`.", "Tilføj `UseStatusCodePagesWithReExecute` i `Program.cs` og actionen `Fejl` i `HomeController`.", "Højreklik på **Views/Home** → **Add** → **View…** → **Razor View - Empty**, kald den `Fejl.cshtml`, og skriv viewet ovenfor.", "Kør. Slet Krus under Varer, og tjek at Krus stadig står på ordren fra 3. september under Ordrer.", "Prøv `/kunde/Zorro`."],
-        mac: ["Ret `Index` og `DeleteConfirmed` i `ProductsController`, og filtrér dropdownen i `OrdersController`.", "Tilføj `UseStatusCodePagesWithReExecute` i `Program.cs` og actionen `Fejl` i `HomeController`.", "Højreklik på **Views/Home** → **Add** → **File**, kald den `Fejl.cshtml`, og skriv viewet ovenfor.", "Kør. Slet Krus under Varer, og tjek at Krus stadig står på ordren fra 3. september under Ordrer.", "Prøv `/kunde/Zorro`."],
+        win: ["Ret `Index` og `DeleteConfirmed` i `ProductsController`, og filtrér dropdownen i `OrdersController`.", "Tilføj `UseStatusCodePagesWithReExecute` i `Program.cs` og actionen `Fejl` i `HomeController`.", "Højreklik på **Views/Home** → **Add** → **View…** → **Razor View - Empty**, kald den `Fejl.cshtml`, og skriv viewet nedenfor.", "Kør. Slet Krus under Varer, og tjek at Krus stadig står på ordren fra 3. september under Ordrer.", "Prøv `/kunde/Zorro`."],
+        mac: ["Ret `Index` og `DeleteConfirmed` i `ProductsController`, og filtrér dropdownen i `OrdersController`.", "Tilføj `UseStatusCodePagesWithReExecute` i `Program.cs` og actionen `Fejl` i `HomeController`.", "Højreklik på **Views/Home** → **Add** → **File**, kald den `Fejl.cshtml`, og skriv viewet nedenfor.", "Kør. Slet Krus under Varer, og tjek at Krus stadig står på ordren fra 3. september under Ordrer.", "Prøv `/kunde/Zorro`."],
         md2: "`(int)ViewData[\"Kode\"]!` henter tallet fra actionen. `ViewData` gemmer alt som `object`, så det skal castes til `int` (modul 7), og `!` fortæller compileren, at værdien ikke er null." },
       { t: "forklar", q: "Forklar med dine egne ord: Hvad er forskellen på cascade delete og soft delete, og hvornår vil du bruge soft delete?",
         svar: "Ved **cascade delete** sletter **databasen** automatisk de rækker, der peger på den række, jeg sletter, fx en kundes ordrer. Ved **soft delete** bliver rækken **ikke slettet**: den bliver markeret, fx med `IsDeleted = true`, og listerne **filtrerer** den fra med `Where`. Soft delete bruger jeg, når **historikken** skal bevares, fx en vare, der er solgt, så gamle ordrer stadig kan vises, og når man skal kunne fortryde. Ulempen er, at jeg skal huske filteret alle steder.",
@@ -995,7 +996,7 @@ else
       { t: "laes", h: "Sådan arbejder du i værkstedet",
         md: "Nu bygger du **selv** en app med database first: et lille **bibliotek** med forfattere og bøger. Det er samme slags opgave som Butik, men uden at nogen viser dig koden. Det er præcis det, du skal kunne til eksamen.\n\n- Lav opgaverne i rækkefølge. De bygger videre på det samme projekt, `Bibliotek`.\n- **Kør ofte.** Byg og prøv i browseren efter hver lille ændring.\n- Går noget galt, så brug **debuggeren**: et breakpoint i actionen, og kig på værdierne.\n- Kig på **tippene**, før du kigger på løsningen. Kig i lektionerne og på Opslag-siden: det er ikke snyd.\n- Du afleverer ikke tekst. Når siden i browseren viser det, opgaven beskriver, er du færdig." },
       { t: "opgave", h: "1. Bibliotekets database og modeller", projekt: "Bibliotek",
-        md: "Lav et nyt MVC-projekt, `Bibliotek`, og en database med to tabeller: `Authors` (forfattere) og `Books` (bøger). Hver bog har én forfatter; en forfatter kan have mange bøger. Scaffold modellerne, og lav controllere med views til begge.",
+        md: "Lav et nyt MVC-projekt, `Bibliotek`, og en database med to tabeller: `Authors` (forfattere) og `Books` (bøger). Hver bog har én forfatter; en forfatter kan have mange bøger. Scaffold modellerne, og lav controllere med views til begge.\n\n**Du har allerede en mappe `Bibliotek`** fra værkstederne i modul 16 og 17. Projektet her skal også hedde `Bibliotek`, så navnene i koden passer. Læg det derfor i en ny, tom mappe, fx `Modul18`: {{skriv den nye mappe i feltet **Location**, når du opretter projektet||skriv den nye mappe i feltet **Solution directory**, når du opretter projektet (bruger du Terminal, så lav mappen, og kør kommandoen inde i den)}}. Det gamle projekt bliver liggende urørt.\n\nPå Windows skal databasen hedde `Bibliotek18DB`: navnet `BibliotekDB` er allerede brugt i LocalDB af modul 17. På Mac ligger `bibliotek.db` i den nye projektmappe, så dér er der ikke noget sammenstød.",
         krav: [
           "Tabellen `Authors` har `Id` (primær nøgle, tæller selv op), `Name` (tekst, højst 60 tegn, NOT NULL) og `Country` (tekst, højst 40 tegn, må være NULL)",
           "Tabellen `Books` har `Id`, `Title` (højst 100 tegn, NOT NULL), `Year` (heltal), `Price` (DECIMAL(8,2)) og `AuthorId`, der er fremmednøgle til `Authors` med ON DELETE CASCADE",
@@ -1006,14 +1007,14 @@ else
           "Der er en `AuthorsController` og en `BooksController` med views, og `/Books` viser fire bøger"
         ],
         tip: [
-          "Følg de fem trin fra lektion 1. Scriptet ligner Butiks: CREATE TABLE for `Authors` først, fordi `Books` peger på den.",
+          "Følg de fem skridt, som du satte i rækkefølge i lektion 1 og udførte i lektion 2. Scriptet ligner Butiks: CREATE TABLE for `Authors` først, fordi `Books` peger på den.",
           "På Windows skrives tekst med æ og ø sikrest som `N'Fasandræberne'`. På Mac: `INTEGER PRIMARY KEY AUTOINCREMENT`, og databasen er filen `bibliotek.db` i projektmappen.",
           "Scaffold: `-Context BibliotekContext -Tables Authors, Books -NoOnConfiguring` (Mac: `--context BibliotekContext --table Authors --table Books --no-onconfiguring`)."
         ],
         fri: true,
         output: "/Books viser en tabel med fire rækker:\nDune · 1965 · 149,95\nBarndommens gade · 1943 · 99,00\nKvinden i buret · 2007 · 129,50\nFasandræberne · 2008 · 129,50\n(Forfatter-kolonnen viser endnu tal: 1, 2, 3, 3)",
         sprog: "text",
-        loesning: R`-- Windows: ny database BibliotekDB i LocalDB, New Query:
+        loesning: R`-- Windows: ny database Bibliotek18DB i LocalDB, New Query:
 CREATE TABLE Authors (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     Name NVARCHAR(60) NOT NULL,
@@ -1040,14 +1041,14 @@ INSERT INTO Books (Title, Year, Price, AuthorId) VALUES
     (N'Fasandræberne', 2008, 129.50, 3);
 
 -- Package Manager Console (én linje):
-Scaffold-DbContext "Server=(localdb)\MSSQLLocalDB;Database=BibliotekDB;Trusted_Connection=True;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context BibliotekContext -Tables Authors, Books -NoOnConfiguring
+Scaffold-DbContext "Server=(localdb)\MSSQLLocalDB;Database=Bibliotek18DB;Trusted_Connection=True;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context BibliotekContext -Tables Authors, Books -NoOnConfiguring
 
 -- Mac: samme script i bibliotek.sql, men med INTEGER PRIMARY KEY AUTOINCREMENT og uden N foran teksterne:
 --   sqlite3 bibliotek.db < bibliotek.sql
 --   dotnet ef dbcontext scaffold "Data Source=bibliotek.db" Microsoft.EntityFrameworkCore.Sqlite --output-dir Models --context BibliotekContext --table Authors --table Books --no-onconfiguring
 
 // appsettings.json (Windows / Mac):
-"ConnectionStrings": { "Bibliotek": "Server=(localdb)\\MSSQLLocalDB;Database=BibliotekDB;Trusted_Connection=True;TrustServerCertificate=True" }
+"ConnectionStrings": { "Bibliotek": "Server=(localdb)\\MSSQLLocalDB;Database=Bibliotek18DB;Trusted_Connection=True;TrustServerCertificate=True" }
 "ConnectionStrings": { "Bibliotek": "Data Source=bibliotek.db" }
 
 // Program.cs:
@@ -1073,7 +1074,7 @@ builder.Services.AddDbContext<BibliotekContext>(options =>
         ],
         fri: true,
         output: "/Books viser fx:\nDune · 1965 · 149,95 · Frank Herbert\n…\nBørnene · 1999 · 89,95 · Tove Ditlevsen",
-        loesning: R`// BooksController: tre steder
+        loesning: R`// BooksController: fire steder (GET og POST i både Create og Edit) — én gang uden og tre gange med book.AuthorId
 ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Name");
 ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Name", book.AuthorId);
 
@@ -1290,7 +1291,7 @@ app.UseRequestLocalization("da-DK");
         ],
         fri: true,
         output: "Efter Slet på Dune:\n/Books viser 4 bøger (Barndommens gade, Børnene, Fasandræberne, Kvinden i buret)\n/bog/dune → Fejl 404\nI databasen: Dune har IsDeleted = 1",
-        loesning: R`-- Databasen (Windows: New Query på BibliotekDB · Mac: sqlite3 bibliotek.db "…")
+        loesning: R`-- Databasen (Windows: New Query på Bibliotek18DB · Mac: sqlite3 bibliotek.db "…")
 ALTER TABLE Books ADD IsDeleted BIT NOT NULL DEFAULT 0;
 -- Scaffold igen: samme kommando som i opgave 1 med -Force (Mac: --force)
 

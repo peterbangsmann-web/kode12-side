@@ -50,7 +50,7 @@ window.KURSUS.push({
         svar: ["Browseren har gemt de hentede filer i sin cache og bruger dem igen", "Serveren kører koden for brugeren anden gang", "WebAssembly-filerne bliver mindre, hver gang de hentes", "Anden gang bruges Interactive Server i stedet"],
         ret: 0, fordi: "Første besøg henter runtimen og dine klasser. Browseren gemmer dem i sin **cache**, så næste besøg ikke skal hente dem igen." },
       { t: "laes", h: "Sikkerhed: alt i browseren kan læses",
-        md: "Alt, hvad der sendes til browseren, ligger på **brugerens** computer. Brugeren kan åbne udviklerværktøjerne (F12), se hver fil og pakke dine klasser ud og læse dem. Det giver tre faste regler:",
+        md: "Alt, hvad der sendes til browseren, ligger på **brugerens** computer. Brugeren kan åbne udviklerværktøjerne ({{F12||⌥⌘I}}), se hver fil og pakke dine klasser ud og læse dem. Det giver tre faste regler:",
         noter: [
           ["Ingen hemmeligheder i klienten", "Connection strings, adgangskoder og API-nøgler må aldrig ligge i klient-projektet, heller ikke i `wwwroot/appsettings.json`. De kan læses af alle."],
           ["Ingen direkte database", "Klienten kan ikke tale med databasen. Det ville kræve en connection string i browseren. Klienten spørger et **API** på serveren, og serveren taler med databasen."],
@@ -1217,7 +1217,7 @@ public async Task<ActionResult<Product>> PostProduct(Product product)
       { t: "ide", h: "Database i ShopWasm",
         md: "Sæt databasen bag API'et. Produkterne skal overleve en genstart.",
         win: [
-          "Højreklik på `ShopWasm` (serveren) → **Manage NuGet Packages** → **Browse**. Installér `Microsoft.EntityFrameworkCore.SqlServer` og `Microsoft.EntityFrameworkCore.Tools`.",
+          "Højreklik på `ShopWasm` (serveren) → **Manage NuGet Packages** → **Browse**. Installér `Microsoft.EntityFrameworkCore.SqlServer` og `Microsoft.EntityFrameworkCore.Tools` — vælg **10.0.12** i feltet **Version** til højre.",
           "Lav mappen `Data` i `ShopWasm` og klassen `ShopContext` i den.",
           "Tilføj connection stringen med LocalDB i serverens `appsettings.json`, og registrér `ShopContext` med `UseSqlServer` i serverens `Program.cs`.",
           "Skriv `ProductsController` om, så den bruger `_context`.",
@@ -1226,11 +1226,11 @@ public async Task<ActionResult<Product>> PostProduct(Product product)
           "Åbn **View** → **SQL Server Object Explorer** → `(localdb)\\MSSQLLocalDB` → **Databases** → `ShopWasm` → **Tables** → `dbo.Products`, højreklik → **View Data**."
         ],
         mac: [
-          "I Terminal i mappen `ShopWasm/ShopWasm` (server-projektet): `dotnet add package Microsoft.EntityFrameworkCore.Sqlite` og `dotnet add package Microsoft.EntityFrameworkCore.Design`.",
+          "I Terminal i mappen `ShopWasm/ShopWasm` (server-projektet): `dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 10.0.12` og `dotnet add package Microsoft.EntityFrameworkCore.Design --version 10.0.12`.",
           "Lav mappen `Data` i `ShopWasm` og klassen `ShopContext` i den.",
           "Tilføj connection stringen `Data Source=shop.db` i serverens `appsettings.json`, og registrér `ShopContext` med `UseSqlite` i serverens `Program.cs`.",
           "Skriv `ProductsController` om, så den bruger `_context`.",
-          "I Terminal i samme mappe: `dotnet ef migrations add Init` og derefter `dotnet ef database update`. Har du ikke `dotnet ef`, så installér det først med `dotnet tool install --global dotnet-ef`.",
+          "I Terminal i samme mappe: `dotnet ef migrations add Init` og derefter `dotnet ef database update`. Har du ikke `dotnet ef`, så installér det først med `dotnet tool install --global dotnet-ef --version 10.0.12`.",
           "Kør, opret et produkt, stop programmet, og kør igen. Produktet er der stadig.",
           "Åbn filen `shop.db` i Riders **Database**-vindue (træk den ind, eller **+** → **Data Source** → **SQLite**), og se tabellen `Products`."
         ],
@@ -1279,7 +1279,7 @@ public async Task<ActionResult<Product>> PostProduct(Product product)
   { id: "m24v", titel: "Værksted: byg Bibliotek selv", vaerksted: true, min: 120, ord: [],
     trin: [
       { t: "laes", h: "Sådan arbejder du i værkstedet",
-        md: "Nu bygger du en **ny** Blazor WebAssembly-app, `Bibliotek`, helt selv. Den ligner `ShopWasm`, men handler om bøger, så du skal tænke dig om i stedet for at skrive af. Opgaverne bygger oven på hinanden: til sidst har du tre projekter, et API med database, hele CRUD, favoritter i localStorage og en publiceret app.\n\nOpgave 3 er en fejlfinding i et konsolprogram, hvor du skal bruge debuggeren.",
+        md: "Nu bygger du en **ny** Blazor WebAssembly-app, `Bibliotek`, helt selv. Den ligner `ShopWasm`, men handler om bøger, så du skal tænke dig om i stedet for at skrive af. Opgaverne bygger oven på hinanden: til sidst har du tre projekter, et API med database, hele CRUD, favoritter i localStorage og en publiceret app.\n\nOpgaven med **Fejlfinding** i titlen er en fejlfinding i et konsolprogram, hvor du skal bruge debuggeren.",
         noter: [
           ["Skriv selv", "Skriv koden med dine egne fingre. Kig i `ShopWasm`, hvis du er i tvivl om en form, men skriv det ikke af."],
           ["Kør tit", "Kør efter hver ny fil. Afprøv API'et i browseren (`/api/books`) før siden, der bruger det. Så ved du, hvilken side af løsningen en fejl er i."],
@@ -1290,7 +1290,7 @@ public async Task<ActionResult<Product>> PostProduct(Product product)
         ] },
 
       { t: "opgave", h: "Bibliotek: tre projekter og en bogliste", projekt: "Bibliotek",
-        md: "Opret en Blazor Web App med WebAssembly, lav et shared-projekt med modellen `Book`, et API, der giver bøgerne, og en side i browseren, der viser dem i en tabel.",
+        md: "Opret en Blazor Web App med WebAssembly, lav et shared-projekt med modellen `Book`, et API, der giver bøgerne, og en side i browseren, der viser dem i en tabel.\n\n**Du har allerede en mappe `Bibliotek`** fra de tidligere værksteder (modul 16, 17, 18 og 20). Projektet her skal også hedde `Bibliotek`, så navnene i koden passer. Læg det derfor i en ny, tom mappe, fx `Modul24`: {{skriv den nye mappe i feltet **Location**, når du opretter projektet||skriv den nye mappe i feltet **Solution directory**, når du opretter projektet (bruger du Terminal, så lav mappen, og kør kommandoen inde i den)}}. Det gamle projekt bliver liggende urørt.",
         krav: [
           "Løsningen hedder `Bibliotek` og er lavet med Blazor Web App, render mode **WebAssembly**, **Global**, uden HTTPS (Mac: `--interactivity WebAssembly --all-interactive --no-https`)",
           "Prerendering er slået fra i `App.razor` (begge linjer)",
@@ -1502,7 +1502,7 @@ public ActionResult<Book> PostBook(Book book)
         ekstra: ["Vis serverens statuskode på siden, hvis det ikke lykkedes (som `fejl` i `ProductCreate.razor`).", "Send en ugyldig bog direkte til API'et med en `.http`-fil (modul 19): `POST http://localhost:XXXX/api/books` med `{ \"title\": \"\", \"author\": \"X\", \"year\": 3000 }`. Læs 400-svaret."] },
 
       { t: "opgave", h: "Fejlfinding: kurven, der blev tom", projekt: "KurvTest",
-        md: "En kollega har lavet en kurv, der gemmer sig selv som JSON, ligesom `CartService` i ShopWasm. For at kunne teste uden browser bruger hun en lille klasse, `FakeStorage`, der gør det samme som localStorage: gemmer tekst under en nøgle. Testen lægger tre varer i en kurv, og laver så en **ny** kurv, der indlæser den gemte tekst. Men den nye kurv har **0 varer**.\n\nLav et Console-projekt, `KurvTest`, og kopiér startkoden ind. Kør det, og se fejlen. Find den så med **debuggeren**: sæt et breakpoint på linjen `_storage.SetItem(\"cart\", json);` i `Save`, kør med {{**F5**||debug-knappen (den grønne bille)}}, og se på variablen `json` i {{**Locals**||**Threads & Variables**}}. Står alt, der skal gemmes, i teksten?",
+        md: "En kollega har lavet en kurv, der gemmer sig selv som JSON, ligesom `CartService` i ShopWasm. For at kunne teste uden browser bruger kollegaen en lille klasse, `FakeStorage`, der gør det samme som localStorage: gemmer tekst under en nøgle. Testen lægger tre varer i en kurv, og laver så en **ny** kurv, der indlæser den gemte tekst. Men den nye kurv har **0 varer**.\n\nLav et Console-projekt, `KurvTest`, og kopiér startkoden ind. Kør det, og se fejlen. Find den så med **debuggeren**: sæt et breakpoint på linjen `_storage.SetItem(\"cart\", json);` i `Save`, kør med {{**F5**||debug-knappen (den grønne bille)}}, og se på variablen `json` i {{**Locals**||**Threads & Variables**}}. Står alt, der skal gemmes, i teksten?",
         krav: [
           "Programmet skriver `Før: 3 varer, 120 kr.`",
           "Programmet skriver `Efter genindlæsning: 3 varer, 120 kr.`",
@@ -1815,7 +1815,7 @@ else
           "Migrationen `Init` er lavet og kørt",
           "`BooksController` bruger `LibraryContext` i stedet for listen og har GET alle, GET én, POST, PUT `{id}` (204 eller 404) og DELETE `{id}` (204 eller 404), alle `async`",
           "`BookEdit.razor` med `@page \"/books/edit/{Id:int}\"` henter bogen, viser formularen og gemmer med `PutAsJsonAsync`. Bogsiden har knapperne **Ret** og **Slet** i hver række",
-          "Tilføj Momo igen (hun lå kun i listen i hukommelsen, og databasen starter med de tre bøger fra `HasData`). Ret Matildas år til 1989, og slet Momo. Stop programmet, og start igen: ændringerne er der stadig",
+          "Tilføj Momo igen (den lå kun i listen i hukommelsen, og databasen starter med de tre bøger fra `HasData`). Ret Matildas år til 1989, og slet Momo. Stop programmet, og start igen: ændringerne er der stadig",
           "Appen er publiceret i Release og kører fra publiceringsmappen med `dotnet Bibliotek.dll --urls http://localhost:5080`"
         ],
         tip: [

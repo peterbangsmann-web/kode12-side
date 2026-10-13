@@ -1481,7 +1481,7 @@ console.log("Besøg nr. " + antal);`,
     ord: [],
     trin: [
       { t: "laes", h: "Sådan arbejder du i værkstedet",
-        md: "Nu skal du skrive **hele sider selv**: klasser, arv, async/await, fetch og localStorage.\n\nOpgaverne bliver sværere hen ad vejen. Den første er let. Den tredje er en fejlfinding, hvor du skal bruge browserens debugger. Den fjerde henter data fra en server. Den sidste er en lille app, der samler hele modulet.\n\nBoksen under hver opgave taler om {{Ctrl + F5 og Error List||den grønne pil og Problems}} — den er lavet til C#-opgaverne. Her laver du i stedet en `.html`-fil (og gerne en `.js`-fil ved siden af), åbner den i browseren og genindlæser med {{**F5**||**⌘R**}}, hver gang du har gemt.",
+        md: "Nu skal du skrive **hele sider selv**: klasser, arv, async/await, fetch og localStorage.\n\nOpgaverne bliver sværere hen ad vejen. Den første er let. Den tredje er en fejlfinding, hvor du skal bruge browserens debugger. Den fjerde henter data fra en server. Den sidste er en lille app, der samler hele modulet.\n\nTil hver opgave laver du en `.html`-fil (og gerne en `.js`-fil ved siden af), åbner den i browseren og genindlæser med {{**F5**||**⌘R**}}, hver gang du har gemt.",
         noter: [
           ["Skriv selv", "Skriv koden med dine egne fingre. Kopiér ikke fra lektionerne."],
           ["Konsollen er altid åben", "Hav udviklerværktøjet åbent ({{**F12**||**⌥⌘I**}}) med fanen **Console**. Fejl vises **kun** der, med rødt og et linjenummer, du kan klikke på."],
@@ -1802,9 +1802,9 @@ console.log("Besøg nr. " + antal);`,
         md: "Lav `huskeliste.html`: en lille app, der samler hele modulet. Brugeren kan tilføje opgaver og klikke på dem for at markere dem som færdige. Listen bliver gemt i **localStorage**, så den er der, når siden åbnes igen. Første gang — når der ikke er gemt noget — henter siden 3 opgaver fra en server, så listen ikke er tom.",
         krav: [
           "En klasse `Opgave` med `constructor(tekst, faerdig)` og en metode `skift()`, der vender `faerdig` om",
-          "En klasse `Huskeliste` med et privat felt `#opgaver = []` og metoderne `tilfoej(tekst)`, `skift(nr)`, `gem()` og `hent()`. Den har også en getter `antalTilbage`",
+          "En klasse `Huskeliste` med et privat felt `#opgaver = []` og metoderne `tilfoej(tekst)`, `skift(nr)`, `gem()` og `hent()`. Den har også to gettere: `opgaver`, der giver arrayet, så siden kan tegne listen, og `antalTilbage`, der giver antallet af opgaver, som ikke er færdige",
           "`gem()` gemmer listen i localStorage under navnet `huskeliste` som JSON. `hent()` læser den igen og laver hvert objekt om til en **ny** `Opgave`. Den returnerer `true`, hvis der lå noget",
-          "Findes der ikke noget i localStorage, henter en `async`-funktion `https://jsonplaceholder.typicode.com/todos?_limit=3` og tilføjer de tre opgavers `title` (og `completed`) til listen",
+          "Findes der ikke noget i localStorage, henter en `async`-funktion `https://jsonplaceholder.typicode.com/todos?_limit=3` og tilføjer de tre opgavers `title` (og `completed`) til listen. Giv derfor `tilfoej` en ekstra parameter med en standardværdi: `tilfoej(tekst, faerdig = false)`. Kaldes den kun med en tekst, er `faerdig` `false`",
           "Siden har et `input`, en knap **Tilføj** og en `ul`. Hvert punkt viser opgavens tekst, og færdige opgaver er overstreget (`style.textDecoration = \"line-through\"`). Klik på et punkt skifter det",
           "Under listen står fx `2 tilbage`. Efter hver ændring gemmes listen, og listen tegnes forfra"
         ],

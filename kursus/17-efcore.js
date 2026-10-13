@@ -305,13 +305,13 @@ class AfdelingController
     ],
     trin: [
       { t: "laes", h: "Fra klasser til tabeller: to skridt",
-        md: "Nu kender projektet modellen, databaseklassen og connection stringen. Men databasen findes ikke. Den laves i **to skridt**, og forskellen er vigtig:\n\n1. **Add-Migration**: EF Core sammenligner dine klasser med det, den sidst noterede, og skriver forskellen ned som en C#-fil — en **migration**. Der sker **intet** i databasen. Det er kun en opskrift.\n2. **Update-Database**: EF Core forbinder til databasen og udfører de opskrifter, databasen ikke har fået endnu. Findes databasen ikke, bliver den lavet.\n\nHvorfor ikke bare rette tabellerne i hånden? Fordi migrationerne er **kode i projektet**. De kan gemmes i Git, køres igen på en anden computer og fortrydes. Databasen og klasserne passer altid sammen.\n\nEn migration får et navn, som du selv finder på. Det skal sige, hvad den gør. Den første kalder man ofte `Init`. Sådan kører du de to kommandoer:",
+        md: "Nu kender projektet modellen, databaseklassen og connection stringen. Men databasen findes ikke. Den laves i **to skridt**, og forskellen er vigtig:\n\n1. **Add-Migration**: EF Core sammenligner dine klasser med det, den sidst noterede, og skriver forskellen ned som en C#-fil — en **migration**. Der sker **intet** i databasen. Det er kun en opskrift.\n2. **Update-Database**: EF Core forbinder til databasen og udfører de opskrifter, databasen ikke har fået endnu. Findes databasen ikke, bliver den lavet.\n\nHvorfor ikke bare rette tabellerne i hånden? Fordi migrationerne er **kode i projektet**. De kan gemmes i Git, køres igen på en anden computer og fortrydes. Databasen og klasserne passer altid sammen.\n\nEn migration får et navn, som du selv finder på. Det skal sige, hvad den gør. Den første kalder man ofte `Init`.",
         win: ["Åbn **Package Manager Console** (Tools → NuGet Package Manager).", "Skriv `Add-Migration Init` og tryk Enter. Visual Studio bygger projektet først.", "Der kommer en ny mappe, **Migrations**, med tre filer, og migrationen åbner sig.", "Skriv `Update-Database` og tryk Enter. Nu bliver databasen `FirmaAppDB` lavet i LocalDB."],
-        mac: ["Åbn Riders **Terminal**. Første gang i et projekt skal værktøjet `dotnet-ef` hentes. Skriv `dotnet new tool-manifest` og tryk Enter.", "Skriv `dotnet tool install dotnet-ef --version 10.0.12` og tryk Enter.", "Skriv `dotnet ef migrations add Init` og tryk Enter. Projektet bliver bygget først, og der kommer en ny mappe, **Migrations**.", "Skriv `dotnet ef database update` og tryk Enter. Nu bliver filen `firma.db` lavet i projektmappen."],
-        md2: "På en anden computer, hvor projektet allerede har en tool-manifest (filen `dotnet-tools.json`), skriver du bare `dotnet tool restore` i stedet for de to første Mac-linjer." },
+        mac: ["Åbn Riders **Terminal**. Første gang i et projekt skal værktøjet `dotnet-ef` hentes. Skriv `dotnet new tool-manifest` og tryk Enter.", "Skriv `dotnet tool install dotnet-ef --version 10.0.12` og tryk Enter.", "Skriv `dotnet ef migrations add Init` og tryk Enter. Projektet bliver bygget først, og der kommer en ny mappe, **Migrations**.", "Skriv `dotnet ef database update` og tryk Enter. Nu bliver filen `firma.db` lavet i projektmappen.", "På en anden computer, hvor projektet allerede har en tool-manifest (filen `dotnet-tools.json`), skriver du bare `dotnet tool restore` i stedet for linje 1 og 2."],
+        md2: "Sådan kører du de to kommandoer:" },
       { t: "valg", q: "Du har lige kørt `Add-Migration Init`, og den lykkedes. Findes databasen `FirmaAppDB` nu?",
         svar: ["Nej. Der er kun kommet en fil i projektet. Databasen laves først af `Update-Database`", "Ja, `Add-Migration` laver altid databasen", "Ja, men den er tom og har ingen tabeller", "Nej, databasen laves først, når man kører programmet"],
-        ret: 0, fordi: "`Add-Migration` skriver opskriften. `Update-Database` udfører den. Den rækkefølge sidder i underviserens liste som trin 6 og 7." },
+        ret: 0, fordi: "`Add-Migration` skriver opskriften. `Update-Database` udfører den. Den rækkefølge sidder i underviserens liste som punkt 6 og 7." },
       { t: "laes", h: "Hvad står der i migrationen?",
         md: "Åbn filen `…_Init.cs` i mappen Migrations. Navnet begynder med dato og klokkeslæt, så migrationerne altid står i rækkefølge. Metoden `Up` er opskriften. Sådan ser den ud med SQL Server:",
         kode: R`protected override void Up(MigrationBuilder migrationBuilder)
@@ -401,7 +401,7 @@ PM> [[Update-Database]]`,
       { t: "laes", h: "CRUD — og hvem der skriver koden",
         md: "En side med data skal næsten altid kunne fire ting. De hedder samlet **CRUD**, og du kender dem fra SQL:\n\n- **C**reate — opret → `INSERT`\n- **R**ead — vis → `SELECT`\n- **U**pdate — ret → `UPDATE`\n- **D**elete — slet → `DELETE`\n\nKoden til CRUD ser næsten ens ud for alle modeller. Derfor kan Visual Studio skrive den for dig. Det hedder **scaffolding** (stillads): du får en controller med alle actions og fem views — `Index`, `Details`, `Create`, `Edit` og `Delete`. Din opgave er at **forstå** koden, så du kan rette i den og forklare den til eksamen." },
       { t: "orden", sprog: "text",
-        q: "Du har nu lavet de første syv af underviserens otte trin i FirmaApp. Sæt alle otte i underviserens rækkefølge, før du laver det sidste.",
+        q: "Du har nu lavet de første syv af underviserens otte punkter i FirmaApp. Sæt alle otte i underviserens rækkefølge, før du laver det sidste.",
         linjer: ["Skriv modelklasserne i Models", "Installér EF Core-pakkerne", "Skriv DbContext-klassen med en DbSet pr. tabel", "Skriv connection stringen i appsettings.json", "Registrér AddDbContext i Program.cs", "Add-Migration", "Update-Database", "Scaffold controllere og views, og tjek mappenavnene i Views"],
         fordi: "Modellen først — alt andet bygger på den. Pakkerne skal være der, før `DbContext` kan skrives. `AddDbContext` skal bruge både klassen og connection stringen. Migrationen kræver det hele, og controllerne kræver en database." },
       { t: "laes", h: "Lav controlleren",
@@ -983,7 +983,7 @@ public string? Location { get; set; }
 
     // ------------------------------------------------------------------
     { t: "opgave", h: "Bibliotek: forfattere fra bunden",
-      md: "Lav et **nyt** MVC-projekt, `Bibliotek`. Det skal holde styr på forfattere i en database, med startdata og CRUD-sider. Ingen opskrift denne gang — kun krav. Brug lærerens otte trin fra lektion 4 som tjekliste.",
+      md: "Lav et **nyt** MVC-projekt, `Bibliotek`. Det skal holde styr på forfattere i en database, med startdata og CRUD-sider. Ingen opskrift denne gang — kun krav. Brug underviserens otte punkter fra lektion 4 (dem, du satte i rækkefølge) som tjekliste.\n\n**Du har allerede en mappe `Bibliotek`** fra værkstedet i modul 16. Projektet her skal også hedde `Bibliotek`, så navnene i koden passer. Læg det derfor i en ny, tom mappe, fx `Modul17`: {{skriv den nye mappe i feltet **Location**, når du opretter projektet||skriv den nye mappe i feltet **Solution directory**, når du opretter projektet (bruger du Terminal, så lav mappen, og kør kommandoen inde i den)}}. Det gamle projekt bliver liggende urørt.",
       krav: [
         "Nyt projekt `Bibliotek` (ASP.NET Core Web App, Model-View-Controller, .NET 10)",
         "Modellen `Author` har `Id`, `Name` (påkrævet, højst 60 tegn) og `Country` (må være tom, højst 40 tegn)",
@@ -1128,7 +1128,7 @@ public Author Author { get; set; } = new Author();`,
       tip: [
         "Når programmet står stille på breakpointet, så hold musen over `ModelState`, eller find den i {{Locals||Threads & Variables}}. Den har en `ErrorCount`, og hvert felt har sine fejl under `Values` / `Errors`.",
         "Er det svært at finde i debuggeren, så sæt disse linjer lige over `if (ModelState.IsValid)` og kig i {{det sorte konsolvindue, som åbner sammen med programmet||Run-vinduet i Rider}}: `foreach (var felt in ModelState) { foreach (var fejl in felt.Value.Errors) { Console.WriteLine($\"{felt.Key}: {fejl.ErrorMessage}\"); } }`",
-        "Fejlen står på `Author.Name`: The Name field is required. `new Author()` laver en tom forfatter, og den bliver valideret sammen med bogen — hendes `Name` er `[Required]` og tomt. Feltet står ikke på formularen, så fejlen vises ingen steder."
+        "Fejlen står på `Author.Name`: The Name field is required. `new Author()` laver en tom forfatter, og den bliver valideret sammen med bogen — den tomme forfatters `Name` er `[Required]` og tomt. Feltet står ikke på formularen, så fejlen vises ingen steder."
       ],
       frag: true, fri: true,
       output: "Author.Name: The Name field is required.",

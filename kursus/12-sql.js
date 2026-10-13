@@ -1040,7 +1040,7 @@ ORDER BY Minutter DESC;`,
 
     // ------------------------------------------------------------------
     { t: "opgave", h: "Fejlfinding: holdet uden elever", sprog: "sql", fri: true,
-      md: "En skole vil se, hvor mange elever der er på hvert hold — også hold uden elever. Kopiér startkoden ind i dit **query-vindue** (ikke i Program.cs), og kør den. Forespørgslen kører uden fejl, men ét af tallene er forkert.\n\nFind fejlen ved at pille forespørgslen fra hinanden: kør den **uden** `GROUP BY` og `COUNT`, og se de rå rækker, som databasen tæller på.",
+      md: "En skole vil se, hvor mange elever der er på hvert hold — også hold uden elever. Kopiér startkoden ind i dit **query-vindue**, og kør den. Forespørgslen kører uden fejl, men ét af tallene er forkert.\n\nFind fejlen ved at pille forespørgslen fra hinanden: kør den **uden** `GROUP BY` og `COUNT`, og se de rå rækker, som databasen tæller på.",
       start: R`CREATE TABLE Hold (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     Navn NVARCHAR(50) NOT NULL

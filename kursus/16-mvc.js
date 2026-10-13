@@ -1220,7 +1220,7 @@ public IActionResult Create(Bog bog)
         ekstra: ["Giv `Forfatter` en `[RegularExpression]`, så navnet skal starte med stort bogstav.", "Brug fanen Network til at se POST → 302 → GET `/Bog/Details/5`."] },
 
       // ----------------------------------------------------------------
-      { t: "opgave", h: "Fejlfinding: den nye bog forsvinder", projekt: "BibliotekFejl", frag: true, fri: true,
+      { t: "opgave", h: "Fejlfinding: den nye bog forsvinder", projekt: "Bibliotek", frag: true, fri: true,
         md: "En kollega har skrevet sin egen udgave af POST-actionen `Create`. Der kommer ingen fejl, men noget er galt: **Når man opretter en ny bog, lander man på detaljesiden for en helt anden bog** (Kongens Fald). Den nye bog står på listen, men dens link **Detaljer** viser også Kongens Fald.\n\nIndsæt startkoden i stedet for din egen POST-action i `BogController`. Find fejlen **med debuggeren** — ikke ved at gætte — og ret den.",
         krav: [
           "Sæt et breakpoint på linjen `bog.Id = …`, og start appen med debuggeren",

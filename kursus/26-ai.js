@@ -232,8 +232,8 @@ historik += laengde[3];`,
         ret: 0, fordi: "Alt i browseren kan ses i udviklerværktøjet (fanen **Network** eller **Sources**). En nøgle, der står der, er offentlig. Derfor går kaldet altid gennem din egen server, som holder nøglen hemmelig." },
       { t: "ide", h: "Opret AiHjaelper og gem nøglen i user secrets",
         md: "Lav et nyt **ASP.NET Core Web App (Model-View-Controller)**-projekt, `AiHjaelper`. Du kan bygge hele lektionen **uden** en rigtig nøgle — så bruger appen den falske AI. Vil du prøve den rigtige, skal du oprette en konto hos udbyderen (for Claude: platform.claude.com) og lave en API-nøgle. Det koster penge pr. kald, så sæt en lav beløbsgrænse på kontoen.",
-        win: ["Opret MVC-projektet `AiHjaelper` med .NET 10 og uden login, som i modul 16.", "Har du en nøgle: højreklik på projektet i Solution Explorer → **Manage User Secrets**.", "Filen `secrets.json` åbner. Skriv `{ \"Ai:ApiKey\": \"din-nøgle\" }`, og gem.", "Har du ingen nøgle, så spring de to sidste skridt over."],
-        mac: ["Opret MVC-projektet `AiHjaelper` med .NET 10 og uden login, som i modul 16.", "Har du en nøgle: åbn Riders **Terminal**, og skriv `dotnet user-secrets init`.", "Skriv `dotnet user-secrets set \"Ai:ApiKey\" \"din-nøgle\"`. Svaret er `Successfully saved Ai:ApiKey to the secret store.`", "Har du ingen nøgle, så spring de to sidste skridt over."],
+        win: ["Opret MVC-projektet `AiHjaelper` med .NET 10 og uden login, som i modul 16.", "Har du en nøgle: højreklik på projektet i Solution Explorer → **Manage User Secrets**.", "Filen `secrets.json` åbner. Skriv `{ \"Ai:ApiKey\": \"din-nøgle\" }`, og gem.", "Har du ingen nøgle, så spring punkt 2 og 3 over."],
+        mac: ["Opret MVC-projektet `AiHjaelper` med .NET 10 og uden login, som i modul 16.", "Har du en nøgle: åbn Riders **Terminal**, og skriv `dotnet user-secrets init`.", "Skriv `dotnet user-secrets set \"Ai:ApiKey\" \"din-nøgle\"`. Svaret er `Successfully saved Ai:ApiKey to the secret store.`", "Har du ingen nøgle, så spring punkt 2 og 3 over."],
         md2: "Nøglen hedder `Ai:ApiKey` i konfigurationen. Kolonet betyder \"feltet `ApiKey` inde i gruppen `Ai`\". Koden henter den med `config[\"Ai:ApiKey\"]`." },
       { t: "laes", h: "Interfacet og den falske AI",
         md: "Interfacet lover én asynkron metode (modul 8): giv et spørgsmål, få et svar. Den falske implementering opfylder løftet med det samme med `Task.FromResult` — der er ikke noget at vente på.\n\nHer kører de to i et konsolprogram, så du kan se, at resten af koden kun kender **interfacet**.",
@@ -668,7 +668,7 @@ Console.WriteLine(svar.Text);`,
   { id: "m26v", titel: "Værksted: AI-funktioner i din egen app", vaerksted: true, min: 75, ord: [],
     trin: [
       { t: "laes", h: "Sådan arbejder du i værkstedet",
-        md: "De tre første opgaver er konsolprogrammer, der øver det, der sker inde i en AI-service: bygge JSON, læse svaret og regne prisen ud. De koster intet og kan sammenlignes med facit. Opgave 3 er en fejlfinding. I opgave 4 og 5 bygger du AI-funktioner i en MVC-app — med den falske AI, så du ikke behøver en betalt nøgle.",
+        md: "De tre første opgaver er konsolprogrammer, der øver det, der sker inde i en AI-service: bygge JSON, læse svaret og regne prisen ud. De koster intet og kan sammenlignes med facit. Den tredje er en fejlfinding. I de to sidste opgaver bygger du AI-funktioner i en MVC-app — med den falske AI, så du ikke behøver en betalt nøgle.",
         noter: [
           ["Skriv selv", "Skriv koden med dine egne fingre. Kopiér ikke fra lektionerne."],
           ["Kør tit", "Kør efter hver lille ændring. Så ved du, hvilken ændring der gjorde noget forkert."],
@@ -820,7 +820,7 @@ Console.WriteLine($"I alt: {samlet:F6} $");`,
         tip: [
           "Byg i den rækkefølge, der ikke giver røde streger: interface → fake → registrering → controller → view. Få den falske til at virke, før du skriver `ClaudeAiService`.",
           "`ClaudeAiService` skal have `using System.Text;` (for `Encoding`) og `using System.Text.Json;`.",
-          "Kig på opgave 1 og 2: body'en og læsningen af svaret er den samme kode, bare inde i en metode."
+          "Kig på opgaverne **Byg en forespørgsel** og **Læs et svar og regn prisen ud**: body'en og læsningen af svaret er den samme kode, bare inde i en metode."
         ],
         fri: true, frag: true,
         output: "Uden nøgle, \"Hvornår har I åbent?\": (Test-svar) Du spurgte: Hvornår har I åbent?\nTom formular: Skriv et spørgsmål på højst 500 tegn.\nMed en forkert nøgle i user secrets: AI-tjenesten svarede med fejl 401.",

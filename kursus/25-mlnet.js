@@ -433,7 +433,7 @@ public class Vurdering
         svar: ["Fordi trænere kun kan regne med tal, så teksten skal laves om til tal først", "Fordi teksten skal oversættes til engelsk", "Fordi teksten ellers bliver gemt i en database", "Fordi `FeaturizeText` retter stavefejl"],
         ret: 0, fordi: "Al machine learning er matematik på tal. `FeaturizeText` laver hver tekst om til en lang række tal, der fortæller, hvilke ord og bogstavgrupper der er i den." },
       { t: "laes", h: "Træn klassifikationsmodellen",
-        md: "Pipelinen er kortere end før: lav teksten om til tal, og træn en klassifikations-træner. Resten — `TrainTestSplit`, `Fit`, `Evaluate`, `Predict` — kender du fra lektion 2. Her er de vigtige linjer; hele programmet med 20 anmeldelser kan du bygge i værkstedet (en ekstra-opgave under opgave 4).",
+        md: "Pipelinen er kortere end før: lav teksten om til tal, og træn en klassifikations-træner. Resten — `TrainTestSplit`, `Fit`, `Evaluate`, `Predict` — kender du fra lektion 2. Her er de vigtige linjer; hele programmet med 20 anmeldelser kan du bygge i værkstedet (en ekstra-opgave under opgaven **Bilpriser med ML.NET**).",
         frag: true,
         kode: R`IDataView alle = ml.Data.LoadFromEnumerable(anmeldelser);
 DataOperationsCatalog.TrainTestData delt = ml.Data.TrainTestSplit(alle, testFraction: 0.25);
@@ -550,7 +550,7 @@ public class AnmeldelseController : Controller
           ["Ansvar", "Vis brugeren, at svaret er et gæt. Lad et menneske træffe vigtige beslutninger."]
         ] },
       { t: "ide", h: "Anmeldelser på en MVC-side",
-        md: "Træn anmeldelsesmodellen i et konsolprojekt (værkstedets opgave 4 viser, hvordan), og brug den på en side i en MVC-app. Har du ikke lavet værkstedet endnu, så gør det med prismodellen fra lektion 2 i stedet — skridtene er de samme.",
+        md: "Træn anmeldelsesmodellen i et konsolprojekt (ekstra-opgaven under **Bilpriser med ML.NET** i værkstedet viser, hvordan), og brug den på en side i en MVC-app. Har du ikke lavet værkstedet endnu, så gør det med prismodellen fra lektion 2 i stedet — skridtene er de samme. Du har allerede en mappe, der hedder `Webshop`, fra værkstedet i modul 7: skriv derfor en ny mappe, fx `Modul25`, i feltet {{**Location**||**Solution directory**}}, når du opretter projektet.",
         win: ["Opret et nyt **ASP.NET Core Web App (Model-View-Controller)**-projekt, `Webshop`.", "Package Manager Console: `Install-Package Microsoft.Extensions.ML -Version 5.0.0`. Den henter selv `Microsoft.ML` med.", "Kopiér model-filen (`.zip`) ind i projektmappen. Klik på den i Solution Explorer, og sæt **Copy to Output Directory** til **Copy if newer** i **Properties**-vinduet.", "Læg klasserne `Anmeldelse` og `Vurdering` i `Models`, registrér poolen i `Program.cs`, og lav controlleren og viewet `Views/Anmeldelse/Index.cshtml`.", "Kør, og gå til `/Anmeldelse`."],
         mac: ["Opret et nyt **ASP.NET Core Web App (Model-View-Controller)**-projekt, `Webshop`.", "Terminal: `dotnet add package Microsoft.Extensions.ML --version 5.0.0`. Den henter selv `Microsoft.ML` med.", "Kopiér model-filen (`.zip`) ind i projektmappen (træk den ind i Explorer, eller kopiér den i Finder).", "Læg klasserne `Anmeldelse` og `Vurdering` i `Models`, registrér poolen i `Program.cs`, og lav controlleren og viewet `Views/Anmeldelse/Index.cshtml`.", "Kør, og gå til `/Anmeldelse`."],
         sprog: "razor",
@@ -578,7 +578,7 @@ public class AnmeldelseController : Controller
   { id: "m25v", titel: "Værksted: dine egne modeller", vaerksted: true, min: 75, ord: [],
     trin: [
       { t: "laes", h: "Sådan arbejder du i værkstedet",
-        md: "Først laver du selv de små \"modeller\" i ren C#, så du ser, at træning og måling bare er løkker og regning. Opgave 3 er en fejlfinding med debuggeren. Så træner du to rigtige modeller med ML.NET, og til sidst kommer en model på nettet.\n\nOpgave 1–3 sammenligner siden dit output med facit. Opgave 4 og 5 bruger ML.NET, og der kan dine tal ligge en smule ved siden af eksemplet.",
+        md: "Først laver du selv de små \"modeller\" i ren C#, så du ser, at træning og måling bare er løkker og regning. Den tredje opgave, **Fejlfinding: accuracy er altid 0 %**, er en fejlfinding med debuggeren. Så træner du to rigtige modeller med ML.NET, og til sidst kommer en model på nettet.\n\nI de tre første opgaver sammenligner siden dit output med facit. De to sidste opgaver bruger ML.NET, og der kan dine tal ligge en smule ved siden af eksemplet.",
         noter: [
           ["Skriv selv", "Skriv koden med dine egne fingre. Kopiér ikke fra lektionerne."],
           ["Kør tit", "Kør efter hver lille ændring. Så ved du, hvilken ændring der gjorde noget forkert."],
@@ -780,7 +780,7 @@ public class BilGaet
         ] },
 
       { t: "opgave", h: "Bilpris-modellen på nettet", projekt: "Webshop",
-        md: "Lav en side i en MVC-app, hvor brugeren skriver bilens alder og kørte kilometer og får modellens bud på prisen. Modellen er `bilpris.zip` fra opgave 4.",
+        md: "Lav en side i en MVC-app, hvor brugeren skriver bilens alder og kørte kilometer og får modellens bud på prisen. Modellen er `bilpris.zip` fra opgaven **Bilpriser med ML.NET**.",
         krav: [
           "MVC-projektet har NuGet-pakken `Microsoft.Extensions.ML` version 5.0.0, og `bilpris.zip` ligger i projektmappen",
           "`Models/Bil.cs` indeholder klasserne `Bil` og `BilGaet` — præcis som i træningsprogrammet",

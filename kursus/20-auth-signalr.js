@@ -25,7 +25,7 @@ window.KURSUS.push({
     ],
     trin: [
       { t: "laes", h: "To spørgsmål: hvem er du, og hvad må du?",
-        md: "Når en side kræver login, er der altid to spørgsmål, og de har hvert sit navn:\n\n- **Authentication** — *hvem er du?* Brugeren beviser, hvem hun er, typisk med e-mail og adgangskode. Det er det, der sker, når man logger ind.\n- **Authorization** — *hvad må du?* Serveren kender nu brugeren og afgør, om hun må se netop denne side.\n\nDet svarer til et hotel: i receptionen viser du dit pas og får et nøglekort (authentication). Nøglekortet åbner kun dit eget værelse, ikke de andres (authorization).\n\nRækkefølgen ligger fast: man kan ikke afgøre, hvad en person må, før man ved, hvem personen er.",
+        md: "Når en side kræver login, er der altid to spørgsmål, og de har hvert sit navn:\n\n- **Authentication** — *hvem er du?* Brugeren beviser, hvem vedkommende er, typisk med e-mail og adgangskode. Det er det, der sker, når man logger ind.\n- **Authorization** — *hvad må du?* Serveren kender nu brugeren og afgør, om brugeren må se netop denne side.\n\nDet svarer til et hotel: i receptionen viser du dit pas og får et nøglekort (authentication). Nøglekortet åbner kun dit eget værelse, ikke de andres (authorization).\n\nRækkefølgen ligger fast: man kan ikke afgøre, hvad en person må, før man ved, hvem personen er.",
         noter: [
           ["Authentication", "Hvem er du? Det sker ved login."],
           ["Authorization", "Hvad må du? Det sker, hver gang du beder om en side."],
@@ -54,7 +54,7 @@ window.KURSUS.push({
           "Åbn en terminal i den mappe, projektet skal ligge i, og skriv: `dotnet new mvc --auth Individual -o KlubWeb`. `--auth Individual` er det samme som Individual Accounts.",
           "Åbn mappen `KlubWeb` i Rider med **File → Open**.",
           "Åbn `appsettings.json`. Connection string er `DataSource=app.db;Cache=Shared` — en SQLite-fil i projektmappen. Skabelonen har allerede lagt tabellerne ind i `app.db`.",
-          "Skriv i terminalen, mens du står i projektmappen: `dotnet ef database update`. Står der `Done.`, er databasen opdateret. (Værktøjet `dotnet-ef` installerede du i modul 17.)",
+          "Skriv i terminalen, mens du står i projektmappen: `dotnet ef database update`. Står der `Done.`, er databasen opdateret. (Værktøjet `dotnet-ef` hentede du til hele maskinen i modul 18. Kender terminalen ikke kommandoen, så skriv først `dotnet tool install --global dotnet-ef --version 10.0.12`.)",
           "Kør projektet med den grønne pil ▶. Øverst til højre står **Register** og **Login**."
         ],
         md2: "Registrér ikke en bruger endnu. Der er én linje i `Program.cs`, der skal rettes først — det kommer om lidt." },
@@ -105,7 +105,7 @@ app.MapRazorPages()
           ["AddDbContext<ApplicationDbContext>", "Registrerer databasen i dependency injection som i modul 17. På Mac står der `UseSqlite` i stedet for `UseSqlServer`."],
           ["AddDatabaseDeveloperPageExceptionFilter()", "Viser en hjælpsom fejlside under udvikling, hvis databasen mangler en migration."],
           ["AddDefaultIdentity<IdentityUser>", "Slår Identity til med `IdentityUser` som brugerklasse. Registrerer også `UserManager` og `SignInManager`, som du får brug for senere."],
-          ["RequireConfirmedAccount = true", "En ny bruger skal bekræfte sin e-mail, før hun kan logge ind. Det retter vi om lidt."],
+          ["RequireConfirmedAccount = true", "En ny bruger skal bekræfte sin e-mail, før brugeren kan logge ind. Det retter vi om lidt."],
           [".AddEntityFrameworkStores<ApplicationDbContext>()", "Brugerne gemmes med EF Core i din database gennem `ApplicationDbContext`."],
           ["UseMigrationsEndPoint()", "Kun under udvikling: mangler databasen en migration, kan du køre den med en knap på fejlsiden."],
           ["UseAuthorization()", "Tjekker adgangen til siderne. Det er emnet i næste lektion."],
@@ -273,7 +273,7 @@ app.MapRazorPages()
         noter: [
           ["UseRouting()", "Finder ud af, hvilken controller og action adressen passer til — og dermed om den har `[Authorize]`."],
           ["UseAuthentication()", "Læser login-cookien og fylder `User` ud: hvem er det?"],
-          ["UseAuthorization()", "Kigger på `[Authorize]` og `User`: må personen komme ind? Hvis ikke, sendes hun til login eller til Access denied."],
+          ["UseAuthorization()", "Kigger på `[Authorize]` og `User`: må personen komme ind? Hvis ikke, sendes brugeren til login eller til Access denied."],
           ["MapControllerRoute / MapRazorPages", "Først nu kører din controller eller Identitys side og laver HTML'en."]
         ],
         md2: "**Bemærk:** Skabelonen i .NET 10 skriver kun `app.UseAuthorization();`. Det virker alligevel, fordi ASP.NET Core selv sætter authentication ind i pipelinen, når Identity er slået til. Skriv alligevel `app.UseAuthentication();` selv — så kan du se og forklare rækkefølgen. Og skriver du den, skal den stå **før** `UseAuthorization`." },
@@ -572,7 +572,7 @@ Console.WriteLine(user.IsInRole("traener"));`,
         noter: [
           ["asp-area=\"\"", "Står på alle links i layoutet. Det betyder \"ikke i et område\", så linket også virker, når du står på en af Identitys sider i området Identity."]
         ],
-        md2: "**Vigtigt:** at skjule et link er kun pænt — det er ikke sikkerhed. Skriver en almindelig bruger `/Admin` i adresselinjen, er det `[Authorize(Roles = \"Admin\")]` på controlleren, der stopper hende. Brug altid begge dele: attributten låser, og `IsInRole` rydder op i menuen." },
+        md2: "**Vigtigt:** at skjule et link er kun pænt — det er ikke sikkerhed. Skriver en almindelig bruger `/Admin` i adresselinjen, er det `[Authorize(Roles = \"Admin\")]` på controlleren, der stopper brugeren. Brug altid begge dele: attributten låser, og `IsInRole` rydder op i menuen." },
       { t: "skriv", sprog: "razor", q: "Skriv Razor-kode til et view: er brugeren i rollen `Traener`, skal der vises linket `<a href=\"/Traener\">Holdlister</a>`. Brug `@if` og `User.IsInRole`.",
         tjek: [
           [/@if\(User\.IsInRole\("Traener"\)\)/, "Brug `@if (User.IsInRole(\"Traener\"))`"],
@@ -994,7 +994,7 @@ app.Run();`,
         frag: true,
         fordi: "`AddSignalR` registrerer SignalR's services. `MapHub<ChatHub>(\"/chathub\")` siger: forbindelser til `/chathub` går til `ChatHub` — ligesom `MapControllerRoute` gør for controllere. Husk `using KlubWeb.Hubs;` øverst." },
       { t: "laes", h: "Klientbiblioteket: signalr.js",
-        md: "Browseren skal have SignalR's JavaScript-bibliotek. Det hentes ned i `wwwroot` med **LibMan** (Library Manager):",
+        md: "Browseren skal have SignalR's JavaScript-bibliotek. Det hentes ned i `wwwroot` med **LibMan** (Library Manager).",
         win: [
           "Højreklik på projektet i Solution Explorer → **Add → Client-Side Library…**",
           "Provider: **unpkg**. Library: `@microsoft/signalr@latest`.",
@@ -1005,7 +1005,7 @@ app.Run();`,
           "Installér LibMan én gang i terminalen: `dotnet tool install -g Microsoft.Web.LibraryManager.Cli`",
           "Stå i projektmappen, og skriv: `libman install @microsoft/signalr@latest -p unpkg -d wwwroot/js/signalr --files dist/browser/signalr.js --files dist/browser/signalr.min.js`"
         ],
-        md2: "Bagefter ligger filen i `wwwroot/js/signalr/dist/browser/signalr.js`. Det er den sti, viewet skal bruge. Der er også kommet en fil, `libman.json`, som husker, hvad der er hentet." },
+        md2: "Følg trinene herunder. Bagefter ligger filen i `wwwroot/js/signalr/dist/browser/signalr.js`. Det er den sti, viewet skal bruge. Der er også kommet en fil, `libman.json`, som husker, hvad der er hentet." },
       { t: "laes", h: "chat.js: forbind, lyt og send",
         md: "Selve chatten i browseren er almindelig JavaScript (modul 14 og 15). Lav `wwwroot/js/chat.js`:",
         kode: R`const connection = new signalR.HubConnectionBuilder()
@@ -1216,10 +1216,10 @@ app.UseHttpsRedirection();`,
         ],
         md2: "SignalR følger med: på en `https://`-side bliver forbindelsen til hubben `wss://` — en krypteret WebSocket." },
       { t: "valg", q: "Hvad gør `app.UseHttpsRedirection();`?",
-        svar: ["Sender browseren videre fra http:// til https://, så alt bliver krypteret", "Krypterer adgangskoderne i databasen", "Logger brugeren ud, når hun lukker browseren", "Sender brugeren til login-siden"],
+        svar: ["Sender browseren videre fra http:// til https://, så alt bliver krypteret", "Krypterer adgangskoderne i databasen", "Logger brugeren ud, når browseren lukkes", "Sender brugeren til login-siden"],
         ret: 0, fordi: "Linjen handler om **transporten** mellem browser og server. Adgangskoderne i databasen er beskyttet af hashing, ikke af HTTPS — de to ting løser hver sit problem." },
       { t: "laes", h: "Anti-forgery: formularer fra fremmede sider",
-        md: "Et angreb, der hedder **CSRF** (*Cross-Site Request Forgery*), virker sådan: admin er logget ind på KlubWeb. I en anden fane åbner hun en ondsindet side. Den side har en skjult formular, der sender et POST til `/Admin/OpretBruger` på KlubWeb — og browseren sender automatisk admins login-cookie med. Uden beskyttelse ville KlubWeb tro, at det var admin selv.\n\nForsvaret er et **anti-forgery token**: en hemmelig værdi, som kun dine egne sider kender.",
+        md: "Et angreb, der hedder **CSRF** (*Cross-Site Request Forgery*), virker sådan: admin er logget ind på KlubWeb. I en anden fane åbner admin en ondsindet side. Den side har en skjult formular, der sender et POST til `/Admin/OpretBruger` på KlubWeb — og browseren sender automatisk admins login-cookie med. Uden beskyttelse ville KlubWeb tro, at det var admin selv.\n\nForsvaret er et **anti-forgery token**: en hemmelig værdi, som kun dine egne sider kender.",
         noter: [
           ["<form asp-action=…>", "Form-tag-helperen lægger selv et skjult felt ind: `<input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"CfDJ8…\" />`. Du kan se det med **Vis sidens kilde** i browseren."],
           ["[ValidateAntiForgeryToken]", "På POST-actionen: mangler tokenet, eller passer det ikke, afvises forespørgslen med **400 Bad Request**, og actionen kører slet ikke."],
@@ -1279,7 +1279,7 @@ string adminPassword = config["[[Admin:Password]]"]
           ["Tips før løsning", "Sidder du fast, så åbn ét tip ad gangen. Løsningen er sidste udvej."]
         ] },
       { t: "opgave", h: "Bibliotek med login", projekt: "Bibliotek",
-        md: "Lav en ny MVC-app til et bibliotek. Alle kan se forsiden, men siden **Mine lån** kræver login.",
+        md: "Lav en ny MVC-app til et bibliotek. Alle kan se forsiden, men siden **Mine lån** kræver login.\n\n**Du har allerede en mappe `Bibliotek`** fra de tidligere værksteder (modul 16, 17 og 18). Projektet her skal også hedde `Bibliotek`, så navnene i koden passer. Læg det derfor i en ny, tom mappe, fx `Modul20`: {{skriv den nye mappe i feltet **Location**, når du opretter projektet||skriv den nye mappe i feltet **Solution directory**, når du opretter projektet (bruger du Terminal, så lav mappen, og kør kommandoen inde i den)}}. Det gamle projekt bliver liggende urørt.",
         krav: [
           "Projektet hedder `Bibliotek` og er lavet med Individual Accounts (Mac: `dotnet new mvc --auth Individual -o Bibliotek`)",
           "`RequireConfirmedAccount` er sat til `false` i `Program.cs`",

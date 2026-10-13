@@ -1420,7 +1420,7 @@ th, td {
 
     // ------------------------------------------------------------------
     { t: "opgave", h: "Fejljagt med udviklerværktøjerne",
-      md: "Siden nedenfor har **tre fejl** i CSS'en. Ingen af dem giver en fejlbesked — siden ser bare forkert ud. Find dem med udviklerværktøjerne, ikke ved at gætte.\n\nLav filen `fejljagt.html`, og kopiér startkoden ind i den (ikke i Program.cs). Åbn den i browseren. Sådan **skal** siden se ud, når den er rettet — se kravene.\n\nFremgangsmåde for hver fejl: åbn {{F12||⌥⌘I}}, klik på elementet i **Elements**, og læs fanen **Styles**. Står reglen der slet ikke? Så passer selektoren ikke. Står den der, men overstreget eller med et advarselstegn? Så er værdien ugyldig. Står den på det forkerte element? Så sidder egenskaben det forkerte sted.",
+      md: "Siden nedenfor har **tre fejl** i CSS'en. Ingen af dem giver en fejlbesked — siden ser bare forkert ud. Find dem med udviklerværktøjerne, ikke ved at gætte.\n\nLav filen `fejljagt.html`, og kopiér startkoden ind i den. Åbn den i browseren. Sådan **skal** siden se ud, når den er rettet — se kravene.\n\nFremgangsmåde for hver fejl: åbn {{F12||⌥⌘I}}, klik på elementet i **Elements**, og læs fanen **Styles**. Står reglen der slet ikke? Så passer selektoren ikke. Står den der, men overstreget eller med et advarselstegn? Så er værdien ugyldig. Står den på det forkerte element? Så sidder egenskaben det forkerte sted.",
       krav: [
         "Overskriften `Dagens tilbud` er mørkegrøn",
         "De tre links i menuen står **på én række** ved siden af hinanden med 20 px imellem",

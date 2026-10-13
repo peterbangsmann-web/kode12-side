@@ -340,7 +340,7 @@ Console.WriteLine(t.[[Result]]);`,
 Console.WriteLine(t.Result);`,
         output: "25" },
       { t: "ide", h: "Tre downloads på én gang",
-        md: "Lav et Console-projekt, `Opgaver`. Programmet leger, at det henter tre filer, der hver tager et stykke tid. Kør det, og se, at den samlede tid er ca. 3 sekunder — ikke 6.",
+        md: "Lav et Console-projekt, `Opgaver`. (Du har allerede en mappe med det navn fra modul 7: behold navnet, men skriv en ny mappe, fx `Modul08`, i feltet {{**Location**||**Solution directory**}}, når du opretter projektet.) Programmet leger, at det henter tre filer, der hver tager et stykke tid. Kør det, og se, at den samlede tid er ca. 3 sekunder — ikke 6.",
         kode: R`using System.Diagnostics;
 
 Stopwatch ur = Stopwatch.StartNew();

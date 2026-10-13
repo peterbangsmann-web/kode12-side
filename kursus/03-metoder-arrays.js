@@ -630,7 +630,7 @@ Console.WriteLine(Sum(uge2));`,
 }`,
         output: "19" },
       { t: "ide", h: "Karakterstatistik",
-        md: "Lav et Console-projekt, `Karakterer`. Det her er det største program, du har skrevet indtil nu — men det består kun af byggesten, du kender. Skriv én metode ad gangen, og kør programmet efter hver.",
+        md: "Lav et Console-projekt, `Karakterer`. (Du har allerede en mappe med det navn fra værkstedet i modul 2: behold navnet, men skriv en ny mappe, fx `Modul03`, i feltet {{**Location**||**Solution directory**}}, når du opretter projektet.) Det her er det største program, du har skrevet indtil nu — men det består kun af byggesten, du kender. Skriv én metode ad gangen, og kør programmet efter hver.",
         kode: R`int[] karakterer = { 7, 10, 4, 12, 2, 7, 10 };
 
 Console.WriteLine($"Antal:       {karakterer.Length}");
@@ -823,7 +823,7 @@ Console.WriteLine(Pris(50, 3));`,
         output: "50\n150",
         fordi: "I det første kald mangler `antal`, så standardværdien 1 bruges. I det andet kald er `antal` 3." },
       { t: "ide", h: "Rens et brugernavn",
-        md: "Lav et Console-projekt, `Brugernavn`. Programmet tager imod et navn, renser det og laver et brugernavn. Prøv at skrive `  Peter Hansen  ` med mellemrum for og bag.",
+        md: "Lav et Console-projekt, `Brugernavn`. (Du har allerede en mappe med det navn fra værkstedet i modul 1: behold navnet, men skriv en ny mappe, fx `Modul03`, i feltet {{**Location**||**Solution directory**}}, når du opretter projektet.) Programmet tager imod et navn, renser det og laver et brugernavn. Prøv at skrive `  Peter Hansen  ` med mellemrum for og bag.",
         kode: R`Console.Write("Skriv dit fulde navn: ");
 string navn = Console.ReadLine().Trim();
 

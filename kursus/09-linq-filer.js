@@ -155,7 +155,7 @@ Console.WriteLine(string.Join(", ", vByer));`],
 Console.WriteLine(string.Join(", ", vByer));`,
         output: "Vejle, Viborg" },
       { t: "ide", h: "Temperaturer med LINQ",
-        md: "Lav et Console-projekt, `Temperaturer`. Skriv koden selv. Kør den først normalt, og bagefter med debuggeren, så du kan **se** listerne.",
+        md: "Lav et Console-projekt, `Temperaturer`. (Du har allerede en mappe med det navn fra modul 3: behold navnet, men skriv en ny mappe, fx `Modul09`, i feltet {{**Location**||**Solution directory**}}, når du opretter projektet.) Skriv koden selv. Kør den først normalt, og bagefter med debuggeren, så du kan **se** listerne.",
         kode: R`List<double> grader = new List<double> { 12.5, 18.0, 21.5, 9.0, 24.5, 16.0 };
 
 List<double> varme = grader.Where(g => g >= 18).ToList();

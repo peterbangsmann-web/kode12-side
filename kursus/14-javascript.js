@@ -256,7 +256,7 @@ console.log(´Du har €{point} point. Dobbelt: €{point * 2}´);`,
           ["${point * 2}", "Der må stå et helt udtryk i hullet, ligesom i C#."]
         ],
         output: "Hej Peter!\nDu har 7 point. Dobbelt: 14",
-        md2: "{{På et dansk Windows-tastatur får du en backtick med Shift + tasten til venstre for Backspace og derefter mellemrum.||Kan du ikke finde backtick på dit Mac-tastatur, så kopiér en fra koden her, indtil du har fundet den.}} Template literals må også gå over flere linjer. Det bliver praktisk, når du skal bygge et stykke HTML i JavaScript." },
+        md2: "{{På et dansk Windows-tastatur får du en backtick med Shift + tasten til venstre for Backspace og derefter mellemrum.||På et dansk Mac-tastatur er det Shift + tasten med ´ (til venstre for slettetasten) og derefter mellemrum. Virker det ikke på dit tastatur, så kopiér en backtick fra koden her.}} Template literals må også gå over flere linjer. Det bliver praktisk, når du skal bygge et stykke HTML i JavaScript." },
       { t: "forudsig", sprog: "js",
         kode: J`const vare = "kaffe";
 const pris = 45;
@@ -652,7 +652,7 @@ b.innerHTML = "<b>Hej</b>";`,
         svar: ["Tegnene <i>Ny</i> præcis som de står", "Ordet Ny i kursiv", "Ingenting — det giver en fejl", "Ordet Ny uden kursiv og uden tags"],
         ret: 0, fordi: "`textContent` laver aldrig tekst om til HTML. Derfor ses tags som almindelige tegn. Med `innerHTML` ville ordet være blevet kursivt." },
       { t: "laes", h: "Reager på et klik: addEventListener",
-        md: "En **event** (hændelse) er noget, der sker på siden: et klik, et tastetryk, en formular, der bliver sendt. Med `addEventListener` kobler du en **funktion** til en event. Funktionen kører, hver gang eventen sker.\n\nDet er samme idé som events i C# (modul 10), hvor du skrev `knap.Click += …`. Her hedder eventen `\"click\"`, og funktionen skrives tit som en arrow function.",
+        md: "En **event** (hændelse) er noget, der sker på siden: et klik, et tastetryk, en formular, der bliver sendt. Med `addEventListener` kobler du en **funktion** til en event. Funktionen kører, hver gang eventen sker.\n\nDet er samme idé som events i C# (modul 10), hvor du skrev fx `klokke.Ringet += …`. Her hedder eventen `\"click\"`, og funktionen skrives tit som en arrow function.",
         sprog: "html",
         kode: R`<button id="knap">Klik på mig</button>
 <p id="besked"></p>
@@ -1227,7 +1227,7 @@ const id = [[setInterval]](() => {
     ord: [],
     trin: [
       { t: "laes", h: "Sådan arbejder du i værkstedet",
-        md: "Nu skal du skrive **hele sider selv**: HTML med et `<script>`, der reagerer på klik, regner, tegner og bruger timere.\n\nOpgaverne bliver sværere hen ad vejen. Den første er let. Den tredje er en fejlfinding, hvor du skal bruge browserens debugger. Den sidste er et lille spil, der samler hele modulet.\n\nBoksen under hver opgave taler om {{Ctrl + F5 og Error List||den grønne pil og Problems}} — den er lavet til C#-opgaverne. Her laver du i stedet en `.html`-fil, åbner den i browseren og genindlæser med {{**F5**||**⌘R**}}, hver gang du har gemt.",
+        md: "Nu skal du skrive **hele sider selv**: HTML med et `<script>`, der reagerer på klik, regner, tegner og bruger timere.\n\nOpgaverne bliver sværere hen ad vejen. Den første er let. Den tredje er en fejlfinding, hvor du skal bruge browserens debugger. Den sidste er et lille spil, der samler hele modulet.\n\nTil hver opgave laver du en `.html`-fil, åbner den i browseren og genindlæser med {{**F5**||**⌘R**}}, hver gang du har gemt.",
         noter: [
           ["Skriv selv", "Skriv koden med dine egne fingre. Kopiér ikke fra lektionerne."],
           ["Konsollen er altid åben", "Hav udviklerværktøjet åbent ({{**F12**||**⌥⌘I**}}) med fanen **Console**. En fejl i JavaScript vises **kun** der, med rødt og et linjenummer, du kan klikke på."],
@@ -1362,7 +1362,7 @@ const id = [[setInterval]](() => {
 
       // ------------------------------------------------------------------
       { t: "opgave", h: "Fejlfinding: gennemsnittet", sprog: "html",
-        md: "Siden nedenfor skal regne gennemsnittet af tre karakterer ud. Skriver man **4**, **7** og **10** og klikker **Beregn**, skal der stå **Gennemsnit: 7**. Men der står **Gennemsnit: 1570**.\n\nDer er ingen røde fejl i konsollen, så browseren hjælper dig ikke. Find fejlen **med debuggeren**, ikke ved at gætte:\n\n1. Lav en ny fil `gennemsnit.html`, og kopiér koden ind. (Knappen siger Program.cs, men her er det en HTML-fil.) Åbn den, skriv 4, 7 og 10, og klik **Beregn**. Se det forkerte svar.\n2. Åbn udviklerværktøjet, fanen **Sources**, og klik på `gennemsnit.html`. Sæt et **breakpoint** på linjen `sum += felt.value;`.\n3. Klik **Beregn** igen. Koden stopper i løkken. Se på `sum` og `felt` under **Scope** — hold musen over `felt.value` i koden for at se værdien.\n4. Klik **Step over** og se, hvad `sum` bliver efter første runde. Er det et tal eller en tekst? (En tekst vises med anførselstegn.)\n5. Fortsæt runde for runde, og skriv `sum` ned efter hver.",
+        md: "Siden nedenfor skal regne gennemsnittet af tre karakterer ud. Skriver man **4**, **7** og **10** og klikker **Beregn**, skal der stå **Gennemsnit: 7**. Men der står **Gennemsnit: 1570**.\n\nDer er ingen røde fejl i konsollen, så browseren hjælper dig ikke. Find fejlen **med debuggeren**, ikke ved at gætte:\n\n1. Lav en ny fil `gennemsnit.html`, og kopiér koden ind. Åbn den, skriv 4, 7 og 10, og klik **Beregn**. Se det forkerte svar.\n2. Åbn udviklerværktøjet, fanen **Sources**, og klik på `gennemsnit.html`. Sæt et **breakpoint** på linjen `sum += felt.value;`.\n3. Klik **Beregn** igen. Koden stopper i løkken. Se på `sum` og `felt` under **Scope** — hold musen over `felt.value` i koden for at se værdien.\n4. Klik **Step over** og se, hvad `sum` bliver efter første runde. Er det et tal eller en tekst? (En tekst vises med anførselstegn.)\n5. Fortsæt runde for runde, og skriv `sum` ned efter hver.",
         krav: [
           "Find den linje, der gør, at karaktererne ikke bliver lagt sammen som tal",
           "Ret fejlen ved at ændre **én** linje",

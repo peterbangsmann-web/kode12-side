@@ -378,7 +378,7 @@ public ActionResult<Person> GetPerson(int id)
     return person;
 }` },
       { t: "ide", h: "Byg PersonsController",
-        md: "Slet `WeatherForecastController.cs` og `WeatherForecast.cs`. Lav mappen **Models** med filen `Person.cs`:",
+        md: "Slet `WeatherForecastController.cs` og `WeatherForecast.cs`. Lav mappen **Models** med filen `Person.cs` — koden til den står under trinene.",
         frag: true,
         kode: R`using System.ComponentModel.DataAnnotations;
 
@@ -415,11 +415,11 @@ public class Person
     ],
     trin: [
       { t: "laes", h: "Problemet: dataene bor i controlleren",
-        md: "Listen ligger inde i `PersonsController`. Det virker, men controlleren har nu **to** opgaver: at tage imod forespørgsler, **og** at vide, hvor dataene bor. Den dag dataene skal ligge i en database, skal hele controlleren skrives om.\n\nLøsningen kommer i tre trin, og det er de samme tre trin, din underviser tegnede:",
+        md: "Listen ligger inde i `PersonsController`. Det virker, men controlleren har nu **to** opgaver: at tage imod forespørgsler, **og** at vide, hvor dataene bor. Den dag dataene skal ligge i en database, skal hele controlleren skrives om.\n\nLøsningen kommer i tre faser, og det er de samme tre, din underviser tegnede:",
         noter: [
-          ["Trin 1", "Dataene ligger i controlleren. Det var forrige lektion."],
-          ["Trin 2", "Dataene flyttes ud i en klasse for sig, et **repository**. Mellem controlleren og repository'et står et **interface**. Controlleren kender **kun interfacet**."],
-          ["Trin 3", "Et andet repository bag det **samme interface** henter dataene i en database. Controlleren mærker ingen forskel. Det er næste lektion."]
+          ["Fase 1", "Dataene ligger i controlleren. Det var forrige lektion."],
+          ["Fase 2", "Dataene flyttes ud i en klasse for sig, et **repository**. Mellem controlleren og repository'et står et **interface**. Controlleren kender **kun interfacet**."],
+          ["Fase 3", "Et andet repository bag det **samme interface** henter dataene i en database. Controlleren mærker ingen forskel. Det er næste lektion."]
         ],
         md2: "Interfaces kender du fra modul 7: et interface siger, **hvad** der kan gøres, og klassen, der implementerer det, bestemmer **hvordan**. Du skrev dengang, at det er vigtigt for dependency injection — nu kommer det." },
       { t: "laes", h: "Idéen i et lille konsolprogram",
@@ -512,7 +512,7 @@ class PersonsController
 }`,
         output: "Ole\nKim\nTest",
         fordi: "`a` fik en `ListRepository` og skriver Ole og Kim. `b` fik en `TestRepository` og skriver Test. Controller-klassen er ikke ændret med et eneste tegn — den kender kun interfacet. **Det** er gevinsten: datakilden kan skiftes uden at røre controlleren." },
-      { t: "laes", h: "Trin 2 i PersonApi: interface og repository",
+      { t: "laes", h: "Fase 2 i PersonApi: interface og repository",
         md: "Nu det rigtige API. Interfacet `IPersonsData` lover de fem CRUD-operationer: hent alle, hent én, opret, ret og slet. Læg begge filer i mappen **Models**.",
         frag: true,
         kode: R`namespace PersonApi.Models;
@@ -531,7 +531,7 @@ public interface IPersonsData
           ["Person? EditPerson(int id, Person changed)", "Retter personen med det id. Giver `null`, hvis den ikke findes."],
           ["bool DeletePerson(int id)", "Sletter. Giver `true`, hvis det lykkedes, og `false`, hvis personen ikke fandtes."]
         ],
-        md2: "Repository'et `PersonsRepository` holder løftet med en liste. Listen er flyttet hertil fra controlleren:",
+        md2: "Repository'et `PersonsRepository` holder løftet med en liste, som er flyttet hertil fra controlleren. Lav de to filer sådan — selve repository'et skriver du i næste trin:",
         win: ["Højreklik på **Models** → **Add** → **New Item…** → **Interface**, navn `IPersonsData`.", "Højreklik på **Models** → **Add** → **Class…**, navn `PersonsRepository`.", "Skriv `: IPersonsData` efter klassens navn. Klik på den røde streg, og vælg **Implement interface** — så laver Visual Studio de fem metoder for dig."],
         mac: ["Højreklik på **Models** → **Add** → **Class/Interface**, vælg **Interface**, navn `IPersonsData`.", "Højreklik på **Models** → **Add** → **Class/Interface**, navn `PersonsRepository`.", "Skriv `: IPersonsData` efter klassens navn. Stil markøren på den røde streg, og vælg **Implement missing members** i pære-menuen."] },
       { t: "udfyld", frag: true, q: "Udfyld `PersonsRepository`, så den holder løftet fra `IPersonsData`. `AddPerson` giver den nye person det næste id og tæller derefter `naesteId` op.",
@@ -563,7 +563,7 @@ public interface IPersonsData
         return newPerson;
     }
 
-    // EditPerson og DeletePerson: se næste trin
+    // EditPerson og DeletePerson skriver du selv i lektionens sidste trin
 }`,
         fordi: "Kolonet og interfacets navn betyder \"jeg holder dette løfte\". `Find` med et lambda-udtryk giver den første person med det id, eller `null`. `naesteId` husker, hvilket id der skal bruges næste gang." },
       { t: "spor", h: "Spor: næste id i repository'et",
@@ -616,9 +616,11 @@ public class PersonsController : ControllerBase
         return CreatedAtAction(nameof(GetPerson), new { id = created.Id }, created);
     }
 }`,
-        md2: "**Hvem kalder konstruktøren?** Det gør ASP.NET, når en forespørgsel kommer ind. Men et interface kan ikke laves med `new`, så ASP.NET skal have at vide, **hvilken klasse** der står bag. Det er den sidste brik, og den står i `Program.cs` — før `builder.Build()`:",
+        md2: "**Hvem kalder konstruktøren?** Det gør ASP.NET, når en forespørgsel kommer ind. Men et interface kan ikke laves med `new`, så ASP.NET skal have at vide, **hvilken klasse** der står bag. Det er den sidste brik: linjen `builder.Services.AddSingleton<IPersonsData, PersonsRepository>();` i `Program.cs` — før `builder.Build()`. Den betyder: \"Når nogen beder om en `IPersonsData`, så giv dem en `PersonsRepository`.\" Det er **det eneste sted**, interfacet og klassen står sammen.",
         noter: [
-          ["builder.Services.AddSingleton<IPersonsData, PersonsRepository>();", "\"Når nogen beder om en `IPersonsData`, så giv dem en `PersonsRepository`.\" Det er **det eneste sted**, interfacet og klassen står sammen."]
+          ["private readonly IPersonsData _data;", "Feltet har **interfacets** type. Controlleren ved ikke, hvilken klasse der står bag."],
+          ["public PersonsController(IPersonsData data)", "Constructor injection: controlleren beder om noget, der holder løftet, og gemmer det i feltet."],
+          ["_data.GetPersons()", "Alle actions spørger nu `_data` i stedet for en liste i controlleren."]
         ] },
       { t: "valg", q: "Du har lavet interfacet, repository'et og konstruktøren i controlleren, men glemt linjen i `Program.cs`. Afprøvet: `GET /api/Persons` giver 500 og fejlen `Unable to resolve service for type 'PersonApi.Models.IPersonsData' while attempting to activate 'PersonApi.Controllers.PersonsController'`. Hvad betyder det?",
         svar: ["ASP.NET ved ikke, hvilken klasse den skal give controlleren, når den beder om `IPersonsData` — servicen er ikke registreret", "Interfacet har for mange metoder", "Controlleren mangler `[ApiController]`", "Databasen er ikke oprettet"],
@@ -655,7 +657,7 @@ class Taeller
         svar: ["3 — GET får et nyt repository med den oprindelige liste", "4 — personen blev jo gemt", "0 — listen er tom", "Programmet går ned ved start"],
         ret: 0, fordi: "Afprøvet: POST svarer `201` med id 4, men næste GET giver de tre oprindelige personer. Scoped betyder et **nyt objekt pr. forespørgsel**, så POST'ens liste er smidt væk. Med `AddSingleton` giver samme test fire personer — indtil programmet genstartes." },
       { t: "ide", h: "Flyt dataene ud af controlleren",
-        md: "Byg trin 2 i dit `PersonApi`:\n\n1. Lav `Models/IPersonsData.cs` med de fem metoder.\n2. Lav `Models/PersonsRepository.cs`, der implementerer interfacet. Skriv **alle fem** metoder færdige — `EditPerson` finder personen og retter `Name` og `City`; `DeletePerson` finder personen og fjerner den med `Remove`.\n3. Ret `PersonsController`: fjern listen, tilføj feltet og konstruktøren, og lad actions bruge `_data`.\n4. Tilføj `builder.Services.AddSingleton<IPersonsData, PersonsRepository>();` i `Program.cs` før `builder.Build()`.\n5. Kør, og prøv `api/Persons` og `api/Persons/2` i browseren. Svarene er de samme som før.",
+        md: "Byg fase 2 i dit `PersonApi`:\n\n1. Lav `Models/IPersonsData.cs` med de fem metoder.\n2. Lav `Models/PersonsRepository.cs`, der implementerer interfacet. Skriv **alle fem** metoder færdige — `EditPerson` finder personen og retter `Name` og `City`; `DeletePerson` finder personen og fjerner den med `Remove`.\n3. Ret `PersonsController`: fjern listen, tilføj feltet og konstruktøren, og lad actions bruge `_data`.\n4. Tilføj `builder.Services.AddSingleton<IPersonsData, PersonsRepository>();` i `Program.cs` før `builder.Build()`.\n5. Kør, og prøv `api/Persons` og `api/Persons/2` i browseren. Svarene er de samme som før.",
         md2: "Sæt et **breakpoint** i konstruktøren `PersonsController(IPersonsData data)`, og kald `api/Persons` to gange. Programmet stopper **hver gang**: ASP.NET laver en ny controller for hver forespørgsel. Hold musen over `data` — i {{**Locals**||**Threads & Variables**}} kan du se, at det er en `PersonsRepository`, selvom controlleren kun har bedt om en `IPersonsData`." },
       { t: "forklar", q: "Eksamensspørgsmål: Hvad er dependency injection, og hvordan har du brugt det i dit API? Nævn de steder i koden, det består af.",
         svar: "Dependency injection betyder, at en klasse **får det, den er afhængig af, udefra** — gennem sin **konstruktør** — i stedet for selv at lave det med `new`. I mit API består det af fire ting: et **interface**, `IPersonsData`, der lover CRUD-metoderne; en klasse, `PersonsRepository`, der **implementerer** det; en **konstruktør** i `PersonsController`, der tager imod en `IPersonsData` og gemmer den i et `readonly`-felt; og **registreringen** i `Program.cs`, `AddSingleton<IPersonsData, PersonsRepository>()`, der fortæller ASP.NET, hvilken klasse den skal give controlleren. Fordelen er **løs kobling**: controlleren kender kun interfacet, så datakilden kan skiftes med én linje.",
@@ -734,7 +736,7 @@ public IActionResult DeletePerson(int id)
     return NoContent();
 }`,
         fordi: "Uden `if` ville API'et svare 204, også når personen aldrig fandtes. Så kan klienten ikke se forskel på \"slettet\" og \"fandtes ikke\"." },
-      { t: "laes", h: "Trin 3: databaseklassen",
+      { t: "laes", h: "Fase 3: databaseklassen",
         md: "En liste i hukommelsen forsvinder, når programmet stopper. Nu skal personerne i en database. Det er code first fra modul 17: en `DbContext` med en `DbSet`. Det nye er `HasData`, der lægger tre personer i tabellen, når migrationen køres.",
         frag: true,
         kode: R`using Microsoft.EntityFrameworkCore;
@@ -771,18 +773,18 @@ public class PersonsDB : DbContext
       { t: "laes", h: "Pakker, connection string og AddDbContext",
         md: "Resten er som i modul 17. Installér pakkerne, læg en connection string i `appsettings.json`, og registrér databaseklassen i `Program.cs`.",
         win: [
-          "Højreklik på projektet → **Manage NuGet Packages…** → **Browse**. Installér `Microsoft.EntityFrameworkCore.SqlServer` og `Microsoft.EntityFrameworkCore.Tools`.",
+          "Højreklik på projektet → **Manage NuGet Packages…** → **Browse**. Installér `Microsoft.EntityFrameworkCore.SqlServer` og `Microsoft.EntityFrameworkCore.Tools` — vælg **10.0.12** i feltet **Version** til højre, som i modul 17.",
           "I `appsettings.json`, efter `\"AllowedHosts\": \"*\",`: `\"ConnectionStrings\": { \"PersonsDB\": \"Server=(localdb)\\\\MSSQLLocalDB;Database=PersonsDB;Trusted_Connection=True;TrustServerCertificate=True\" }` — med **to** omvendte skråstreger, fordi det er JSON.",
           "I `Program.cs`, før `builder.Build()`: `builder.Services.AddDbContext<PersonsDB>(options => options.UseSqlServer(builder.Configuration.GetConnectionString(\"PersonsDB\")));`",
           "Øverst i `Program.cs`: `using Microsoft.EntityFrameworkCore;` og `using PersonApi.Models;`."
         ],
         mac: [
-          "I Terminal, i projektmappen: `dotnet add package Microsoft.EntityFrameworkCore.Sqlite` og `dotnet add package Microsoft.EntityFrameworkCore.Design`.",
+          "I Terminal, i projektmappen: `dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 10.0.12` og `dotnet add package Microsoft.EntityFrameworkCore.Design --version 10.0.12`.",
           "I `appsettings.json`, efter `\"AllowedHosts\": \"*\",`: `\"ConnectionStrings\": { \"PersonsDB\": \"Data Source=persons.db\" }`",
           "I `Program.cs`, før `builder.Build()`: `builder.Services.AddDbContext<PersonsDB>(options => options.UseSqlite(builder.Configuration.GetConnectionString(\"PersonsDB\")));`",
           "Øverst i `Program.cs`: `using Microsoft.EntityFrameworkCore;` og `using PersonApi.Models;`."
         ],
-        md2: "Kør derefter migrationen, præcis som i modul 17. {{I **Package Manager Console** (View → Other Windows): `Add-Migration Init` og derefter `Update-Database`.||I Terminal i projektmappen: `dotnet ef migrations add Init` og derefter `dotnet ef database update`. Har du ikke værktøjet endnu: `dotnet tool install --global dotnet-ef`.}}\n\nAfprøvet: tabellen `Persons` får de tre personer fra `HasData`." },
+        md2: "Kør derefter migrationen, præcis som i modul 17. {{I **Package Manager Console** (View → Other Windows): `Add-Migration Init` og derefter `Update-Database`.||I Terminal i projektmappen: `dotnet ef migrations add Init` og derefter `dotnet ef database update`. Har du ikke værktøjet endnu: `dotnet tool install --global dotnet-ef --version 10.0.12`.}}\n\nAfprøvet: tabellen `Persons` får de tre personer fra `HasData`." },
       { t: "laes", h: "DatabaseRepository: samme løfte, ny datakilde",
         md: "Nu det smarte: en ny klasse, `DatabaseRepository`, der implementerer **det samme** `IPersonsData`. Den får databaseklassen ind gennem sin konstruktør — dependency injection én gang til, ét lag længere nede. Hver metode, der ændrer noget, slutter med `SaveChanges()`.",
         frag: true,
@@ -896,7 +898,7 @@ builder.Services.AddScoped<IPersonsData, DatabaseRepository>();`,
         svar: ["Ingen — controlleren kender kun `IPersonsData`", "Alle actions skal skrives om", "Konstruktøren skal tage imod en `PersonsDB`", "Feltet `_data` skal have en ny type"],
         ret: 0, fordi: "Afprøvet: præcis samme controller-fil virker med begge repositories. Det er **open/closed**-princippet (O'et i SOLID) i praksis: controlleren er **lukket for ændring**, men programmet er **åbent for udvidelse** med nye repositories." },
       { t: "ide", h: "Sæt databasen bag dit API",
-        md: "Byg trin 3 i dit `PersonApi`:\n\n1. Tilføj `PutPerson` og `DeletePerson` i controlleren.\n2. Installér pakkerne, lav `Models/PersonsDB.cs` med `HasData`, læg connection stringen i `appsettings.json`, og tilføj `AddDbContext` i `Program.cs`.\n3. Lav `Models/DatabaseRepository.cs`.\n4. Skift registreringen til `AddScoped<IPersonsData, DatabaseRepository>()`.\n5. Lav migrationen, og opdatér databasen.\n6. Kør, og hent `api/Persons` i browseren: de tre personer kommer nu fra databasen.",
+        md: "Byg fase 3 i dit `PersonApi`:\n\n1. Tilføj `PutPerson` og `DeletePerson` i controlleren.\n2. Installér pakkerne, lav `Models/PersonsDB.cs` med `HasData`, læg connection stringen i `appsettings.json`, og tilføj `AddDbContext` i `Program.cs`.\n3. Lav `Models/DatabaseRepository.cs`.\n4. Skift registreringen til `AddScoped<IPersonsData, DatabaseRepository>()`.\n5. Lav migrationen, og opdatér databasen.\n6. Kør, og hent `api/Persons` i browseren: de tre personer kommer nu fra databasen.",
         sprog: "js",
         kode: R`[{"id":1,"name":"Ole","city":"Valby"},{"id":2,"name":"Kim","city":"Kalby"},{"id":3,"name":"Sanne","city":"Salby"}]`,
         md2: "{{Åbn **SQL Server Object Explorer** (View-menuen) → `(localdb)\\MSSQLLocalDB` → Databases → `PersonsDB` → Tables, højreklik på `dbo.Persons` → **View Data**.||Åbn **Database**-vinduet i Rider, tilføj `persons.db` som SQLite-datakilde, og åbn tabellen `Persons`.}} Så kan du se de samme tre rækker. I næste lektion opretter, retter og sletter du — og ser tabellen ændre sig." },
@@ -1185,7 +1187,7 @@ console.log(personer[1].Name);`,
         output: "Ole fra Valby\nKim fra Kalby\nundefined",
         fordi: "`JSON.parse` gør det samme som `svar.json()`. Navnene i JSON'en har lille forbogstav, så `personer[1].Name` med stort N findes ikke og giver `undefined`. Den fejl er nem at lave, når man kommer fra C#." },
       { t: "laes", h: "CORS: når siden kommer fra en anden adresse",
-        md: "Åbner du HTML-siden ved at dobbeltklikke på filen, sker der ingenting på siden. Tryk F12 og se i **Console**. Afprøvet i Chrome:\n\n`Access to fetch at 'http://localhost:5257/api/Persons' from origin 'null' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.`\n\nBrowseren har en sikkerhedsregel: JavaScript fra én **origin** (adresse og port) må ikke læse svar fra en anden — medmindre serveren **siger ja**. Siden kommer fra en fil (origin `null`), API'et fra `localhost:5257`. Det tilladelsessystem hedder **CORS**. Det er **serveren**, der skal give tilladelsen, i `Program.cs`:",
+        md: "Åbner du HTML-siden ved at dobbeltklikke på filen, sker der ingenting på siden. Tryk {{F12||⌥⌘I}}, og se i **Console**. Afprøvet i Chrome:\n\n`Access to fetch at 'http://localhost:5257/api/Persons' from origin 'null' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.`\n\nBrowseren har en sikkerhedsregel: JavaScript fra én **origin** (adresse og port) må ikke læse svar fra en anden — medmindre serveren **siger ja**. Siden kommer fra en fil (origin `null`), API'et fra `localhost:5257`. Det tilladelsessystem hedder **CORS**. Det er **serveren**, der skal give tilladelsen, i `Program.cs`:",
         frag: true,
         kode: R`builder.Services.AddCors(options =>
 {
@@ -1220,7 +1222,7 @@ app.MapControllers();`,
         svar: ["Det virker — CORS håndhæves kun af browsere", "Det fejler med en CORS-fejl", "Det virker kun med AddSingleton", "Programmet kan ikke oversættes"],
         ret: 0, fordi: "CORS er en regel i **browseren**, der beskytter brugeren mod fremmede sider. Afprøvet: konsolklienten virkede før CORS-linjerne kom på. CORS er altså ikke en adgangskontrol til selve API'et — det er login og roller i modul 20." },
       { t: "ide", h: "En side, der viser dine personer",
-        md: "1. Lav filen `personer.html` et sted på din computer (fx på skrivebordet) med koden fra før. Ret portnummeret til dit eget.\n2. Start `PersonApi`, og dobbeltklik på filen. Tryk F12, og se CORS-fejlen i **Console**.\n3. Tilføj `AddCors` og `UseCors` i `Program.cs`, og start API'et igen.\n4. Genindlæs siden. Nu står de tre personer på siden.",
+        md: "1. Lav filen `personer.html` et sted på din computer (fx på skrivebordet) med koden fra trinnet **fetch fra en HTML-side** tidligere i lektionen. Ret portnummeret til dit eget.\n2. Start `PersonApi`, og dobbeltklik på filen. Tryk {{F12||⌥⌘I}}, og se CORS-fejlen i **Console**.\n3. Tilføj `AddCors` og `UseCors` i `Program.cs`, og start API'et igen.\n4. Genindlæs siden. Nu står de tre personer på siden.",
         md2: "Udvid selv: tilføj to tekstfelter og en knap, der sender en POST med `fetch(adresse, { method: \"POST\", headers: { \"Content-Type\": \"application/json\" }, body: JSON.stringify({ name: …, city: … }) })`, og hent listen igen bagefter. Afprøvet: svaret er 201." },
       { t: "laes", h: "Løs kobling — og SOLID's D",
         md: "Kig på, hvad de forskellige dele af systemet ved om hinanden:\n\n- **Klienten** (HTML-siden eller C#-programmet) kender kun **adressen** og **JSON-formatet**. Ikke C#-koden, ikke databasen.\n- **Controlleren** kender kun **interfacet** `IPersonsData`. Ikke listen, ikke databasen.\n- **Repository'et** kender databasen, men ikke HTTP.\n\nHver del kan skiftes ud uden at røre de andre. Det hedder **løs kobling**.\n\nIdéen bag controllerens del er **dependency inversion**, D'et i SOLID: *vær afhængig af abstraktioner, ikke af konkrete klasser*. Controlleren (den overordnede logik) afhænger ikke af `DatabaseRepository` (detaljen). Begge afhænger af interfacet. Og **dependency injection** er teknikken, der får det til at virke: ASP.NET giver controlleren den rigtige klasse gennem konstruktøren." },
@@ -1482,7 +1484,7 @@ if (app.Environment.IsDevelopment())
         ekstra: ["Skift `AddSingleton` til `AddScoped`, og opret en bog. Hvor mange bøger er der, når du bagefter henter alle? Forklar hvorfor, og skift tilbage.", "Prøv også Scalar på `/scalar`."] },
 
       { t: "opgave", h: "Fejlfinding: bogen, der forsvandt", projekt: "BookTest",
-        md: "En kollega har skrevet sit eget `BooksRepository` og testet det i et lille konsolprogram — uden web, så det er nemt at fejlfinde. Testen sletter Matilda og opretter Momo. Men når testen henter Momo igen på hendes id, kommer der en **anden bog** tilbage.\n\nLav et Console-projekt, `BookTest`, og kopiér startkoden ind. Kør det, og se fejlen. Find den så med **debuggeren**: sæt et breakpoint på den første linje i `AddBook`, kør med {{**F5**||debug-knappen (den grønne bille)}}, og se på `books.Count` og listens indhold i {{**Locals**||**Threads & Variables**}}. Hvilke id'er har bøgerne i listen, når Momo får sit?",
+        md: "En kollega har skrevet sit eget `BooksRepository` og testet det i et lille konsolprogram — uden web, så det er nemt at fejlfinde. Testen sletter Matilda og opretter Momo. Men når testen henter Momo igen på dens id, kommer der en **anden bog** tilbage.\n\nLav et Console-projekt, `BookTest`, og kopiér startkoden ind. Kør det, og se fejlen. Find den så med **debuggeren**: sæt et breakpoint på den første linje i `AddBook`, kør med {{**F5**||debug-knappen (den grønne bille)}}, og se på `books.Count` og listens indhold i {{**Locals**||**Threads & Variables**}}. Hvilke id'er har bøgerne i listen, når Momo får sit?",
         krav: [
           "Programmet skriver `Momo fik id 4`",
           "`GetBook` på Momos id giver Momo",

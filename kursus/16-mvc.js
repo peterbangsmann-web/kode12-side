@@ -989,7 +989,7 @@ public IActionResult Create()
         ] },
 
       // ----------------------------------------------------------------
-      { t: "opgave", h: "Projektet og en action, der svarer med tekst", projekt: "Bibliotek", frag: true,
+      { t: "opgave", h: "Projektet og en action, der svarer med tekst", projekt: "Bibliotek", konsol: false, frag: true,
         md: "Opret et nyt MVC-projekt, der hedder **Bibliotek**. Tilføj en action i `HomeController`, der svarer med ren tekst. Ret også forsiden.\n\nKør appen, åbn `/Home/Om`, og kopiér teksten fra browseren ind herunder.",
         krav: [
           "Projektet er et **ASP.NET Core MVC**-projekt (skabelonen Model-View-Controller), der hedder `Bibliotek`",

@@ -697,7 +697,7 @@ Console.WriteLine($"Rigtige: {rigtige} af {gaet.Length}");
 Console.WriteLine($"Accuracy: {accuracy:P0}");`,
         ekstra: ["Udvid programmet, så det også tæller, hvor mange negative anmeldelser modellen overså (facit `false`, gæt `true`). For en webshop, der vil fange sure kunder, er det tal vigtigere end accuracy."] },
 
-      { t: "opgave", h: "Bilpriser med ML.NET", projekt: "BilPris",
+      { t: "opgave", h: "Bilpriser med ML.NET", projekt: "BilPris", konsol: true,
         md: "Træn en rigtig regressionsmodel med ML.NET, der gætter prisen på en brugt bil ud fra alder og kørte kilometer. Mål den, brug den på tre nye biler, og gem den i en fil.\n\nData (alder i år, km i tusinder, pris i tusind kr.): 1, 15, 280 · 2, 30, 250 · 3, 45, 220 · 3, 60, 205 · 4, 70, 185 · 5, 80, 165 · 6, 95, 140 · 7, 110, 120 · 8, 120, 105 · 9, 140, 85 · 10, 150, 70 · 12, 180, 45.",
         krav: [
           "Konsolprojektet `BilPris` har NuGet-pakken `Microsoft.ML` version 5.0.0",

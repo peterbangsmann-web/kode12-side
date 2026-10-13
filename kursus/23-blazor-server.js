@@ -1206,7 +1206,7 @@ onChange?.Invoke();`,
   { id: "m23v", titel: "Værksted: søgning, fejlfinding og VareLager", vaerksted: true, min: 120, ord: [], trin: [
 
     { t: "laes", h: "Sådan arbejder du i værkstedet",
-      md: "Først to små opgaver i KundeApp: et søgefelt og en fejl, du skal finde med debuggeren. Derefter bygger du en **ny app helt fra bunden**, `VareLager`, ud fra krav — ikke fra en opskrift. Det er den samme slags arbejde som i dit eksamensprojekt.\n\nEn Blazor-app skriver ikke noget i et sort vindue, som siden her kan sammenligne. Derfor gør du sådan: læs kravene, byg, kør, og klik dig igennem siderne i browseren. Sæt flueben ved hvert krav, når du kan **se**, at det virker.\n\nNår der står \"Kopiér koden ind i Program.cs\" ved en startkode, så se bort fra det: opgaven siger, hvilken fil koden hører til.",
+      md: "Først to små opgaver i KundeApp: et søgefelt og en fejl, du skal finde med debuggeren. Derefter bygger du en **ny app helt fra bunden**, `VareLager`, ud fra krav — ikke fra en opskrift. Det er den samme slags arbejde som i dit eksamensprojekt.\n\nEn Blazor-app skriver ikke noget i et sort vindue, som siden her kan sammenligne. Derfor gør du sådan: læs kravene, byg, kør, og klik dig igennem siderne i browseren. Sæt flueben ved hvert krav, når du kan **se**, at det virker.",
       noter: [
         ["Skriv selv", "Brug KundeApp som opslag, men kopiér ikke. Det er skrivningen, der får det til at sidde."],
         ["Ét skridt ad gangen", "Byg og kør efter hver lille ændring. Så ved du præcis, hvad der lavede en fejl."],

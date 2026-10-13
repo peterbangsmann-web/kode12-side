@@ -440,15 +440,25 @@
     opgave: function (st, el) {
       var tips = st.tip || [], vist = 0, kanTjekkes = st.output != null && !st.fri;
       var rk = st.output != null ? String(st.output).split("\n").length + 2 : 4;
+      // Hvad slags opgave er det? Konsolprogram (C# med projektnavn, hvor siden kan tjekke udskriften — eller konsol: true), SQL, en side i browseren, Angular eller et web-projekt.
+      var sp = st.sprog || "csharp", cs = sp === "csharp" || sp === "cs";
+      var konsol = cs && !!st.projekt && (st.konsol === true || (st.konsol == null && kanTjekkes));
+      var hvor = konsol ? "<p>Lav et nyt <b>Console</b>-projekt, der hedder <code>" + esc(st.projekt) + "</code>" + (erMac() ? " (File → New Solution → Console)." : " (File → New → Project → Console App).") + " Skriv programmet selv — helt fra en tom fil.</p>"
+        : st.projekt ? "<p>Arbejd i <code>" + esc(st.projekt) + "</code>. Opgaveteksten ovenfor siger, hvad det er, og om det skal oprettes først.</p>" : "";
+      var koer = sp === "sql" ? (erMac() ? "Skriv SQL'en i en <b>Query Console</b> i Rider (Database-vinduet). Markér sætningerne, og kør dem med den grønne pil ▶." : "Skriv SQL'en i et query-vindue til databasen (SQL Server Object Explorer → højreklik på databasen → <b>New Query</b>). Kør med den grønne pil ▶.")
+        : sp === "html" || sp === "css" ? "Gem filen, og åbn den i browseren. Fejl giver ingen besked — se dem i udviklerværktøjerne (" + (erMac() ? "⌥⌘I" : "F12") + ")."
+        : sp === "js" ? "Start appen fra terminalen, som lektionerne viser. Fejl står i terminalen og i browserens konsol (" + (erMac() ? "⌥⌘I" : "F12") + " → Console)."
+        : sp === "text" ? ""
+        : (erMac() ? "Kør med den grønne pil ▶. Kig i vinduet <b>Problems</b>, hvis der er røde streger." : "Kør med <b>Ctrl + F5</b>. Kig i <b>Error List</b>, hvis der er røde streger.");
+      var startTekst = konsol ? "Start med denne kode — kopiér den ind i Program.cs" : sp === "sql" ? "Start med denne kode — kopiér den ind i dit query-vindue" : sp === "html" ? "Start med denne kode — kopiér den ind i din fil" : "Start med denne kode — opgaveteksten siger, hvilken fil den hører til";
+      var udTekst = konsol || !st.projekt ? "Kør dit program. Kopiér det, der står i " + (erMac() ? "Run-vinduet" : "det sorte vindue") + ", og indsæt det her" : "Kopiér det, opgaven beder dig sammenligne, og indsæt det her";
       el.innerHTML = hoved(st) + '<div class="opg-intro">' + md(st.md) + "</div>" +
         (st.krav ? '<div class="krav"><div class="krav-h">Krav til programmet — sæt flueben, efterhånden som du får dem til at virke</div>' + st.krav.map(function (k) { return '<label><input type="checkbox"><span>' + inl(k) + "</span></label>"; }).join("") + "</div>" : "") +
-        '<div class="osboks"><div class="osnavn">' + (erMac() ? "Mac · Rider" : "Windows · Visual Studio") + "</div>" +
-        (st.projekt ? "<p>Lav et nyt <b>Console</b>-projekt, der hedder <code>" + esc(st.projekt) + "</code>" + (erMac() ? " (File → New Solution → Console)." : " (File → New → Project → Console App).") + " Skriv programmet selv — helt fra en tom fil.</p>" : "") +
-        "<p>" + (erMac() ? "Kør med den grønne pil ▶. Kig i vinduet <b>Problems</b>, hvis der er røde streger." : "Kør med <b>Ctrl + F5</b>. Kig i <b>Error List</b>, hvis der er røde streger.") + "</p></div>" +
-        (st.start ? '<div class="udlabel">Start med denne kode — kopiér den ind i Program.cs</div>' + kodeblok(st.start, st.sprog) + '<p><button type="button" class="knap" id="kopier">Kopiér koden</button></p>' : "") +
+        (hvor || koer ? '<div class="osboks"><div class="osnavn">' + (erMac() ? "Mac · Rider" : "Windows · Visual Studio") + "</div>" + hvor + (koer ? "<p>" + koer + "</p>" : "") + "</div>" : "") +
+        (st.start ? '<div class="udlabel">' + startTekst + "</div>" + kodeblok(st.start, st.sprog) + '<p><button type="button" class="knap" id="kopier">Kopiér koden</button></p>' : "") +
         (st.input ? '<p class="lille svag">Afprøv med disse svar fra brugeren: ' + st.input.map(function (x) { return "<code>" + esc(x) + "</code>"; }).join(", ") + "</p>" : "") +
         udblok(st.output, kanTjekkes ? "Det skal dit program skrive" : "Sådan kan en kørsel se ud") +
-        (kanTjekkes ? '<div class="udlabel">Kør dit program. Kopiér det, der står i ' + (erMac() ? "Run-vinduet" : "det sorte vindue") + ', og indsæt det her</div><textarea class="kode" rows="' + rk + '" spellcheck="false" placeholder="Indsæt (eller skriv) det, dit program skrev"></textarea>' :
+        (kanTjekkes ? '<div class="udlabel">' + udTekst + '</div><textarea class="kode" rows="' + rk + '" spellcheck="false" placeholder="Indsæt (eller skriv) det, dit program skrev"></textarea>' :
           '<label class="afkryds"><input type="checkbox" id="opgklar"> Mit program virker og opfylder kravene</label>') +
         '<div id="tips"></div><div class="rk opg-knapper">' + (tips.length ? '<button type="button" class="knap" id="tipknap">💡 Giv mig et tip (0/' + tips.length + ")</button>" : "") +
         '<button type="button" class="knap" id="facitknap">Vis et løsningsforslag</button></div><div id="facit"></div>' + md(st.md2) +

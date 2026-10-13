@@ -1240,7 +1240,7 @@ h1 {
   { id: "m13v", titel: "Værksted: byg dine egne sider", vaerksted: true, min: 75, ord: [], trin: [
 
     { t: "laes", h: "Sådan arbejder du i værkstedet",
-      md: "Nu skal du skrive **hele sider selv**. Siden her giver dig opgaven og kravene. Resten er dit.\n\nHTML og CSS kan ikke tjekkes af siden her, for resultatet er noget, man **ser** — ikke noget, et program skriver. Derfor gør du det sådan: læs kravene, byg siden, åbn den i browseren, og sæt flueben ved hvert krav, når du kan se, at det passer. Til sidst krydser du af, at siden virker.\n\nNår der står \"Console\", \"Ctrl + F5\" eller \"Program.cs\" i den grå boks på opgaverne, så se bort fra det — her laver du `.html`- og `.css`-filer i mappen `web`, præcis som i lektionerne.",
+      md: "Nu skal du skrive **hele sider selv**. Siden her giver dig opgaven og kravene. Resten er dit.\n\nHTML og CSS kan ikke tjekkes af siden her, for resultatet er noget, man **ser** — ikke noget, et program skriver. Derfor gør du det sådan: læs kravene, byg siden, åbn den i browseren, og sæt flueben ved hvert krav, når du kan se, at det passer. Til sidst krydser du af, at siden virker.\n\nDu laver `.html`- og `.css`-filer i mappen `web`, præcis som i lektionerne.",
       noter: [
         ["Skriv selv", "Skriv HTML'en med dine egne fingre. Kopiér ikke fra lektionerne. Det er skrivningen, der får det til at sidde."],
         ["Gem og genindlæs tit", "Gem efter hver lille ændring, og genindlæs i browseren ({{F5||⌘R}}). Så ved du præcis, hvad der lavede en fejl."],

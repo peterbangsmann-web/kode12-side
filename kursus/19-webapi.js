@@ -1737,7 +1737,7 @@ builder.Services.AddDbContext<BooksDB>(options =>
 builder.Services.AddScoped<IBooksData, BooksDatabaseRepository>();`,
         ekstra: ["Tilføj en property `Pages` (`int`) til `Book`, lav en ny migration (`AddPages`), og opdatér databasen. Hvilke filer skulle ændres? (Controlleren igen ikke.)"] },
 
-      { t: "opgave", h: "En klient til BookApi", projekt: "BookKlient",
+      { t: "opgave", h: "En klient til BookApi", projekt: "BookKlient", konsol: true,
         md: "Til sidst skal et andet program bruge dit API. Lav et Console-projekt, `BookKlient`, i samme solution som `BookApi` (eller som et selvstændigt projekt). Det skal liste bøgerne, oprette en, tjekke en bog, der ikke findes, og rydde op efter sig. Start `BookApi` først, og kør så klienten.\n\nEksemplet nedenfor er kørt mod en database med kun de tre bøger fra `HasData`. Står bogen fra forrige opgave stadig i din database, kommer den også med i listen, og Momo får et højere id (fx `Oprettet med id 5`). Det er rigtigt nok: databasen genbruger aldrig et id.",
         krav: [
           "Klienten har sin egen klasse `Book` med `Id`, `Title`, `Author` og `Year`",

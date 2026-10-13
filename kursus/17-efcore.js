@@ -932,7 +932,7 @@ public async Task<IActionResult> Create([Bind("Id,Name,Title,Email,DepartmentId"
   { id: "m17v", titel: "Værksted: Bibliotek med forfattere og bøger", vaerksted: true, min: 120, ord: [], trin: [
 
     { t: "laes", h: "Sådan arbejder du i værkstedet",
-      md: "Nu bygger du selv. Først en lille udvidelse af FirmaApp. Derefter en **ny app helt fra bunden**, `Bibliotek`, med forfattere og bøger — ud fra krav, ikke fra en opskrift. Det er den samme slags arbejde som i dit eksamensprojekt.\n\nEn webapp skriver ikke noget i et sort vindue, som siden her kan sammenligne. Derfor gør du sådan: læs kravene, byg, kør, og klik dig igennem siderne i browseren. Sæt flueben ved hvert krav, når du kan **se**, at det virker. Til sidst krydser du af, at programmet virker.\n\nNår der står \"Kopiér koden ind i Program.cs\" ved en startkode, så se bort fra det: opgaven siger, hvilken fil koden hører til.",
+      md: "Nu bygger du selv. Først en lille udvidelse af FirmaApp. Derefter en **ny app helt fra bunden**, `Bibliotek`, med forfattere og bøger — ud fra krav, ikke fra en opskrift. Det er den samme slags arbejde som i dit eksamensprojekt.\n\nEn webapp skriver ikke noget i et sort vindue, som siden her kan sammenligne. Derfor gør du sådan: læs kravene, byg, kør, og klik dig igennem siderne i browseren. Sæt flueben ved hvert krav, når du kan **se**, at det virker. Til sidst krydser du af, at programmet virker.",
       noter: [
         ["Skriv selv", "Skriv koden med dine egne fingre. Brug FirmaApp som opslag, men kopiér ikke. Det er skrivningen, der får det til at sidde."],
         ["Ét skridt ad gangen", "Byg efter hver lille ændring. Kør efter hver migration. Så ved du præcis, hvad der lavede en fejl."],

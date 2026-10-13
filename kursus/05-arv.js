@@ -1087,7 +1087,7 @@ class Bil
         linjer: ["class Dyr", "{", R`    public virtual string Lyd() { return "..."; }`, "}", "class Fugl : Dyr", "{", R`    public override string Lyd() { return "Pip"; }`, "}"],
         omkring: ["Console.WriteLine(new Fugl().Lyd());", ""],
         output: "Pip",
-        fordi: "Basisklassen først med `virtual`, derefter den afledte klasse med kolon og `override`." },
+        fordi: "Basisklassen har `virtual`, og den afledte klasse har kolon og `override`. Skikken er at skrive basisklassen først, men compileren er ligeglad med, hvilken af de to klasser der står øverst." },
       { t: "ide", h: "Samlet øvelse: en zoologisk have",
         md: "Lav et Console-projekt, `Zoo`. Det samler hele modulet: arv, `base`-konstruktør, `protected`, `virtual`/`override`, `ToString`, polymorfi og `is`.",
         kode: R`Dyr[] zoo =

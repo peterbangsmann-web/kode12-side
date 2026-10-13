@@ -998,7 +998,7 @@ class Produkt
           ["?? new List<Produkt>()", "`Deserialize` kan give `null` (fx hvis filen indeholder `null`). Så bruger vi en tom liste i stedet."]
         ],
         output: "2\nTe",
-        md2: "Åbner du `varer.json`, ser det sådan ud — én property pr. linje:\n\n`[ { \"Navn\": \"Kaffe\", \"Pris\": 45 }, { \"Navn\": \"Te\", \"Pris\": 30 } ]`\n\nBemærk: bogstaverne æ, ø og å bliver gemt som koder (`\\u00E6` for æ) i filen. Det er stadig gyldig JSON, og de kommer rigtigt tilbage, når filen deserialiseres." },
+        md2: "Åbner du `varer.json`, står hver property på sin egen linje med indrykning. Indholdet er det her (vist på én linje for at spare plads):\n\n`[ { \"Navn\": \"Kaffe\", \"Pris\": 45 }, { \"Navn\": \"Te\", \"Pris\": 30 } ]`\n\nBemærk: bogstaverne æ, ø og å bliver gemt som koder (`\\u00E6` for æ) i filen. Det er stadig gyldig JSON, og de kommer rigtigt tilbage, når filen deserialiseres." },
       { t: "udfyld", q: "Gem en person som JSON i en fil, og hent den igen.",
         kode: R`using System.Text.Json;
 

@@ -210,7 +210,7 @@ class Billet
     tip: [
       "Lav klassen med de tre properties og de to konstruktører først. Skriv `Console.WriteLine(a);` og kør, før du laver metoderne.",
       "Den korte konstruktør har en tom krop: `public Bog(string titel) : this(titel, \"Ukendt\") { }`.",
-      "I `ToString` kan du vælge teksten med den betingede operator: `string status = ErUdlaant ? \"udlånt\" : \"hjemme\";`."
+      "I `ToString` kan du vælge teksten med den ternære operator (modul 2): `string status = ErUdlaant ? \"udlånt\" : \"hjemme\";`."
     ],
     output: "Dune er nu udlånt\nDune er allerede udlånt\nDen lille prins er ikke udlånt\nDune er afleveret\nDen lille prins er nu udlånt\nDune af Frank Herbert (hjemme)\nDen lille prins af Ukendt (udlånt)",
     loesning: R`Bog a = new Bog("Dune", "Frank Herbert");

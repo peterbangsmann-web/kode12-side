@@ -1461,7 +1461,7 @@ class ElevRepository : IElevRepository
           "Lav et nyt Console-projekt, der hedder `Butik.App`.",
           "Højreklik på **solutionen** (øverste linje) i **Solution Explorer** → **Add** → **New Project…**.",
           "Søg efter **Class Library** (C#), vælg den, og klik **Next**. Kald den `Butik.Logik`, klik **Next**, vælg **.NET 10**, og klik **Create**.",
-          "Omdøb `Class1.cs` til `PrisBeregner.cs`, og skriv klassen fra koden nedenfor (den med `namespace Butik.Logik;`).",
+          "Omdøb `Class1.cs` til `PrisBeregner.cs`, og skriv klassen fra koden nedenfor (den del, der står under kommentaren `// Butik.Logik / PrisBeregner.cs`).",
           "Højreklik på **Dependencies** under `Butik.App` → **Add Project Reference…** → sæt flueben ved `Butik.Logik` → **OK**.",
           "Skriv `Program.cs` i `Butik.App` som nedenfor, og kør med **F5**. Er `Butik.App` ikke fed i Solution Explorer, så højreklik på den og vælg **Set as Startup Project**."
         ],
@@ -1469,7 +1469,7 @@ class ElevRepository : IElevRepository
           "Lav en ny solution med et Console-projekt, der hedder `Butik.App`.",
           "Højreklik på **solutionen** (øverste linje) i vinduet **Explorer** til venstre → **Add** → **New Project…**.",
           "Vælg **Class Library**, kald den `Butik.Logik`, vælg **.NET 10**, og klik **Create**.",
-          "Omdøb `Class1.cs` til `PrisBeregner.cs`, og skriv klassen fra koden nedenfor (den med `namespace Butik.Logik;`).",
+          "Omdøb `Class1.cs` til `PrisBeregner.cs`, og skriv klassen fra koden nedenfor (den del, der står under kommentaren `// Butik.Logik / PrisBeregner.cs`).",
           "Højreklik på projektet `Butik.App` → **Add** → **Reference…** → sæt flueben ved `Butik.Logik` → **Add**. (Kan du ikke finde menuen, så åbn **Terminal** nederst i Rider, og skriv `dotnet add Butik.App reference Butik.Logik`.)",
           "Skriv `Program.cs` i `Butik.App` som nedenfor, og kør med den grønne ▶. Vælg `Butik.App` i listen øverst, hvis der står noget andet."
         ],

@@ -277,7 +277,7 @@ class Kunde
     new Produkt { Navn = "Te", Pris = 30 }
 };
 
-Produkt p = produkter.[[Find]](x [[=>]] x.Navn == "Te");
+Produkt p = produkter.[[Find|First|Single]](x [[=>]] x.Navn == "Te");
 Console.WriteLine(p.Pris);
 
 class Produkt

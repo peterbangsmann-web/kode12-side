@@ -306,7 +306,7 @@ Console.WriteLine(string.Join(" ", billigst));`,
         foer: R`List<int> karakterer = new List<int> { 12, -3, 7, 0, 10 };`,
         tjek: [
           [/(double|var) snit=karakterer\.Where\(/, "Start med `double snit = karakterer.Where(`"],
-          [/Where\((\w+)=>\1>=2\)/, "Betingelsen: `k => k >= 2`"],
+          [/Where\((\w+)=>(\1>=2|\1>1|2<=\1|1<\1)\)/, "Betingelsen: `k => k >= 2`"],
           [".Average()", "Beregn gennemsnittet med `.Average()`"],
           ["Console.WriteLine(snit);", "Skriv `snit` ud"]
         ],
@@ -705,7 +705,7 @@ Console.WriteLine(File.Exists("findes-ikke.txt"));`,
 File.[[WriteAllLines]]("navne.txt", navne);
 
 string[] laest = File.[[ReadAllLines]]("navne.txt");
-Console.WriteLine(laest.[[Length]]);`,
+Console.WriteLine(laest.[[Length|Count()]]);`,
         output: "3",
         fordi: "`WriteAllLines` skriver et array med én linje pr. element, og `ReadAllLines` giver et array tilbage. Et array har `Length`." },
       { t: "fejl",

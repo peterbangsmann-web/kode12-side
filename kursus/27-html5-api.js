@@ -170,7 +170,7 @@ autoKnap.addEventListener("click", () => {
 const billeder = [b1, b2, b3];`,
         tjek: [
           [/function forrige\(\)\{/, "Lav funktionen: `function forrige() { … }`"],
-          [/nr=\(nr-1\+billeder\.length\)%billeder\.length;/, "Regn det nye nummer ud: `nr = (nr - 1 + billeder.length) % billeder.length;`"],
+          [/nr=\((nr-1\+billeder\.length|nr\+billeder\.length-1|billeder\.length\+nr-1)\)%billeder\.length;|nr=billeder\.length-1;/, "Regn det nye nummer ud: `nr = (nr - 1 + billeder.length) % billeder.length;`"],
           [/vis\(\);/, "Kald `vis()` til sidst"]
         ],
         forkert: ["function forrige() {\n    nr = (nr - 1) % billeder.length;\n    vis();\n}"],

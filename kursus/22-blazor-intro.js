@@ -229,7 +229,7 @@ app.Run();`,
 
 @* Components/Layout/NavMenu.razor *@
 <div class="nav-item px-3">
-    <[[NavLink]] class="nav-link" href="[[liste]]">
+    <[[NavLink]] class="nav-link" href="[[liste|/liste]]">
         Indkøbsliste
     </NavLink>
 </div>`,
@@ -413,7 +413,7 @@ void Faerre()
 
     private void Flere()
     {
-        antal[[++]];
+        antal[[++|+= 1]];
     }
 }`,
         sprog: "razor",
@@ -708,7 +708,7 @@ void MarkerKoebt(string navn)
         kolonner: ["koebt", "sidst"],
         raekker: [[1, "=0", "=–"], [2, "=0", "=ingen"], [3, "1", "Mælk"], [4, "2", "Æbler"]],
         fordi: "Hvert klik kalder `MarkerKoebt` med navnet på varen. `koebt` tæller op, og `sidst` bliver overskrevet med det nyeste navn. Begge felter ligger i forælderen, så det er forælderen, der tegnes igen." },
-      { t: "orden", q: "Sæt linjerne i `VareLinje.razor` i rækkefølge, så komponenten viser navnet og sender det op til forælderen ved klik.",
+      { t: "orden", q: "Sæt linjerne i `VareLinje.razor` i rækkefølge, så komponenten viser navnet og sender det op til forælderen ved klik. HTML'en står øverst og `@code` nederst.", alt: [[0, 1, 2, 3, 4, 6, 5, 7]],
         linjer: [
           R`<li class="list-group-item">`,
           R`    @Navn`,
@@ -920,7 +920,7 @@ class Vare
 }`,
         output: "Mælk\n1",
         fordi: "`nyVare = new Vare()` lader variablen pege på et **nyt** objekt. Mælk-objektet i listen bliver ikke rørt. Æg er ikke tilføjet endnu, så listen har stadig 1 vare." },
-      { t: "orden", q: "Sæt linjerne i rækkefølge, så formularen har validering og et navnefelt med fejlbesked.",
+      { t: "orden", q: "Sæt linjerne i rækkefølge, så formularen har validering og et navnefelt med fejlbesked. Inde i formularen er rækkefølgen: validatoren, feltet, fejlbeskeden, knappen.",
         linjer: [
           R`<EditForm Model="nyVare" OnValidSubmit="TilfoejVare">`,
           R`    <DataAnnotationsValidator />`,
@@ -1080,7 +1080,7 @@ class Vare
 }`,
         output: "Mangler: 2 af 3\nRugbrød",
         fordi: "Kun Mælk er købt, så 2 af 3 mangler. `Where` beholder kun de varer, hvis navn indeholder `br`. `OrdinalIgnoreCase` betyder, at store og små bogstaver er lige gode, så `BR` ville også finde Rugbrød." },
-      { t: "spor", q: "Sådan tæller `Count(v => !v.Koebt)` i virkeligheden. Klassen `Vare` har `Navn` og `bool Koebt`. Følg løkken, og skriv `mangler` efter de linjer, der kører.",
+      { t: "spor", q: "Sådan tæller `Count(v => !v.Koebt)` i virkeligheden. Klassen `Vare` har `Navn` og `bool Koebt`. Følg løkken, og skriv `mangler` lige efter hver kørt linje. Kun linje 5, 8 og 10 er med i skemaet. Linje 8 kører én gang for hver vare, og den ændrer ikke noget.",
         kode: R`List<Vare> varer = new List<Vare>();
 varer.Add(new Vare { Navn = "Mælk", Koebt = true });
 varer.Add(new Vare { Navn = "Rugbrød" });
@@ -1099,7 +1099,7 @@ foreach (Vare v in varer)
     public bool Koebt { get; set; }
 }`],
         kolonner: ["mangler"],
-        raekker: [[5, "=0"], [8, "=0"], [10, "1"], [10, "2"]],
+        raekker: [[5, "=0"], [8, "=0"], [8, "0"], [10, "1"], [8, "1"], [10, "2"]],
         fordi: "Første gang i løkken er `v` Mælk. Den er købt, så `!v.Koebt` er falsk, og linje 10 springes over. Rugbrød og Æbler er ikke købt, så linje 10 kører to gange. Resultatet er 2 — det samme som `Count(v => !v.Koebt)`." },
       { t: "laes", h: "Hent data, når siden starter: OnInitializedAsync",
         md: "I en rigtig app kommer varerne fra en database eller et API, og det tager tid. Data hentes i **livscyklus-metoden** `OnInitializedAsync`, som Blazor kalder én gang, når komponenten starter. Du skriver din egen udgave med `override` (modul 5).\n\nHer **lader** vi, som om det tager et sekund, med `Task.Delay` (modul 8). I modul 23 bliver det et rigtigt databasekald.",
@@ -1173,7 +1173,7 @@ void Vis()
         tjek: [
           [/@if\(varer\.Count==0\)\{<p>Listen er tom\.<\/p>\}/, "Brug `@if (varer.Count == 0)` med `<p>Listen er tom.</p>` indeni"],
           [/\}else\{/, "Brug `else` til listen"],
-          [/@foreach\(var vare in varer\)\{/, "Brug `@foreach (var vare in varer)`"],
+          [/@foreach\((var |Vare )vare in varer\)\{/, "Brug `@foreach (var vare in varer)`"],
           [/<VareLinje Vare="vare"OnFjern="Fjern"\/>/, "Lav `<VareLinje Vare=\"vare\" OnFjern=\"Fjern\" />` inde i løkken"]
         ],
         forkert: [R`@if (varer.Count == 0)

@@ -738,7 +738,7 @@ sessionStorage.setItem("fane", "kun her");`,
     private async Task GemOgHent()
     {
         await JS.[[InvokeVoidAsync]]("localStorage.setItem", "farve", "blå");
-        farve = await JS.InvokeAsync<[[string?]]>("localStorage.[[getItem]]", "farve");
+        farve = await JS.InvokeAsync<[[string?|string]]>("localStorage.[[getItem]]", "farve");
     }
 }`,
         fordi: "`setItem` giver intet tilbage, så den kaldes med `InvokeVoidAsync`. `getItem` giver en tekst eller `null`, så den kaldes med `InvokeAsync<string?>`." },

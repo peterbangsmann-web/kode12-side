@@ -745,8 +745,8 @@ new Hold("AGF", ["Ida", "Bo"]).vis();` },
         svar: ["Metoden bliver kaldt med `this` = knappen, så det er knappen, der får `antal` lagt til — ikke `t`", "`addEventListener` kan ikke bruges med metoder fra klasser", "Klikket kalder slet ikke metoden, fordi der mangler parenteser", "`this` i en klasse peger altid på hele vinduet"],
         ret: 0, fordi: "`t.op` uden parenteser er bare funktionen — objektet `t` følger ikke med. Når browseren kalder den, sætter den `this` til knappen. `this.antal++` laver så `antal` om på knappen (til `NaN`), og `t.antal` røres ikke. Løsningen er `() => t.op()`." },
       { t: "udfyld", sprog: "js",
-        q: "Listen har id `liste`. Når der klikkes på et punkt i listen, skal punktets tekst skrives i konsollen. Brug event-objektet.",
-        kode: R`document.getElementById("liste").addEventListener("click", [[e]] => {
+        q: "Listen har id `liste`. Når der klikkes på et punkt i listen, skal punktets tekst skrives i konsollen. Brug event-objektet, som her hedder `e`.",
+        kode: R`document.getElementById("liste").addEventListener("click", e => {
     console.log([[e]].[[target]].textContent);
 });`,
         fordi: "Funktionen får event-objektet som parameter. `e.target` er det element, der faktisk blev klikket på — her det ene `li`, selvom lytteren sidder på hele listen." },
@@ -1254,7 +1254,7 @@ opretPost();`,
         kode: R`const vare = { navn: "Te", pris: 30 };
 
 await fetch("/api/varer", {
-    method: "[[POST]]",
+    method: "[[POST|post]]",
     headers: { "Content-Type": "[[application/json]]" },
     body: JSON.[[stringify]](vare)
 });`,

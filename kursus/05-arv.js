@@ -560,7 +560,7 @@ class Cirkel : Figur
     }
 }`,
         omkring: ["", "class __Start { static void Main() { } }"] },
-      { t: "udfyld", q: "Lad `Elbil` have sin egen udgave af `Start`.",
+      { t: "udfyld", q: "Lad `Elbil` **overskrive** `Start` med sin egen udgave. Basisklassen skal give lov til det.",
         kode: R`Elbil e = new Elbil();
 e.Start();
 
@@ -1083,7 +1083,7 @@ class Bil
       { t: "valg", q: "En `Bil` skal kunne bruge en `Motor`s metode `Start()`. Hvad er det bedste design?",
         svar: ["Bil har en property af typen Motor og kalder Motor.Start() (komposition)", "class Bil : Motor (arv)", "class Motor : Bil (arv)", "Kopiér koden fra Start() ind i Bil"],
         ret: 0, fordi: "En bil **er ikke** en motor — den **har** en. Med komposition kan motoren også skiftes ud med en anden, uden at `Bil` skal laves om." },
-      { t: "orden", q: "Byg et lille hierarki: `Dyr` med en virtual metode og `Fugl`, der overskriver den. Sæt linjerne i rækkefølge.",
+      { t: "orden", q: "Byg et lille hierarki: `Dyr` med en virtual metode og `Fugl`, der overskriver den. Sæt linjerne i rækkefølge.", alt: [[4, 5, 6, 7, 0, 1, 2, 3]],
         linjer: ["class Dyr", "{", R`    public virtual string Lyd() { return "..."; }`, "}", "class Fugl : Dyr", "{", R`    public override string Lyd() { return "Pip"; }`, "}"],
         omkring: ["Console.WriteLine(new Fugl().Lyd());", ""],
         output: "Pip",

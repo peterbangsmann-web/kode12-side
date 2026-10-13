@@ -755,7 +755,7 @@ console.log('B: efter subscribe');`,
         output: "A: sender request\nB: efter subscribe\nC: svaret kom",
         fordi: "Funktionen i `setTimeout` bliver først kaldt, når den nuværende kode er færdig — også med 0 millisekunder. Sådan er det også med `subscribe`: koden efter `subscribe` kører **før** svaret er kommet." },
       { t: "spor", sprog: "js", slut: false,
-        q: "Listen starter tom. Følg `hent()`, og skriv antallet af personer i signalet og det, konsollen har vist, efter hver linje. Rækkerne står i den rækkefølge, linjerne **faktisk** bliver udført. Skriv konsollens bogstaver med mellemrum, fx `A B`.",
+        q: "Listen starter tom, og API'et svarer med 3 personer. Følg `hent()`, og skriv antallet af personer i signalet og det, konsollen har vist, efter hver linje. Rækkerne står i den rækkefølge, linjerne **faktisk** bliver udført. Skriv konsollens bogstaver med mellemrum, fx `A B`.",
         kode: R`hent() {
   console.log('A');
   this.personService.hentAlle().subscribe({
@@ -950,7 +950,7 @@ export const routes: Routes = [
         kode: R`private route = inject([[ActivatedRoute]]);
 
 ngOnInit() {
-  const id = [[Number]](this.route.snapshot.paramMap.get('[[id]]'));
+  const id = [[Number|parseInt]](this.route.snapshot.paramMap.get('[[id]]'));
 }`,
         fordi: "`ActivatedRoute` kender den aktuelle adresse. `paramMap.get('id')` giver teksten fra `:id`, og `Number` gør den til et tal." },
       { t: "laes", h: "Detaljesidens skabelon",

@@ -245,7 +245,7 @@ Console.WriteLine(!b && a);`,
         kode: R`string kodeord = "hemmelig";
 bool erSpaerret = false;
 
-if (kodeord == "hemmelig" [[&&]] [[!]]erSpaerret)
+if (kodeord == "hemmelig" [[&&|&]] [[!]]erSpaerret)
 {
     Console.WriteLine("Adgang givet");
 }`,
@@ -254,7 +254,7 @@ if (kodeord == "hemmelig" [[&&]] [[!]]erSpaerret)
       { t: "skriv", q: "Variablen `tal` er lavet for dig. Skriv en `if`, der skriver `Mellem`, hvis `tal` er mindst 10 **og** højst 20.",
         foer: R`int tal = 15;`,
         tjek: [
-          [/if\((tal>=10&&tal<=20|tal<=20&&tal>=10|10<=tal&&tal<=20)\)/, "Betingelsen skal være `tal >= 10 && tal <= 20`"],
+          [/if\(((tal>=10|tal>9|10<=tal|9<tal)&&(tal<=20|tal<21|20>=tal|21>tal)|(tal<=20|tal<21|20>=tal|21>tal)&&(tal>=10|tal>9|10<=tal|9<tal))\)/, "Betingelsen skal være `tal >= 10 && tal <= 20`"],
           ['Console.WriteLine("Mellem");', "Skriv `Mellem` i blokken"]
         ],
         forkert: ['if (tal >= 10 || tal <= 20)\n{\n    Console.WriteLine("Mellem");\n}', 'if (10 <= tal <= 20)\n{\n    Console.WriteLine("Mellem");\n}'],
@@ -464,10 +464,10 @@ while (tal <= 3)
       { t: "udfyld", q: "Løkken skal tælle ned fra 3 til 1 og så skrive `Start!`.",
         kode: R`int n = 3;
 
-[[while]] (n [[>]] 0)
+[[while]] (n [[>|!=]] 0)
 {
     Console.WriteLine(n);
-    n[[--]];
+    n[[--|-= 1]];
 }
 Console.WriteLine("Start!");`,
         output: "3\n2\n1\nStart!",
@@ -578,7 +578,7 @@ else
           ["int i = 1;", "Start med `int i = 1;`"],
           [/while\(i(<=5|<6)\)/, "Løkken skal køre, så længe `i <= 5`"],
           ["Console.WriteLine(i);", "Skriv `i` ud i løkken"],
-          [/i\+\+;|i\+=1;|i=i\+1;/, "Læg 1 til `i` i hver omgang — ellers stopper løkken aldrig"]
+          [/i\+\+;|\+\+i;|i\+=1;|i=i\+1;|i=1\+i;/, "Læg 1 til `i` i hver omgang — ellers stopper løkken aldrig"]
         ],
         forkert: ["int i = 1;\nwhile (i <= 5)\n{\n    Console.WriteLine(i);\n}"],
         loesning: R`int i = 1;
@@ -641,7 +641,7 @@ Console.WriteLine($"Om 5 år er du {alder + 5}.");`,
         output: "0\n1\n2\n3",
         fordi: "Løkken starter på 0 og kører, så længe i er **mindre end** 4. Den kører altså 4 gange: 0, 1, 2 og 3. Mønsteret `i = 0; i < antal` er det, du ser allermest — programmører tæller fra 0." },
       { t: "udfyld", q: "Løkken skal skrive `Hej` præcis 5 gange.",
-        kode: R`for (int i = 0; i [[<]] 5; [[i++]])
+        kode: R`for (int i = 0; i [[<|!=]] 5; [[i++|++i|i += 1|i = i + 1]])
 {
     Console.WriteLine("Hej");
 }`,
@@ -675,7 +675,7 @@ Console.WriteLine("Slut");` },
         tjek: [
           [/for\(int i=1;/, "Start løkken med `for (int i = 1;`"],
           [/;i(<=10|<11);/, "Betingelsen skal være `i <= 10`"],
-          [/;(i\+\+|\+\+i|i\+=1)\)/, "Tæl op med `i++`"],
+          [/;(i\+\+|\+\+i|i\+=1|i=i\+1|i=1\+i)\)/, "Tæl op med `i++`"],
           ["Console.WriteLine(i);", "Skriv `i` ud i løkken"]
         ],
         loesning: R`for (int i = 1; i <= 10; i++)
@@ -761,7 +761,7 @@ for (int i = 1; i <= 10; i++)
       { t: "valg", q: "Hvilken slags løkke passer til \"gentag, indtil der er gættet rigtigt\"?",
         svar: ["while — vi ved ikke på forhånd, hvor mange gæt der skal til", "for — den skal køre præcis 10 gange", "Ingen løkke — en if er nok", "switch"],
         ret: 0, fordi: "Antallet af omgange er ukendt. Det afhænger af brugeren. Så er det `while`." },
-      { t: "orden", q: "Byg kernen i spillet: løkken, der bliver ved, så længe gættet er forkert. Sæt linjerne i rækkefølge.",
+      { t: "orden", q: "Byg kernen i spillet: løkken, der bliver ved, så længe gættet er forkert. Sæt linjerne i rækkefølge.", alt: [[1, 0, 2, 3, 4, 5, 6, 7]],
         linjer: ["int hemmeligt = 7;", "int gaet = 0;", "while (gaet != hemmeligt)", "{", R`    Console.Write("Gæt: ");`, "    gaet = int.Parse(Console.ReadLine());", "}", R`Console.WriteLine("Rigtigt!");`],
         fordi: "Begge variabler skal laves før løkken. `gaet` starter på 0, så betingelsen er sand første gang. Inde i løkken spørges der, og svaret gemmes. Når gættet er rigtigt, bliver betingelsen falsk, og programmet fortsætter efter klammen." },
       { t: "forudsig", q: "Brugeren taster de gæt, der står under koden. Hvad skriver programmet i alt? (Programmet skriver ikke selv noget, når det læser et gæt.)",
@@ -793,7 +793,7 @@ int forsoeg = [[0]];
 while (gaet != hemmeligt)
 {
     gaet = int.Parse(Console.ReadLine());
-    forsoeg[[++]];
+    forsoeg[[++|+= 1]];
 }
 Console.WriteLine($"Du brugte {forsoeg} forsøg");`,
         input: ["1", "5", "8", "7"],
@@ -814,11 +814,11 @@ Console.WriteLine($"Du brugte {forsoeg} forsøg");`,
         foer: R`int hemmeligt = 50;
 int gaet = 80;`,
         tjek: [
-          [/if\(gaet<hemmeligt\)/, "Første betingelse: `if (gaet < hemmeligt)`"],
+          [/if\((gaet<hemmeligt|hemmeligt>gaet)\)/, "Første betingelse: `if (gaet < hemmeligt)`"],
           ['Console.WriteLine("For lavt");', "Skriv `For lavt`"],
-          [/else if\(gaet>hemmeligt\)/, "Anden betingelse: `else if (gaet > hemmeligt)`"],
+          [/else if\((gaet>hemmeligt|hemmeligt<gaet)\)/, "Anden betingelse: `else if (gaet > hemmeligt)`"],
           ['Console.WriteLine("For højt");', "Skriv `For højt`"],
-          [/else\{Console\.WriteLine\("Rigtigt"\);\}/, "Slut med en `else`-blok, der skriver `Rigtigt`"]
+          [/else ?\{?Console\.WriteLine\("Rigtigt"\);\}?/, "Slut med en `else`-blok, der skriver `Rigtigt`"]
         ],
         loesning: R`if (gaet < hemmeligt)
 {

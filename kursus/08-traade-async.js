@@ -618,7 +618,7 @@ Console.WriteLine(k.Saldo);
 
 class Konto
 {
-    private object laas = new [[object]]();
+    private object laas = new [[object|Object]]();
     public int Saldo { get; private set; }
 
     public void Indsaet(int beloeb)

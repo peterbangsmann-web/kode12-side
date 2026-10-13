@@ -357,7 +357,7 @@ else
           ["TilfoejTest", "Opretter en kunde og henter listen igen. Blazor tegner siden igen af sig selv efter et klik."]
         ],
         md2: "Siden bruger `Customer` og `ICustomerService`, som ligger i andre namespaces. I stedet for `@using` øverst i hver `.razor`-fil skriver du to linjer **én gang** nederst i `Components/_Imports.razor`:\n\n`@using KundeApp.Models`\n\n`@using KundeApp.Services`\n\nLinjerne i `_Imports.razor` gælder for alle komponenter i `Components` og mapperne under den." },
-      { t: "udfyld", frag: true, q: "Udfyld: registrér servicen i `Program.cs`, og bed om den på en side.",
+      { t: "udfyld", frag: true, q: "Udfyld: registrér servicen i `Program.cs`, så alle brugere deler den samme liste, og bed om den på en side.",
         kode: R`// Program.cs
 builder.Services.[[AddSingleton]]<ICustomerService, [[MemoryCustomerService]]>();
 

@@ -242,7 +242,7 @@ class Person
 
     public [[void]] HarFoedselsdag()
     {
-        [[Alder++|Alder += 1]];
+        [[Alder++|Alder += 1|++Alder|Alder = Alder + 1]];
     }
 }`,
         output: "30",
@@ -771,7 +771,7 @@ Console.WriteLine($"{f.Titel} ({f.Aar})");
 class Film
 {
     public string Titel { [[get]]; [[set]]; }
-    public [[int]] Aar { get; set; }
+    public [[int|long|double|decimal|float]] Aar { get; set; }
 }`,
         output: "Matrix (1999)",
         fordi: "En auto-property har `get;` og `set;` i tuborgklammer. Årstallet er et heltal." },

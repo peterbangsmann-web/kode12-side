@@ -463,7 +463,7 @@ public static class SeedData
           ["AddToRoleAsync(admin, \"Admin\")", "Giver brugeren rollen: én ny række i AspNetUserRoles."]
         ] },
       { t: "spor", h: "Spor: seeding, der kan køre igen og igen",
-        q: "Seedingen kører, **hver gang** appen starter. Her er samme logik med en liste i stedet for databasen. Databasen har allerede rollen Medlem fra sidste start. Skriv `oprettet` og antallet af roller i databasen lige efter hver kørt linje.",
+        q: "Seedingen kører, **hver gang** appen starter. Her er samme logik med en liste i stedet for databasen. Databasen har allerede rollen Medlem fra sidste start. Skriv `oprettet` og antallet af roller i databasen lige efter hver kørt linje. Kun linje 3, 6, 8 og 9 er med i skemaet. Linje 6 kører én gang for hver rolle, og den ændrer ikke noget.",
         kode: R`List<string> database = new List<string> { "Medlem" };
 string[] roller = { "Admin", "Traener", "Medlem" };
 int oprettet = 0;
@@ -477,7 +477,7 @@ foreach (string rolle in roller)
 }
 Console.WriteLine($"{oprettet} nye, {database.Count} i alt");`,
         kolonner: ["oprettet", "database.Count"],
-        raekker: [[3, "=0", "=1"], [8, "=0", "=2"], [9, "1", "2"], [8, "1", "3"], [9, "2", "3"], [6, "2", "3"]],
+        raekker: [[3, "=0", "=1"], [6, "=0", "=1"], [8, "0", "2"], [9, "1", "2"], [6, "1", "2"], [8, "1", "3"], [9, "2", "3"], [6, "2", "3"]],
         output: "2 nye, 3 i alt",
         fordi: "Admin og Traener manglede og blev oprettet. Medlem fandtes, så `if` sprang den over (sidste række: kun linje 6 kørte). Starter appen igen, giver det `0 nye, 3 i alt` — derfor kan seedingen trygt køre ved hver start." },
       { t: "valg", q: "Hvorfor står der `if (!await roleManager.RoleExistsAsync(rolle))` i seedingen?",

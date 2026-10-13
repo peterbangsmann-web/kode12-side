@@ -51,8 +51,8 @@ Console.WriteLine(alder);`,
         output: "Peter\n25",
         md2: "Typen bestemmer, hvad der må ligge i kassen. Du kan ikke lægge tekst i en `int` eller et tal uden anførselstegn i en `string`." },
       { t: "udfyld", q: "Vælg den rigtige type til hver variabel.",
-        kode: R`[[string]] by = "Aarhus";
-[[int]] postnummer = 8000;
+        kode: R`[[string|var]] by = "Aarhus";
+[[int|var]] postnummer = 8000;
 Console.WriteLine(by);
 Console.WriteLine(postnummer);`,
         output: "Aarhus\n8000",
@@ -201,7 +201,7 @@ Console.WriteLine(7.0 / 2);
 Console.WriteLine(7 / 2);`,
         output: "1,82\n3,5\n3" },
       { t: "udfyld", q: "Gennemsnittet af 7 og 8 er 7,5. Vælg typen, så resultatet ikke mister kommaet.",
-        kode: R`[[double]] sum = 7 + 8;
+        kode: R`[[double|decimal|float]] sum = 7 + 8;
 Console.WriteLine(sum / 2);`,
         output: "7,5",
         fordi: "`sum` er en `double`, så `sum / 2` er en division med et kommatal — og kommaet overlever. Havde `sum` været en `int`, var resultatet blevet 7." },

@@ -238,7 +238,7 @@ console.log(a(1), b(1), c(1));`,
         output: "2 2 2",
         md2: "Har en arrow function flere parametre, skal de i parentes: `(a, b) => a + b`. Skal den have flere linjer, bruger du tuborgklammer og `return`: `(a, b) => { const s = a + b; return s; }`." },
       { t: "udfyld", q: "Lav en arrow function, der ganger et tal med sig selv.", sprog: "js",
-        kode: R`[[const]] kvadrat = x [[=>]] x * x;
+        kode: R`[[const|let|var]] kvadrat = x [[=>]] x * x;
 console.log(kvadrat(5));`,
         output: "25",
         fordi: "Funktionen gemmes i en `const`. Pilen `=>` skiller parameteren fra det, der skal beregnes." },
@@ -296,7 +296,7 @@ for (let i = 0; i < tal.length; i++) {
 }
 console.log(sum);`,
         kolonner: ["sum", "i"],
-        raekker: [[2, "=0", "=–"], [3, "=0", "=0"], [4, "4", "0"], [3, "4", "1"], [4, "5", "1"], [3, "5", "2"], [4, "11", "2"]],
+        raekker: [[2, "=0", "=–"], [3, "=0", "=0"], [4, "4", "0"], [3, "4", "1"], [4, "5", "1"], [3, "5", "2"], [4, "11", "2"], [3, "11", "3"]],
         output: "11",
         fordi: "`tal[i]` er 4, så 1, så 6. Summen vokser 0 → 4 → 5 → 11. Efter sidste runde bliver `i` til 3, betingelsen `3 < 3` er falsk, og løkken stopper. `for`-løkken skrives præcis som i C# — bare med `let` i stedet for `int`." },
       { t: "laes", h: "forEach, map og filter",
@@ -329,7 +329,7 @@ console.log(navne[0]);`,
         output: "ANNA,BO,CARL\n1\nanna",
         fordi: "`map` laver hvert navn om til store bogstaver med `toUpperCase()` — JavaScripts udgave af `ToUpper()`. Kun \"bo\" har højst 3 bogstaver, så `korte` har ét element. `navne` er uændret — `map` laver et **nyt** array." },
       { t: "orden", sprog: "js",
-        q: "Sæt linjerne i rækkefølge, så funktionen regner gennemsnittet af tallene ud, og programmet skriver 5.",
+        q: "Sæt linjerne i rækkefølge, så funktionen regner gennemsnittet af tallene ud, og programmet skriver 5.", alt: [[7, 0, 1, 2, 3, 4, 5, 6]],
         linjer: [
           R`function gennemsnit(tal) {`,
           R`    let sum = 0;`,

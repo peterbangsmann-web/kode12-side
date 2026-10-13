@@ -265,7 +265,7 @@ var pipeline = ml.Transforms.Concatenate("Features", "Kvm", "Vaerelser")
           ["Regression.Trainers.…", "Vælg en **træner** til regression. `labelColumnName` siger, hvilken kolonne der er svaret."]
         ],
         md2: "Hvorfor netop `LbfgsPoissonRegression`? Den giver stabile resultater på små datasæt med tal, der altid er positive, som priser. ML.NET har mange andre trænere — fx `Sdca`, der bruges i mange af Microsofts eksempler. På så få rækker som her giver `Sdca` til gengæld helt skæve modeller. Det ser du selv i værkstedet, og det er en vigtig pointe: **mål altid modellen**." },
-      { t: "orden", frag: true, q: "Sæt de seks skridt i den rækkefølge, et ML.NET-program skal have dem.",
+      { t: "orden", frag: true, q: "Sæt de seks skridt i den rækkefølge, et ML.NET-program skal have dem.", alt: [[0, 2, 1, 3, 4, 5]],
         linjer: [
           R`MLContext ml = new MLContext(seed: 1);`,
           R`IDataView data = ml.Data.LoadFromEnumerable(lejligheder);`,

@@ -848,7 +848,7 @@ int j = 0;
         efter: R`
 Console.WriteLine(string.Join(" ", t));`,
         tjek: [
-          ["int temp=t[j];", "Gem `t[j]` i `temp` først: `int temp = t[j];`"],
+          [/(int|var) temp=t\[j\];/, "Gem `t[j]` i `temp` først: `int temp = t[j];`"],
           ["t[j]=t[j+1];", "Kopiér naboen ind: `t[j] = t[j + 1];`"],
           ["t[j+1]=temp;", "Læg den gemte værdi på naboens plads: `t[j + 1] = temp;`"]
         ],

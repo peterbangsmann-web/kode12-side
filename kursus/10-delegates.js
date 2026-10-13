@@ -120,7 +120,7 @@ delegate int Beregning(int x);`,
         output: "8" },
       { t: "udfyld", q: "Lad `op` pege på metoden `Halv`, og kald den med 10.",
         kode: R`Beregning op = [[Halv]];
-Console.WriteLine([[op]](10));
+Console.WriteLine([[op|op.Invoke]](10));
 
 static int Halv(int x)
 {
@@ -354,7 +354,7 @@ skrivDobbelt(21);`,
       { t: "skriv", q: "Lav en `Func<int, bool>`, der hedder `erVoksen`. Den skal være et lambda-udtryk, der returnerer `true`, når alderen er **18 eller mere**. Skriv derefter `erVoksen(20)` ud med `Console.WriteLine`.",
         tjek: [
           [/Func<int,bool> ?erVoksen=/, "Variablen: `Func<int, bool> erVoksen = …`"],
-          [/\(?(\w+)\)?=>\1>=18;/, "Lambda-udtrykket returnerer `true` ved 18 eller mere, fx `alder => alder >= 18`"],
+          [/\(?(\w+)\)?=>(\1>=18|\1>17|18<=\1|17<\1);/, "Lambda-udtrykket returnerer `true` ved 18 eller mere, fx `alder => alder >= 18`"],
           [/Console\.WriteLine\(erVoksen\(20\)\);/, "Kald den og skriv svaret ud: `Console.WriteLine(erVoksen(20));`"]
         ],
         forkert: [R`Func<int, bool> erVoksen = a => a > 18;
@@ -567,7 +567,7 @@ static void Gentag(int gange, Action<int> handling)
 static void Beregn(int a, int b, [[Action]]<int> naarFaerdig)
 {
     int sum = a + b;
-    [[naarFaerdig]](sum);
+    [[naarFaerdig|naarFaerdig.Invoke]](sum);
 }`,
         output: "Svaret er 9",
         fordi: "Callback'en returnerer intet, så den er en `Action<int>`. Inde i metoden kaldes den med `naarFaerdig(sum)`." },
@@ -792,7 +792,7 @@ class Butik
         slut: false,
         output: "13",
         fordi: "Linje 3 og 6 tilmelder kun — de ændrer ikke `antal`. De to første salg har én subscriber: 1, 2. Det tredje salg kører begge subscribers: 2 + 1 + 10 = 13." },
-      { t: "orden", q: "Sæt linjerne i rækkefølge, så programmet skriver `Ring til vagten`. Klassen `Alarm` rejser eventen `Udloest`.",
+      { t: "orden", q: "Sæt linjerne i rækkefølge, så programmet skriver `Ring til vagten`. Klassen `Alarm` rejser eventen `Udloest`.", alt: [[0, 1, 2, 3, 4, 6, 5, 7]],
         linjer: [R`Alarm alarm = new Alarm();`, R`alarm.Udloest += (s, e) => Console.WriteLine("Ring til vagten");`, R`alarm.Udloes();`, R`class Alarm`, R`{`, R`    public event EventHandler? Udloest;`, R`    public void Udloes() { Udloest?.Invoke(this, EventArgs.Empty); }`, R`}`],
         output: "Ring til vagten",
         fordi: "Objektet skal findes, før man kan tilmelde sig. Man skal være tilmeldt, før eventen rejses — ellers sker der ingenting. Klassen står til sidst, og eventen er erklæret i den." },

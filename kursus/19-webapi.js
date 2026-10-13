@@ -317,7 +317,7 @@ public ActionResult<Person> PostPerson(Person person)
           ['[HttpGet("{id}")]', "Attributten `[HttpGet(\"{id}\")]` over metoden"],
           [/public ActionResult<Person>GetPerson\(int id\)/, "Metoden: `public ActionResult<Person> GetPerson(int id)`"],
           [/personer\.Find\((\w+)=>\1\.Id==id\)/, "Find personen: `personer.Find(p => p.Id == id)`"],
-          [/==null\)\{?return NotFound\(\);/, "Hvis personen er `null`: `return NotFound();`"],
+          [/(==null|is null)\)\{?return NotFound\(\);/, "Hvis personen er `null`: `return NotFound();`"],
           [/return (person|Ok\(person\));/, "Ellers: `return person;`"]
         ],
         forkert: [R`[HttpGet("id")]
@@ -552,7 +552,7 @@ public interface IPersonsData
 
     public Person? GetPerson(int id)
     {
-        return personer.[[Find]](p => p.Id == id);
+        return personer.[[Find|FirstOrDefault|SingleOrDefault]](p => p.Id == id);
     }
 
     public Person AddPerson(Person newPerson)

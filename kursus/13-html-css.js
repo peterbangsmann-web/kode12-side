@@ -80,8 +80,8 @@ window.KURSUS.push({
         ] },
       { t: "orden", q: "Sæt linjerne i rækkefølge, så de danner et korrekt HTML-skelet.",
         sprog: "html",
-        linjer: [R`<!DOCTYPE html>`, R`<html lang="da">`, R`<head>`, R`  <title>Opskrifter</title>`, R`</head>`, R`<body>`, R`  <h1>Opskrifter</h1>`, R`</body>`],
-        fordi: "Først `DOCTYPE`, så `html`. Inden i `html` kommer `head` (med `title`) og bagefter `body` (med det, man ser). Hvert element lukkes, før det næste åbnes. Til sidst kommer `</html>` — den er udeladt her." },
+        linjer: [R`<!DOCTYPE html>`, R`<html lang="da">`, R`<head>`, R`  <title>Opskrifter</title>`, R`</head>`, R`<body>`, R`  <h1>Opskrifter</h1>`, R`</body>`, R`</html>`],
+        fordi: "Først `DOCTYPE`, så `html`. Inden i `html` kommer `head` (med `title`) og bagefter `body` (med det, man ser). Hvert element lukkes, før det næste åbnes. Til sidst lukkes `html` med `</html>`." },
       { t: "udfyld", q: "Udfyld skelettet. Fanen skal vise `Min blog`, og siden skal vise overskriften `Velkommen`.",
         sprog: "html",
         kode: R`<!DOCTYPE html>
@@ -479,7 +479,7 @@ window.KURSUS.push({
           ["type=\"checkbox\"", "Et flueben. Sendes kun, hvis der er sat flueben."]
         ],
         md2: "`id` og `name` har ofte samme værdi, men de har forskellige opgaver: `id` er til siden selv (label og CSS), `name` er til serveren." },
-      { t: "udfyld", q: "Bind teksten `E-mail` til feltet, og sørg for, at værdien sendes til serveren som `email`.",
+      { t: "udfyld", q: "Bind teksten `E-mail` til feltet, gør feltet til et e-mailfelt, og sørg for, at værdien sendes til serveren som `email`.",
         sprog: "html",
         kode: R`<label [[for]]="email">E-mail</label>
 <input type="[[email]]" id="email" [[name]]="email">`,
@@ -503,7 +503,7 @@ window.KURSUS.push({
           ["<textarea>", "Et stort tekstfelt med flere linjer. Har et sluttag, i modsætning til `input`."],
           ["<button type=\"submit\">", "Sender formularen. Uden `type` er en knap i en formular også en submit-knap."]
         ] },
-      { t: "orden", q: "Sæt linjerne i rækkefølge, så de danner en formular, der sender et navn med POST til `/opret`.",
+      { t: "orden", q: "Sæt linjerne i rækkefølge, så de danner en formular, der sender et navn med POST til `/opret`. På siden skal teksten Navn stå først, så feltet og til sidst knappen.",
         sprog: "html",
         linjer: [R`<form action="/opret" method="post">`, R`  <label for="navn">Navn</label>`, R`  <input type="text" id="navn" name="navn">`, R`  <button type="submit">Opret</button>`, R`</form>`],
         fordi: "Formularen åbnes med `action` og `method`. Label står foran feltet, så teksten kommer før. Knappen står til sidst, og `</form>` lukker." },
@@ -854,7 +854,7 @@ h1 {
         kode: R`<style>
   .kort-raekke {
     display: [[flex]];
-    [[gap]]: 20px;
+    [[gap|column-gap]]: 20px;
   }
 </style>
 

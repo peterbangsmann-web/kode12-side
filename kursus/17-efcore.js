@@ -401,7 +401,7 @@ PM> [[Update-Database]]`,
       { t: "laes", h: "CRUD — og hvem der skriver koden",
         md: "En side med data skal næsten altid kunne fire ting. De hedder samlet **CRUD**, og du kender dem fra SQL:\n\n- **C**reate — opret → `INSERT`\n- **R**ead — vis → `SELECT`\n- **U**pdate — ret → `UPDATE`\n- **D**elete — slet → `DELETE`\n\nKoden til CRUD ser næsten ens ud for alle modeller. Derfor kan Visual Studio skrive den for dig. Det hedder **scaffolding** (stillads): du får en controller med alle actions og fem views — `Index`, `Details`, `Create`, `Edit` og `Delete`. Din opgave er at **forstå** koden, så du kan rette i den og forklare den til eksamen." },
       { t: "orden", sprog: "text",
-        q: "Du har nu lavet de første syv af underviserens otte trin i FirmaApp. Sæt alle otte i den rigtige rækkefølge, før du laver det sidste.",
+        q: "Du har nu lavet de første syv af underviserens otte trin i FirmaApp. Sæt alle otte i underviserens rækkefølge, før du laver det sidste.",
         linjer: ["Skriv modelklasserne i Models", "Installér EF Core-pakkerne", "Skriv DbContext-klassen med en DbSet pr. tabel", "Skriv connection stringen i appsettings.json", "Registrér AddDbContext i Program.cs", "Add-Migration", "Update-Database", "Scaffold controllere og views, og tjek mappenavnene i Views"],
         fordi: "Modellen først — alt andet bygger på den. Pakkerne skal være der, før `DbContext` kan skrives. `AddDbContext` skal bruge både klassen og connection stringen. Migrationen kræver det hele, og controllerne kræver en database." },
       { t: "laes", h: "Lav controlleren",
@@ -513,7 +513,7 @@ public async Task<IActionResult> Create([Bind("Id,Name")] Department department)
           ["return RedirectToAction(nameof(Index));", "Send browseren videre til listen (statuskode 302). Så bliver formularen ikke sendt igen, hvis man trykker opdatér."]
         ] },
       { t: "spor", h: "Spor: Edit modtager formularen",
-        q: "Når du retter en afdeling, sender formularen til adressen `/Departments/Edit/3`, og model binding laver et objekt ud fra felterne. Programmet her gør det samme i hånden. Skriv værdierne, lige efter at linjen er udført.",
+        q: "Når du retter en afdeling, sender formularen til adressen `/Departments/Edit/3`, og model binding laver et objekt ud fra felterne. Programmet her gør det samme i hånden. Skriv værdierne, lige efter at linjen er udført. `\"\"` i skemaet betyder en tom tekst.",
         kode: R`int id = 3;
 Department d = new Department();
 d.Id = 3;
@@ -527,7 +527,7 @@ class Department
     public string Name { get; set; } = "";
 }`,
         kolonner: ["id", "d.Id", "d.Name", "svar"],
-        raekker: [[1, "=3", "=–", "=–", "=–"], [2, "=3", "=0", "=", "=–"], [3, "3", "3", "=", "–"], [4, "3", "3", "Lager og logistik", "–"], [5, "3", "3", "Lager og logistik", "Gem"]],
+        raekker: [[1, "=3", "=–", "=–", "=–"], [2, "=3", "=0", "=\"\"", "=–"], [3, "3", "3", "=\"\"", "–"], [4, "3", "3", "Lager og logistik", "–"], [5, "3", "3", "Lager og logistik", "Gem"]],
         slut: false,
         output: "Gem",
         fordi: "`id` kommer fra **adressen**, `d.Id` fra et **skjult felt** i formularen. Den rigtige `Edit` begynder med `if (id != department.Id) return NotFound();` — er de to forskellige, har nogen pillet ved formularen, og intet bliver gemt. Her er de ens, så afdelingen bliver gemt. Bemærk linje 2: et nyt objekt har `Name` = tom tekst, fordi klassen skriver `= \"\"`." },
@@ -859,7 +859,7 @@ public IActionResult Create()
       { t: "laes", h: "Når modellen ændrer sig",
         md: "Chefen vil have medarbejdernes e-mail med. Du retter **aldrig** tabellen i hånden. Du retter klassen og laver en migration mere:\n\n1. Tilføj propertyen `public string? Email { get; set; }` med attributten `[EmailAddress]` over i `Employee`.\n2. {{`Add-Migration AddEmail`||`dotnet ef migrations add AddEmail`}} — migrationen indeholder kun forskellen: `AddColumn` med kolonnen `Email`.\n3. {{`Update-Database`||`dotnet ef database update`}}.\n4. **Ret views og controller.** Scaffoldingen skrev koden én gang; den opdaterer sig ikke selv. Tilføj et felt til `Email` i `Create.cshtml` og `Edit.cshtml`, en kolonne i `Index.cshtml`, og skriv `Email` i `[Bind(…)]` i **både** Create og Edit.\n\n`[EmailAddress]` er en valideringsattribut som `[Required]`: teksten skal ligne en e-mailadresse." },
       { t: "orden", sprog: "text",
-        q: "Du skal have en ny kolonne `Phone` på medarbejderne. Sæt arbejdet i rækkefølge.",
+        q: "Du skal have en ny kolonne `Phone` på medarbejderne. Sæt arbejdet i rækkefølge.", alt: [[0, 3, 1, 2, 4], [0, 1, 3, 2, 4]],
         linjer: ["Tilføj public string? Phone { get; set; } i Employee.cs", "Add-Migration AddPhone", "Update-Database", "Tilføj Phone i formularerne og i [Bind] i Create og Edit", "Kør programmet, og ret en medarbejder"],
         fordi: "Klassen først, så opskriften, så databasen. Views og `[Bind]` kan rettes før eller efter migrationen — men de skal rettes, før du afprøver det." },
       { t: "fejl", frag: true, logisk: true,

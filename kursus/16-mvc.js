@@ -211,7 +211,7 @@ app.Run();`,
           ["app.Run()", "Starter serveren. Den kører nu og venter på forespørgsler, til du stopper den."]
         ] },
       { t: "orden", frag: true,
-        q: "Sæt de vigtigste linjer i `Program.cs` i den rigtige rækkefølge.",
+        q: "Sæt de vigtigste linjer i `Program.cs` i samme rækkefølge som i skabelonen. Der står `UseHttpsRedirection` før `UseRouting`.",
         linjer: [R`var builder = WebApplication.CreateBuilder(args);`, R`builder.Services.AddControllersWithViews();`, R`var app = builder.Build();`, R`app.UseHttpsRedirection();`, R`app.UseRouting();`, R`app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");`, R`app.Run();`],
         fordi: "Først services (før `Build`), så appen bygges, så pipelinen sættes op, og til sidst `Run`, der starter serveren. `Run` skal stå sidst: linjer efter den kører først, når serveren stopper." },
       { t: "udfyld", frag: true,
@@ -387,7 +387,7 @@ public class FilmController : Controller
         svar: ["RedirectToAction(\"Index\")", "View(\"Index\")", "Content(\"Index\")", "Json(\"Index\")"],
         ret: 0, fordi: "`RedirectToAction` sender 302, så browseren selv beder om `/Film`. `View(\"Index\")` ville vise Index-viewet med det samme, men adressen i browseren ville stadig være den gamle, og Index-actionen ville aldrig køre." },
       { t: "skriv", frag: true,
-        q: "Skriv en action i `FilmController`, der hedder `Om`. Den har ingen parametre og svarer med den rene tekst `FilmKlub version 1`.",
+        q: "Skriv en action i `FilmController`, der hedder `Om`. Den har ingen parametre og svarer med den rene tekst `FilmKlub version 1`. Brug returtypen `IActionResult` og `Content(...)`.",
         foer: R`public class FilmController : Controller
 {`,
         efter: R`}`,
@@ -854,7 +854,7 @@ public IActionResult Create(Film film)
         md2: "Formularens tag helper lægger også et skjult felt ind, `__RequestVerificationToken`. Det beskytter mod falske formularer fra andre sider og forklares i modul 17." },
       { t: "udfyld", sprog: "razor", frag: true,
         q: "Udfyld formularen, så den sender titlen med POST til actionen `Create`.",
-        kode: R`<form asp-action="[[Create]]" method="[[post]]">
+        kode: R`<form asp-action="[[Create]]" method="[[post|POST]]">
     <label asp-for="Titel"></label>
     <input asp-[[for]]="Titel" class="form-control" />
     <span asp-validation-for="Titel" class="text-danger"></span>
@@ -940,11 +940,11 @@ ider.Add(nyId);`,
         raekker: [[1, "=–", "=3"], [2, "5", "3"], [3, "5", "4"], [4, "6", "4"], [5, "6", "5"]],
         fordi: "Det største id er 4, så første nye film får 5 — ikke 4, selvom listen kun har 3 elementer. Efter `Add` er 5 det største, så næste film får 6. Id'et skal være unikt, så man finder den rigtige film på `/Film/Details/{id}`." },
       { t: "orden", frag: true,
-        q: "Sæt linjerne i POST-actionen i rækkefølge, så ugyldige data afvises, og gyldige gemmes.",
+        q: "Sæt linjerne i POST-actionen i rækkefølge, så ugyldige data afvises, og gyldige gemmes. Filmen skal have sit `Id`, før den lægges i listen.",
         linjer: [R`[HttpPost]`, R`public IActionResult Create(Film film)`, R`{`, R`    if (!ModelState.IsValid) return View(film);`, R`    film.Id = FilmData.Alle.Max(f => f.Id) + 1;`, R`    FilmData.Alle.Add(film);`, R`    return RedirectToAction("Index");`, R`}`],
         fordi: "Tjek først. Et ugyldigt objekt må aldrig nå ned i listen (eller databasen). Id'et sættes, før filmen lægges i listen, og omdirigeringen kommer til sidst." },
       { t: "skriv", frag: true,
-        q: "Skriv GET-actionen til formularen. Den hedder `Create`, har attributten `[HttpGet]`, ingen parametre, og viser bare viewet.",
+        q: "Skriv GET-actionen til formularen. Den hedder `Create`, har attributten `[HttpGet]`, returtypen `IActionResult`, ingen parametre, og viser bare viewet.",
         foer: R`public class FilmController : Controller
 {`,
         efter: R`}`,

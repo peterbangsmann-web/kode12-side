@@ -70,7 +70,7 @@ Streg();`,
 }`,
         output: "Hej fra min egen metode",
         md2: "`Main` er altså selv en metode — den, computeren kalder for at starte programmet. Ordet `static` skal stå foran dine metoder indtil videre. Hvorfor, lærer du i modul 4.\n\nMetodenavne skrives med **PascalCase**: stort begyndelsesbogstav, `BeregnPris`. Variabler skrives med camelCase, `prisMedMoms`." },
-      { t: "orden", q: "Sæt linjerne i rækkefølge, så klassen har en `Main`, der kalder metoden `Farvel`.",
+      { t: "orden", q: "Sæt linjerne i rækkefølge, så klassen har en `Main`, der kalder metoden `Farvel`.", alt: [[0, 1, 6, 7, 8, 9, 2, 3, 4, 5, 10]],
         linjer: ["class Program", "{", "    static void Main(string[] args)", "    {", "        Farvel();", "    }", "    static void Farvel()", "    {", R`        Console.WriteLine("Farvel");`, "    }", "}"],
         output: "Farvel",
         fordi: "Begge metoder ligger inde i klassens klammer — efter hinanden, ikke inden i hinanden." },
@@ -227,7 +227,7 @@ Console.WriteLine(Dobbelt(Dobbelt(3)));`,
         svar: ["WriteLine viser noget for brugeren. return sender en værdi tilbage til koden, der kaldte, så den kan bruges videre.", "Der er ingen forskel", "return viser værdien på skærmen", "WriteLine gemmer værdien i en variabel"],
         ret: 0, fordi: "En metode, der kun skriver ud, kan man ikke regne videre med. En metode, der returnerer, giver en værdi, man kan gemme, regne med eller sende videre. Derfor er det normalt bedst, at metoder **returnerer** — og at det kun er yderst i programmet, der skrives ud." },
       { t: "udfyld", q: "Metoden skal regne arealet af et rektangel ud og give det tilbage.",
-        kode: R`static [[int]] Areal(int bredde, int hoejde)
+        kode: R`static [[int|long|double|decimal|float]] Areal(int bredde, int hoejde)
 {
     [[return]] bredde * hoejde;
 }
@@ -586,7 +586,7 @@ foreach (int k in karakterer)
 Console.WriteLine(fundet);`,
         output: "5 har bestået\nTrue",
         md2: "`break` stopper søgningen, så snart værdien er fundet. Der er ingen grund til at lede videre." },
-      { t: "orden", q: "Sæt linjerne i rækkefølge, så programmet tæller, hvor mange tal der er større end 10.",
+      { t: "orden", q: "Sæt linjerne i rækkefølge, så programmet tæller, hvor mange tal der er større end 10.", alt: [[1, 0, 2, 3, 4, 5, 6, 7, 8, 9]],
         linjer: ["int[] tal = { 5, 12, 20, 8 };", "int antal = 0;", "foreach (int t in tal)", "{", "    if (t > 10)", "    {", "        antal++;", "    }", "}", "Console.WriteLine(antal);"],
         output: "2",
         fordi: "Arrayet og tælleren laves først. Løkken gennemgår alle tal, og `if` vælger dem, der skal tælles. Udskriften står efter løkken." },

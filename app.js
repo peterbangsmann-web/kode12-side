@@ -286,9 +286,11 @@
         fokus: ta,
         tjek: function () {
           if (!ta.value.trim()) return null;
-          var ok = ensUd(ta.value, st.output);
+          // Kommatal: en dansk computer skriver 7,5 — en computer med engelsk opsætning skriver 7.5. Begge dele er det rigtige svar.
+          function tal(x) { return String(x).replace(/(\d)[.,](?=\d)/g, "$1,"); }
+          var praecis = ensUd(ta.value, st.output), ok = praecis || ensUd(tal(ta.value), tal(st.output));
           ta.className = "kode " + (ok ? "ok" : "nej");
-          return { ok: ok, html: ok ? md(st.fordi) : (naestenUd(ta.value, st.output) ? "<p>Næsten! Det er kun store/små bogstaver eller mellemrum, der er forskellige. Computeren skriver tegn for tegn.</p>" : "") };
+          return { ok: ok, html: ok ? (praecis ? "" : "<p>Rigtigt. Du har skrevet decimaltegnet anderledes end facit: med dansk opsætning skriver computeren komma (7,5), med engelsk punktum (7.5).</p>") + md(st.fordi) : (naestenUd(ta.value, st.output) ? "<p>Næsten! Det er kun store/små bogstaver eller mellemrum, der er forskellige. Computeren skriver tegn for tegn.</p>" : "") };
         },
         vis: function () { return udblok(st.output) + md(st.fordi); },
         igen: function () { ta.className = "kode"; ta.focus(); }
@@ -309,7 +311,9 @@
           if (felter.some(function (f) { return !f.value.trim(); })) return null;
           var alle = true;
           felter.forEach(function (f) {
-            var ok = f.getAttribute("data-svar").split("|").some(function (a) { return norm(a) === norm(f.value); });
+            // I SQL, HTML og almindelig tekst er store og små bogstaver ligegyldige. I C#, JavaScript og Razor er de ikke.
+            var lige = /^(sql|html|text)$/.test(st.sprog || "") ? function (x) { return norm(x).toLowerCase(); } : norm;
+            var ok = f.getAttribute("data-svar").split("|").some(function (a) { return lige(a) === lige(f.value); });
             f.className = ok ? "ok" : "nej"; if (!ok) alle = false;
           });
           return { ok: alle, html: alle ? udblok(st.output) + md(st.fordi) : "" };
@@ -341,8 +345,16 @@
     },
 
     orden: function (st, el) {
+      // Facit er rækkefølgen i st.linjer. st.alt er andre rækkefølger (lister af linjenumre fra 0), der er lige så rigtige.
+      // Indrykning tæller ikke med, så to klammer med forskellig indrykning kan bytte plads.
+      var maal = [st.linjer.map(function (_, i) { return i; })].concat(st.alt || []);
+      function bedst() {
+        var b = null;
+        maal.forEach(function (m) { var p = raek.map(function (x, pos) { return st.linjer[x].trim() === st.linjer[m[pos]].trim(); }), k = p.filter(Boolean).length; if (!b || k > b.k) b = { p: p, k: k }; });
+        return b;
+      }
       var raek = bland(st.linjer.map(function (_, i) { return i; })), n = 0;
-      while (st.linjer.length > 1 && raek.every(function (x, i) { return st.linjer[x] === st.linjer[i]; }) && n++ < 20) raek = bland(raek);
+      while (st.linjer.length > 1 && bedst().k === raek.length && n++ < 20) raek = bland(raek);
       el.innerHTML = hoved(st) + (st.q ? "" : '<div class="q"><p>Sæt linjerne i den rigtige rækkefølge.</p></div>') + '<div class="orden"></div><p class="lille svag">Træk linjerne, eller brug pilene.</p>';
       var boks = $(".orden", el), laast = false, traek = null;
       function tegn() {
@@ -359,8 +371,8 @@
       tegn();
       return {
         tjek: function () {
-          var alle = true;
-          $$(".linje", boks).forEach(function (l, pos) { var ok = st.linjer[raek[pos]] === st.linjer[pos]; l.classList.add(ok ? "ok" : "nej"); if (!ok) alle = false; });
+          var b = bedst(), alle = b.k === raek.length;
+          $$(".linje", boks).forEach(function (l, pos) { l.classList.add(b.p[pos] ? "ok" : "nej"); });
           return { ok: alle, html: alle ? udblok(st.output) + md(st.fordi) : "<p>De røde linjer står forkert.</p>" };
         },
         vis: function () { raek = st.linjer.map(function (_, i) { return i; }); tegn(); laast = true; return udblok(st.output) + md(st.fordi); },

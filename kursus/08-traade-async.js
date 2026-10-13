@@ -420,6 +420,7 @@ static [[async]] Task<[[string]]> HentNavnAsync()
         output: "Peter",
         fordi: "`await` foran kaldet, `async` foran metoden, og returtypen er `Task<string>`, fordi der returneres en tekst." },
       { t: "fejl",
+        q: "Compileren melder fejl på linje 3: `The 'await' operator can only be used within an async method`. Linje 3 skal blive stående. Klik på den linje, der skal rettes.",
         kode: R`static Task<int> HentAlderAsync()
 {
     await Task.Delay(100);

@@ -239,11 +239,12 @@ Console.WriteLine(Areal(4, 5));`,
         kode: R`static int Kvadrat(int tal)
 {
     int resultat = tal * tal;
+    resultat;
 }
 
 Console.WriteLine(Kvadrat(4));`,
-        linje: 1,
-        fordi: "Metoden lover at give en `int` tilbage, men den returnerer aldrig noget. Compileren siger: `not all code paths return a value` og peger på metodens første linje. Der mangler `return resultat;` til sidst i metoden.",
+        linje: 4,
+        fordi: "Linje 4 mangler ordet `return`. `resultat;` alene gør ingenting, så metoden giver aldrig sin `int` tilbage. Compileren melder to fejl: `Only assignment, call, increment, decrement, await, and new object expressions can be used as a statement` på linje 4 og `not all code paths return a value` på linje 1.",
         rettet: R`static int Kvadrat(int tal)
 {
     int resultat = tal * tal;

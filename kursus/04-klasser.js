@@ -83,6 +83,7 @@ Console.WriteLine(h.Navn);
         mac: ["Højreklik på projektet i vinduet **Explorer** til venstre.", "Vælg **Add → Class/Interface…** (i nogle versioner **New → C# Class**).", "Skriv `Person`, og tryk Enter.", "Rider laver filen `Person.cs` med en tom klasse `Person`."],
         md2: "Klassenavne skrives med **PascalCase** og i **ental**: `Person`, `Produkt`, `OrdreLinje`.\n\n**Vigtigt:** {{Visual Studio||Rider}} lægger den nye klasse i et **namespace** med projektets navn (fx `namespace Bibliotek`). Derfor skal du skrive `using` og projektets navn som den **første linje i Program.cs** — fx `using Bibliotek;`. Ellers kan Program.cs ikke finde klassen, og du får fejlen `CS0246: The type or namespace name 'Person' could not be found`. Hvad et namespace er, forklares i lektion 6." },
       { t: "fejl",
+        q: "Compileren melder fejl på linje 2: `Use of unassigned local variable 'k'`. Men linje 2 er skrevet rigtigt. Klik på den linje, der skal rettes.",
         kode: R`Kat k;
 k.Navn = "Mis";
 Console.WriteLine(k.Navn);
@@ -91,8 +92,8 @@ class Kat
 {
     public string Navn;
 }`,
-        linje: 2,
-        fordi: "Variablen `k` er erklæret, men der er aldrig lavet et objekt — der mangler `new Kat()`. En variabel uden objekt er som en adresse uden hus. Compileren siger: `Use of unassigned local variable 'k'`.",
+        linje: 1,
+        fordi: "Linje 1 erklærer variablen `k`, men laver aldrig et objekt — der mangler `= new Kat()`. Compileren opdager det først på linje 2, hvor `k` bliver brugt, og siger derfor `Use of unassigned local variable 'k'` dér. Fejlbeskeden peger på det sted, hvor det går galt. Årsagen står ofte en eller flere linjer højere oppe.",
         rettet: R`Kat k = new Kat();
 k.Navn = "Mis";
 Console.WriteLine(k.Navn);
@@ -249,6 +250,7 @@ class Person
       { t: "laes", h: "Hvorfor ikke static?",
         md: "I modul 3 skrev du `static` foran alle metoder. Nu skal det **væk**. Forskellen er:\n\n- En metode **uden** `static` hører til **et objekt**. Den kaldes på et objekt (`p.Praesenter()`) og kan bruge objektets felter. Den kaldes en **instansmetode**.\n- En metode **med** `static` hører til **klassen selv**. Den kaldes uden et objekt og kan derfor **ikke** se nogen felter. `Main` er static, fordi programmet skal kunne starte, før der findes et eneste objekt.\n\nTommelfingerregel: I dine egne klasser er metoderne **ikke** static. Mere om `static` i lektion 5." },
       { t: "fejl",
+        q: "Compileren melder fejl på linje 2 og på linje 10. Begge fejl forsvinder, når ét ord fjernes på en tredje linje. Klik på den linje.",
         kode: R`Lampe l = new Lampe();
 l.Taend();
 

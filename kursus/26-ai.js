@@ -150,7 +150,7 @@ Console.WriteLine(ud);`,
         output: "12",
         fordi: "`Parse` læser teksten. Så går man ét niveau ned ad gangen: først `usage`, så `output_tokens`. Tallet tages ud med `GetInt32`." },
       { t: "fejl", logisk: true, fejler: true,
-        q: "Programmet skal skrive svarets tekst, men det går ned med en `KeyNotFoundException`. Hvilken linje er skyld i det?",
+        q: "Programmet skal skrive svarets tekst, men det går ned på linje 9 med en `KeyNotFoundException`. Linje 9 er skrevet rigtigt, men den får det forkerte at arbejde med. Klik på den linje, der giver den det.",
         kode: R`using System.Text.Json;
 
 string svar = """

@@ -66,6 +66,7 @@ class Kvadrat : Figur
     public override double Areal() { return 4; }
 }` },
       { t: "fejl",
+        q: "Koden kan ikke oversættes, fordi én af de to klasser mangler noget. Klik på den linje, hvor den klasse begynder.",
         kode: R`abstract class Figur
 {
     public abstract double Areal();
@@ -288,6 +289,7 @@ class Fly : IKanFlyve
         ],
         output: "Basker med vingerne\nStarter motorerne" },
       { t: "fejl",
+        q: "Koden kan ikke oversættes, fordi der mangler noget inden i enten `IKanGemmes` eller `Dokument`. Klik på den første linje i den af dem, der mangler noget.",
         kode: R`interface IKanGemmes
 {
     void Gem();

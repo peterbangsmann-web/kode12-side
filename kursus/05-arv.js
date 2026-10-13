@@ -96,6 +96,7 @@ class Hund : Dyr
         output: "Ukendt spiser",
         md2: "Et almindeligt `Dyr` kan spise, men det kan ikke gø — `d.Goe()` ville give en fejl. Alle hunde er dyr, men ikke alle dyr er hunde." },
       { t: "fejl",
+        q: "Compileren melder fejl på linje 3: `'Dyr' does not contain a definition for 'Mjav'`. Klasserne er rigtige, og linje 3 skal blive stående. Klik på den linje, der skal rettes.",
         kode: R`Dyr d = new Dyr();
 d.Navn = "Mis";
 d.Mjav();
@@ -109,8 +110,8 @@ class Kat : Dyr
 {
     public void Mjav() { Console.WriteLine("Mjav"); }
 }`,
-        linje: 3,
-        fordi: "`Mjav()` findes kun i `Kat`. Objektet er et almindeligt `Dyr`, og det har ikke arvet noget fra sine børn. Compileren siger: `'Dyr' does not contain a definition for 'Mjav'`.",
+        linje: 1,
+        fordi: "`Mjav()` findes kun i `Kat`. Linje 1 laver et almindeligt `Dyr`, og et `Dyr` har ikke arvet noget fra sine børn. Skal `Mjav()` kunne kaldes, skal linje 1 lave en `Kat`.",
         rettet: R`Kat d = new Kat();
 d.Navn = "Mis";
 d.Mjav();
@@ -253,6 +254,7 @@ class Hund : Dyr
         output: "4",
         md2: "`Hund` må bruge `energi`, fordi feltet er `protected`. Udefra — fx `h.energi = 99;` — er det forbudt." },
       { t: "fejl",
+        q: "Compileren melder fejl på linje 10: `'Konto.saldo' is inaccessible due to its protection level`. Linje 10 skal blive stående. Klik på den linje, der skal rettes.",
         kode: R`class Konto
 {
     private decimal saldo;
@@ -265,8 +267,8 @@ class Opsparing : Konto
         saldo = saldo * 1.02m;
     }
 }`,
-        linje: 10,
-        fordi: "`saldo` er `private` i `Konto`, så selv en klasse, der arver, må ikke røre det. Compileren siger: `'Konto.saldo' is inaccessible due to its protection level`. Gør feltet `protected` — eller endnu bedre: giv `Konto` en metode, børnene kan kalde.",
+        linje: 3,
+        fordi: "`saldo` er `private` i `Konto` (linje 3), så selv en klasse, der arver, må ikke røre det. Gør feltet `protected` — eller endnu bedre: giv `Konto` en metode, børnene kan kalde.",
         rettet: R`class Konto
 {
     protected decimal saldo;
@@ -524,6 +526,7 @@ class Fisk : Dyr
         output: "Mjav\n...",
         fordi: "`Kat` har overskrevet metoden. `Fisk` har ikke — så den bruger den udgave, den har arvet fra `Dyr`. `virtual` betyder **må** erstattes, ikke **skal**." },
       { t: "fejl",
+        q: "Compileren melder fejl på linje 11: `cannot override inherited member 'Figur.Tegn()' because it is not marked virtual, abstract, or override`. `Cirkel` skal have lov til at overskrive `Tegn`. Klik på den linje, der skal rettes.",
         kode: R`class Figur
 {
     public void Tegn()
@@ -539,7 +542,7 @@ class Cirkel : Figur
         Console.WriteLine("En cirkel");
     }
 }`,
-        linje: 11,
+        linje: 3,
         fordi: "`Tegn` i `Figur` er ikke markeret `virtual`, så den må ikke overskrives. Compileren peger på override-linjen og siger: `cannot override inherited member 'Figur.Tegn()' because it is not marked virtual, abstract, or override`. Rettelsen laves i linje 3: tilføj `virtual`.",
         rettet: R`class Figur
 {
@@ -834,6 +837,7 @@ class Hund : Dyr
         output: "Vov",
         md2: "Objektet **er** en hund og kan sagtens hente pinde. Men gennem en `Dyr`-variabel kan compileren kun se det, alle dyr kan." },
       { t: "fejl",
+        q: "Compileren melder fejl på linje 3: `'Person' does not contain a definition for 'Klasse'`. Klasserne er rigtige, og linje 3 skal blive stående. Klik på den linje, der skal rettes.",
         kode: R`Person p = new Elev();
 p.Navn = "Maja";
 p.Klasse = "7.B";
@@ -847,8 +851,8 @@ class Elev : Person
 {
     public string Klasse { get; set; }
 }`,
-        linje: 3,
-        fordi: "Variablen `p` har typen `Person`, og en `Person` har ingen `Klasse`. At objektet i virkeligheden er en `Elev`, hjælper ikke — compileren kigger kun på variablens type. Fejlen: `'Person' does not contain a definition for 'Klasse'`.",
+        linje: 1,
+        fordi: "Linje 1 giver variablen `p` typen `Person`, og en `Person` har ingen `Klasse`. At objektet i virkeligheden er en `Elev`, hjælper ikke — compileren kigger kun på variablens type. Fejlen: `'Person' does not contain a definition for 'Klasse'`.",
         rettet: R`Elev p = new Elev();
 p.Navn = "Maja";
 p.Klasse = "7.B";

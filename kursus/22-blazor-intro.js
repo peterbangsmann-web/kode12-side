@@ -598,7 +598,7 @@ class VareLinje
 <[[VareLinje]] Navn="Mælk" Antal="[[2]]" />`,
         sprog: "razor",
         fordi: "Parametre er almindelige properties med `[Parameter]` over. Tagget i forælderen hedder det samme som komponentens fil, og attributterne hedder det samme som parametrene." },
-      { t: "fejl", q: "Siden kan bygges, men når man går til den, går den ned med en fejl. Klik på linjen, der skal rettes.",
+      { t: "fejl", q: "Siden kan bygges, men når man går til den, går den ned med en fejl. Én af de to properties mangler noget. Klik på den linje, hvor den property står.",
         kode: R`<li class="list-group-item">@Antal × @Navn</li>
 
 @code {

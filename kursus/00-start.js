@@ -279,9 +279,10 @@ Console.WriteLine("3"); // Console.WriteLine("4");`,
     static void Main(string[] args)
     {
         Console.WriteLine("Hej");
-    }`,
+    {
+}`,
         linje: 6,
-        fordi: "Der er to `{`, men kun én `}`. Klassen bliver aldrig lukket, så der mangler en `}` efter linje 6. Compileren siger `} expected`. Tæl klammerne: der skal være lige mange af hver.",
+        fordi: "Linje 6 åbner en ny blok med `{`. Der skulle stå `}`, som lukker `Main`. Nu er der tre `{` og kun én `}`. Compileren siger `} expected`. Den opdager det først helt til sidst, for den bliver ved med at vente på de klammer, der mangler. Tæl klammerne: der skal være lige mange `{` og `}`.",
         rettet: R`class Program
 {
     static void Main(string[] args)

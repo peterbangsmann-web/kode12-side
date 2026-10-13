@@ -414,7 +414,7 @@ DELETE FROM Produkter WHERE Kategori = 'Slik';`,
         ],
         md2: "Samme fare gælder `UPDATE`: `UPDATE Produkter SET Pris = 0;` gør **alle** produkter gratis. Vanen \"SELECT først, så UPDATE/DELETE\" redder dig fra de fleste ulykker." },
       { t: "fejl", sprog: "sql", logisk: true,
-        q: "Meningen var kun at sætte prisen på Te ned til 25. Sætningen kører uden fejl, men bagefter koster **alle** produkter 25. Hvilken linje er skyld i det?",
+        q: "Meningen var kun at sætte prisen på Te ned til 25. Sætningen kører uden fejl, men bagefter koster **alle** produkter 25. Der mangler en betingelse. Klik på den linje, betingelsen skulle have stået lige efter.",
         kode: R`UPDATE Produkter
 SET Pris = 25;
 SELECT Navn, Pris FROM Produkter WHERE Navn = 'Te';`,

@@ -455,7 +455,7 @@ public async Task<IActionResult> VisMedNavn(string navn)
           ["View(\"Details\", customer)", "Der findes intet view, der hedder VisMedNavn. Genbrug Details."]
         ],
         md2: "Afprøvet i Butik: `/kunde/anna` og `/kunde/ANNA` viser Anna, og `/kunde/Zorro` giver 404. Én ting at vide: når en action har `[Route]`, kan den **kun** nås ad den rute. `/Customers/VisMedNavn?navn=Anna` giver 404." },
-      { t: "fejl", frag: true, q: "Adressen `/kunde/Bo` giver altid 404, selv om Bo findes i databasen. Hvilken linje er fejlen i?",
+      { t: "fejl", frag: true, q: "Adressen `/kunde/Bo` giver altid 404, selv om Bo findes i databasen. Ruten i linje 1 skal blive, som den er. Klik på den linje, der skal rettes.",
         kode: R`[Route("kunde/{navn}")]
 public async Task<IActionResult> VisMedNavn(string? kundenavn)
 {

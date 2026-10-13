@@ -281,7 +281,7 @@ app.MapRazorPages()
         linjer: [R`app.UseRouting();`, R`app.UseAuthentication();`, R`app.UseAuthorization();`, R`app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");`],
         frag: true,
         fordi: "Først findes ruten, så findes brugeren (authentication), så tjekkes adgangen (authorization), og til sidst kører controlleren. Man kan ikke tjekke, hvad en bruger må, før man ved, hvem det er." },
-      { t: "fejl", q: "Programmet efterligner pipelinen med to metoder. Ida *er* logget ind — hendes cookie er med — men hun bliver alligevel sendt til login. Klik på den linje, der er skyld i det.",
+      { t: "fejl", q: "Programmet efterligner pipelinen med to metoder. Ida *er* logget ind — hendes cookie er med — men hun bliver alligevel sendt til login. To linjer står i forkert rækkefølge. Klik på den af dem, der kører for tidligt.",
         kode: R`string? bruger = null;
 string svar = "";
 

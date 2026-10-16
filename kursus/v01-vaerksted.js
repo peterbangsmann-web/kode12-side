@@ -268,7 +268,8 @@ Console.WriteLine($"Tilbage: {tilbage} kr.");`,
       "En konstant `const int AarNu = 2026;`, og en `int`, der hedder `alder`, som er `AarNu - foedselsaar`",
       "En `string`, der hedder `brugernavn`: fornavnet med små bogstaver efterfulgt af de to sidste cifre i fødselsåret (brug `%`)",
       "En `bool`, der hedder `erLangt`, som er `true`, når brugernavnet har mere end 8 tegn",
-      "Programmet skriver præcis fem linjer: `Navn: PETER HANSEN`, `Alder: 28`, `Brugernavn: peter98`, `Antal tegn: 7` og `Langt brugernavn: False`"
+      "Programmet skriver præcis fem linjer: `Navn: PETER HANSEN`, `Alder: 28`, `Brugernavn: peter98`, `Antal tegn: 7` og `Langt brugernavn: False`",
+      "`Antal tegn` er antallet af tegn i `brugernavn`. Det skal ikke have sin egen variabel: regn det ud direkte inde i `Console.WriteLine`"
     ],
     tip: [
       "De to sidste cifre i et tal får du med `% 100`: `1998 % 100` er 98.",

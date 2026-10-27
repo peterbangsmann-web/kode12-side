@@ -724,6 +724,7 @@
     (window.STUDIEPLAN || []).forEach(function (f) {
       var lek = [];
       (f.moduler || []).forEach(function (id) { var m = K.filter(function (x) { return x.id === id; })[0]; if (m) (m.lektioner || []).forEach(function (l) { lek.push(l); }); });
+      if (f.lektioner) lek = lek.filter(function (l) { return f.lektioner.indexOf(l.id) >= 0; });   // valgfrit: kun nogle af modulets lektioner
       var faerdige = lek.filter(function (l) { return S.lek[l.id]; }).length;
       var o = { f: f, antal: lek.length, faerdige: faerdige, naeste: lek.filter(function (l) { return !S.lek[l.id]; })[0] || null, tid: d < f.fra ? "kommer" : d > f.til ? "ovre" : "nu" };
       ud.faser.push(o);

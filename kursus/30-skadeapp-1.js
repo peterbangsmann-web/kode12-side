@@ -25,7 +25,7 @@ window.KURSUS.push({
     trin: [
       { t: "laes", h: "Hvad SkadeApp kan",
         md: "En sagsbehandler i et forsikringsselskab skal holde styr på kunder og deres skader: hvem har anmeldt hvad, hvor meget koster det, og er skaden godkendt endnu? Det er problemet, din app løser. Det er også begrundelsen i dispositionen: du har selv arbejdet med forsikring i seks år.\n\nAppen har fire sider:\n\n- **Overblik**: antal kunder, antal åbne skader, hvor meget der er udbetalt, og de seneste skader.\n- **Kunder**: en liste, man kan søge i, og en formular til nye kunder.\n- **Kundesiden**: én kundes oplysninger og skader. Her kan man rette og slette kunden, anmelde en ny skade og skifte en skades status.\n- **Skader**: alle skader, som kan filtreres efter status og sorteres.\n\nData gemmes i en database, så de er der endnu, når appen startes igen. Man skal logge ind for at se siderne, fordi kundernes oplysninger er personlige.",
-        md2: "Projektet bruger skabelon 2 fra projektkravene: **Blazor Server**." },
+        md2: "Projektet bruger skabelon 2 fra projektkravene: **Blazor Server**. Det betyder, at al din C#-kode kører **på serveren**, ikke i browseren. Browseren viser siden og holder en forbindelse åben til serveren. Klikker brugeren på en knap, sender browseren klikket til serveren, C#-koden kører dér, og serveren sender ændringerne på siden tilbage." },
       { t: "laes", h: "Tre lag med hver sit ansvar",
         md: "Koden er delt i tre lag. Hvert lag har sin egen mappe og ét ansvar.",
         kode: R`Components/Pages   Siderne       viser data og tager imod klik
@@ -79,7 +79,8 @@ Models + Data      Modeller og   beskriver kunder og skader,
           [".razor", "En komponent: HTML og C# i samme fil."],
           ["Pages", "Her ligger siderne. En side har en `@page`-linje med sin adresse."],
           ["Account og Data", "Login og brugere. Skabelonen har lavet det hele. Du ser nærmere på det i lektion 12."]
-        ] },
+        ],
+        md2: "Tre ting fra tegningen, som du får brug for med det samme:\n\n- `Program.cs` kører **først**, når appen starter.\n- En ny **side** lægges i mappen `Components/Pages`. Linjen `@page \"/adresse\"` øverst i filen giver siden dens adresse.\n- `Layout` er det, der står **rundt om** alle sider: menuen til venstre og rammen om indholdet." },
       { t: "valg", q: "Hvilken fil kører først, når du starter SkadeApp?",
         svar: ["Program.cs", "Home.razor", "App.razor", "NavMenu.razor"],
         ret: 0, fordi: "`Program.cs` bygger appen: den registrerer services og starter webserveren. Først derefter kan en side blive vist." },

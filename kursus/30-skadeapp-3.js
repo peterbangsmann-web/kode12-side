@@ -19,7 +19,7 @@ m.lektioner.push(
     ],
     trin: [
       { t: "laes", h: "@bind: feltet og input-feltet følges ad",
-        md: "Søgefeltet på kundelisten skal opdatere listen, mens man skriver. `@bind` forbinder et input-felt med et felt i `@code`. Med `@bind:event=\"oninput\"` sker det ved hvert tastetryk. Hver gang feltet ændres, tegner Blazor siden igen.",
+        md: "Søgefeltet på kundelisten skal opdatere listen, mens man skriver. `@bind` forbinder et input-felt med et felt i `@code`. Uden mere opdateres feltet først, når man forlader input-feltet eller trykker Enter. Med `@bind:event=\"oninput\"` sker det ved hvert tastetryk. Hver gang feltet ændres, tegner Blazor siden igen.",
         kode: R`<input class="form-control" @bind="soegeord" @bind:event="oninput" />
 <p>Du søger efter: @soegeord</p>
 
@@ -65,7 +65,7 @@ foreach (string n in fundne)
         output: "Mette Jensen\nSøren Nielsen",
         fordi: "\"Jensen\" og \"Nielsen\" indeholder \"sen\", og store og små bogstaver er ligegyldige. `OrderBy` sætter dem i alfabetisk rækkefølge." },
       { t: "laes", h: "EditForm: en formular, der validerer",
-        md: "Formularen til nye kunder er en `EditForm`. Den får et `Kunde`-objekt som model. `DataAnnotationsValidator` får den til at bruge reglerne fra lektion 5. Når man klikker på knappen, tjekker formularen reglerne: er de overholdt, kører `OnValidSubmit`. Ellers vises fejlbeskederne, og der bliver ikke gemt noget.",
+        md: "Formularen til nye kunder er en `EditForm`. Den får et `Kunde`-objekt som model. `DataAnnotationsValidator` får den til at bruge reglerne fra lektion 5. Når man klikker på knappen, tjekker formularen reglerne: er de overholdt, kører `OnValidSubmit`. Ellers vises fejlbeskederne, og der bliver ikke gemt noget.\n\nNår kunden er gemt, laver siden et **nyt**, tomt `Kunde`-objekt til formularen: `nyKunde = new Kunde();`. Så bliver felterne tomme. Den gemte kunde har nu fået et id i databasen, og den må ikke blive gemt igen, hvis man klikker en gang til.",
         kode: R`<EditForm Model="nyKunde" OnValidSubmit="OpretKunde">
     <DataAnnotationsValidator />
 

@@ -16,5 +16,8 @@ window.STUDIEPLAN = [
   { fra: "2026-10-31", til: "2026-11-05", titel: "Træn til den mundtlige eksamen", moduler: ["m28"],
     tekst: "Hver dag: Repetition, og alle \"Forklar med egne ord\"-trin i modul 30. Modul 28 viser, hvordan eksamen foregår, og træner svarene på de typiske spørgsmål. Hold din præsentation på tid (ca. 10 minutter) med stikord, ikke en tekst, du skal huske ordret. Vis din app og peg i din egen kode, mens du forklarer." },
   { fra: "2026-11-06", til: "2026-11-06", titel: "Mundtlig eksamen", moduler: [],
-    tekst: "Kun en kort Repetition om morgenen. Du kender dit projekt bedre end nogen anden i lokalet." }
+    tekst: "Kun en kort Repetition om morgenen. Du kender dit projekt bedre end nogen anden i lokalet." },
+  { fra: "2026-11-07", til: "2026-12-31", titel: "Efter eksamen: resten af kurset", valgfri: true,
+    moduler: ["m04", "m05", "m06", "m07", "m08", "m09", "m10", "m11", "m12", "m13", "m14", "m15", "m16", "m17", "m18", "m19", "m20", "m21", "m22", "m23", "m24", "m25", "m26", "m27", "m29"],
+    tekst: "Nu er der tid til at lære det hele ordentligt, i dit eget tempo. Fortsæt med modul 4, hvor du slap. Meget af det kender du allerede fra dit projekt, så det bliver lettere, end det ville have været før." }
 ];

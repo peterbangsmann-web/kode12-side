@@ -280,7 +280,7 @@ public class SkadeContext : DbContext
 }`,
         frag: true,
         noter: [
-          ["override", "Metoden findes i `DbContext`. `override` betyder: brug min udgave i stedet."],
+          ["protected override", "Metoden findes i `DbContext`. `override` betyder: brug min udgave i stedet. `protected` betyder: kun klassen selv og klasser, der arver fra den, må kalde metoden."],
           ["Id = 1", "Startdata skal have faste id'er, så skaden kan pege på kunden med `KundeId = 1`."],
           ["new DateTime(2026, 8, 14)", "En fast dato: 14. august 2026."]
         ] },
@@ -591,7 +591,7 @@ async Task<int> TaelKunderAsync()
 }`,
         frag: true,
         noter: [
-          ["private readonly … _factory", "Et felt, der husker fabrikken. `readonly`: den kan kun sættes i konstruktøren."],
+          ["private readonly … _factory", "Et felt: en variabel, der hører til objektet og lever, så længe objektet gør. `private`: kun klassen selv kan bruge det. `readonly`: det kan kun sættes i konstruktøren."],
           ["konstruktøren", "Servicen beder om fabrikken. Dependency injection giver den, ligesom en side får sin service."],
           ["using var db", "Laver en `SkadeContext`, som lukkes automatisk, når metoden er færdig."],
           ["Include(k => k.Skader)", "Hent kundernes skader med. Uden den er listen `Skader` tom."],
@@ -811,7 +811,8 @@ else
           ["@if / @foreach", "Almindelig C# midt i HTML. Det, der står i krøllede parenteser, er HTML igen."],
           ["@k.Navn", "Skriver værdien ind i siden."],
           ["@code { … }", "Sidens felter og metoder."],
-          ["OnInitializedAsync", "Kører, når siden åbnes: her hentes kunderne."]
+          ["private List<Kunde>? kunder", "Et felt på siden. `private`: kun siden selv bruger det. `?`: det må være `null`, indtil kunderne er hentet."],
+          ["protected override … OnInitializedAsync", "Din egen udgave (`override`) af en metode, som Blazor kalder, når siden åbnes. Her hentes kunderne."]
         ] },
       { t: "valg", q: "Øverst i en `.razor`-fil står `@page \"/skader\"`. Hvad betyder det?",
         svar: ["Siden vises, når adressen i browseren er /skader", "Siden hedder Skader i menuen", "Siden henter skader fra databasen", "Filen skal ligge i en mappe, der hedder skader"],

@@ -14,6 +14,68 @@ window.KURSUS.push({
   lektioner: [
 
   // ------------------------------------------------------------------
+  { id: "m30l0", titel: "Det store overblik: hvad er alle ordene?", min: 20,
+    ord: [
+      ["Browser", "Programmet, man ser hjemmesider i: Chrome, Edge eller Safari."],
+      ["Server", "En computer, der kører et program og venter på, at browsere beder om noget. Mens du udvikler, er serveren din egen computer."],
+      ["HTTP", "Sproget, browser og server taler sammen med. Browseren sender en forespørgsel (request), serveren sender et svar (response)."],
+      ["URL", "En adresse, fx `http://localhost:5103/kunder`. `localhost` er din egen computer, `5103` er porten, og `/kunder` er siden."],
+      ["HTML", "Sproget for indholdet på en side: overskrifter, tekst, tabeller, knapper og felter."],
+      ["CSS", "Sproget for udseendet: farver, størrelser og placering."],
+      ["JavaScript", "Programmeringssproget, der kører inde i browseren. Med Blazor skriver du C# i stedet."],
+      ["Framework", "Et færdigt skelet, man bygger sit program ind i. Det bestemmer opbygningen og kalder din kode på de rigtige tidspunkter."],
+      ["ASP.NET Core", "Microsofts framework til web-apps i C#: webserveren, adresserne, login og meget mere."],
+      ["Blazor", "Den del af ASP.NET Core, hvor sider laves som komponenter med HTML og C# i samme fil."],
+      ["MVC", "En anden måde at lave web-apps på i ASP.NET Core: Model, View og Controller i hver sin fil. Skabelon 4 i projektkravene."],
+      ["API", "De metoder, én del af et program stiller til rådighed for andre dele. Et Web API gør det samme over internettet og sender data i stedet for sider."],
+      ["Full stack", "En app med alle tre dele: det, brugeren ser (frontend), logikken bagved (backend) og databasen."]
+    ],
+    trin: [
+      { t: "laes", h: "Fra konsolprogram til web-app",
+        md: "Indtil nu har du lavet **konsolprogrammer**: de kører på din egen computer og skriver i et sort vindue.\n\nEn **web-app** er delt i to:\n\n- **Serveren** er en computer, der kører dit C#-program og venter på besøg.\n- **Browseren** (Chrome, Edge, Safari) er det, brugeren ser siden i.\n\nBrowseren beder om en side, og serveren svarer. Det kaldes en *request* og et *response*, og de sendes med **HTTP**. Mens du udvikler, er serveren din egen computer. Derfor hedder adressen `http://localhost:5103`: `localhost` betyder \"denne computer\".",
+        kode: R`Browser                          Server (dit C#-program)
+"Giv mig /kunder"      ───────▶   finder kunderne
+                       ◀───────   sender siden med kunderne
+viser siden`,
+        sprog: "text" },
+      { t: "valg", q: "En sagsbehandler åbner SkadeApp i Chrome og klikker på Kunder. Hvor kører C#-koden, der henter kunderne?",
+        svar: ["På serveren. Browseren beder om siden, og serveren sender den tilbage", "I Chrome", "I sagsbehandlerens Word", "Ingen steder, siden er fast"],
+        ret: 0, fordi: "Browseren viser kun siden. C#-koden kører på serveren, som mens du udvikler er din egen computer." },
+      { t: "laes", h: "Det, browseren forstår: HTML og CSS",
+        md: "En browser forstår ikke C#. Den forstår tre sprog:\n\n- **HTML**: indholdet. Overskrifter, tekst, tabeller, knapper og felter.\n- **CSS**: udseendet. Farver, skrift og placering.\n- **JavaScript**: små programmer, der kører i browseren.\n\n**Bootstrap** er en færdig samling CSS, som følger med din projektskabelon. Den giver pæne knapper og tabeller, uden at du skriver CSS selv.\n\nDu kommer til at skrive HTML og lidt CSS. JavaScript skal du ikke skrive: det klarer Blazor for dig. HTML får sin egen lektion, før du laver den første side." },
+      { t: "valg", q: "Knapperne i din app skal være grønne i stedet for blå. Hvilket sprog bestemmer det?",
+        svar: ["CSS", "HTML", "C#", "SQL"],
+        ret: 0, fordi: "CSS bestemmer udseendet. HTML bestemmer, at der er en knap. C# bestemmer, hvad der sker, når man klikker." },
+      { t: "laes", h: "C#, .NET og frameworks",
+        md: "- **C#** er sproget, du skriver i.\n- **.NET** er Microsofts platform, der kører C#-programmer. Den har tusindvis af færdige klasser, fx `Console` og `List`.\n- En **NuGet-pakke** er et færdigt bibliotek, man henter ind i sit projekt, fx til databaser.\n- Et **framework** er et færdigt skelet, man bygger sit program ind i. Du skriver ikke selv webserveren; frameworket har den. Du skriver dine sider og din logik, og frameworket kalder din kode, når der er brug for den." },
+      { t: "laes", h: "ASP.NET Core og Blazor",
+        md: "**ASP.NET Core** er Microsofts framework til web-apps i C#. Det står for webserveren, adresserne, login og meget mere.\n\nInde i ASP.NET Core er der flere måder at lave selve siderne på. Projektkravene nævner dem som skabeloner:\n\n- **MVC** (skabelon 4): en *Controller* modtager forespørgslen, henter en *Model* og sender den til et *View*, der laver HTML'en. Tre slags filer.\n- **Blazor** (skabelon 1 og 2): en side er en **komponent**, én `.razor`-fil med HTML og C# sammen. Klikker man på en knap, kører en C#-metode.\n- **Angular** (skabelon 3): et JavaScript-framework til siderne og ASP.NET Core til data bagved.\n\nBlazor findes i to udgaver. I **Blazor Server**, som du bruger, kører C#-koden på serveren, og browseren holder en forbindelse åben. I **Blazor WebAssembly** sendes C#-koden til browseren og kører dér.",
+        md2: "Du valgte Blazor Server, fordi alt er C#, en side er én fil, og koden kører ved siden af databasen. Det er din begrundelse, hvis censor spørger." },
+      { t: "valg", q: "Hvad er sammenhængen mellem ASP.NET Core og Blazor?",
+        svar: ["Blazor er en del af ASP.NET Core: en måde at lave sider på, mens ASP.NET Core står for resten, fx webserveren og login", "De er to konkurrerende sprog", "ASP.NET Core er en del af Blazor", "Blazor er en database"],
+        ret: 0, fordi: "ASP.NET Core er hele frameworket til web. Blazor og MVC er to måder at lave sider på inde i det." },
+      { t: "valg", q: "Projektkravene giver fire skabeloner. Hvad er den store forskel på MVC og Blazor?",
+        svar: ["I MVC er en side delt i controller, model og view. I Blazor er en side én komponent med HTML og C# sammen", "MVC kan ikke bruge en database", "Blazor kan kun bruges på Mac", "Der er ingen forskel"],
+        ret: 0, fordi: "Begge bygger på ASP.NET Core og kan bruge samme database og services. Forskellen er, hvordan siderne er bygget op." },
+      { t: "laes", h: "API, database og login",
+        md: "- **API** betyder de metoder, én del af et program stiller til rådighed for andre dele. Dine services bliver en slags API for dine sider: siderne kalder `HentAlleAsync()` uden at vide, hvordan den virker.\n- Et **Web API** er det samme over internettet: adresser, der sender **data** (ofte som JSON) i stedet for sider, fx til en mobil-app. Det er valgfrit i projektkravene, og din app har ikke et.\n- En **database** gemmer data i tabeller, så de er der endnu, når appen lukkes. **SQL** er sproget til databaser. **SQLite** er en lille database, der ligger i én fil.\n- **EF Core** oversætter mellem dine C#-klasser og databasens tabeller, så du ikke skriver SQL selv.\n- **Identity** er ASP.NET Cores færdige system til brugere og login." },
+      { t: "valg", q: "En kollega spørger, hvad et Web API er. Hvilket svar er rigtigt?",
+        svar: ["Adresser på en server, der sender data, fx kunder som JSON, i stedet for færdige sider. Det bruges fx af mobil-apps", "En database", "Et program til at tegne sider", "Det samme som HTML"],
+        ret: 0, fordi: "Et Web API svarer med data, ikke med en side. Din Blazor-app sender sider, så den har ikke brug for et Web API." },
+      { t: "laes", h: "Full stack: dine tre dele",
+        md: "Projektkravet er en **Full Stack Web App**: en app med alle tre dele. Sådan ser de ud i SkadeApp:",
+        kode: R`Del                       Hvad                                   I SkadeApp
+Frontend (det man ser)    HTML og CSS i Blazor-komponenter       mappen Components
+Backend (logikken)        C#: services, der henter og gemmer     mappen Services
+Database                  tabeller med kunder og skader          SQLite + EF Core (mappen Data)`,
+        sprog: "text",
+        md2: "Delingen i lag, der hver har ét ansvar, hedder **lagdelt arkitektur**. Du ser den igen i næste lektion og bygger den i lektion 6 og 7." },
+      { t: "forklar", q: "Eksamensspørgsmål: Hvilke teknologier bruger din app, og hvad bruges de til?",
+        svar: "Appen er bygget med ASP.NET Core, Microsofts framework til web-apps i C#. Siderne er lavet med Blazor Server: hver side er en komponent med HTML og C#, og koden kører på serveren. Udseendet er HTML og CSS med Bootstrap. Data gemmes i en SQLite-database, og EF Core oversætter mellem mine C#-klasser og tabellerne. Login klares af ASP.NET Core Identity. Tilsammen er det en full stack-app: frontend, backend og database.",
+        noegle: ["ASP.NET Core", "Blazor Server", "HTML og CSS", "SQLite", "EF Core", "full stack"] }
+    ] },
+
+  // ------------------------------------------------------------------
   { id: "m30l1", titel: "Hvad du bygger, og projektet oprettes", min: 20,
     ord: [
       ["Blazor Server", "En måde at lave web-apps på, hvor al C#-koden kører på serveren. Browseren viser siden og sender klik til serveren."],
@@ -87,41 +149,11 @@ Models + Data      Modeller og   beskriver kunder og skader,
       { t: "valg", q: "Du skal lave en ny side med adressen `/skader`. Hvor skal filen ligge?",
         svar: ["I mappen Components/Pages", "I mappen wwwroot", "Ved siden af Program.cs", "I mappen Components/Layout"],
         ret: 0, fordi: "Siderne ligger i `Components/Pages`. Det er `@page \"/skader\"` øverst i filen, der giver siden dens adresse. `Layout` er til det, der står rundt om alle sider." },
-      { t: "opgave", h: "Ryd op og lav menuen", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
-        md: "Arbejd videre i dit SkadeApp-projekt. Eksempelsiderne skal væk, og menuen skal have dine tre sider. Linkene, der står i `Components/Layout/NavMenu.razor` i forvejen, er dit mønster.\n\nEn fil slettes ved at højreklikke på den i {{Solution Explorer||Rider}} og vælge **Delete**.",
-        krav: [
-          "`Counter.razor`, `Weather.razor` og `Auth.razor` i `Components/Pages` er slettet",
-          "I `NavMenu.razor` er de fire første links (**Home**, **Counter**, **Weather** og **Auth Required**) erstattet af tre: **Overblik** til forsiden, **Kunder** til adressen `kunder` og **Skader** til adressen `skader`",
-          "Resten af `NavMenu.razor`, delen med `AuthorizeView`, er uændret",
-          "Appen kører, og menuen viser Overblik, Kunder og Skader"
-        ],
-        tip: [
-          "Hvert link er en `<div class=\"nav-item px-3\">` med en `<NavLink>` indeni. Kopiér hele Home-linket tre gange, og ret teksten og `href` i hver.",
-          "Forsiden har `href=\"\"` og `Match=\"NavLinkMatch.All\"`: så lyser linket kun, når du står præcis på forsiden. Kunder og Skader har kun `href=\"kunder\"` og `href=\"skader\"`.",
-          "Ikonet er `<span class=\"bi …\">` foran teksten. Genbrug ikonerne fra Home, Counter og Weather."
-        ],
-        output: "Menuen viser Overblik, Kunder og Skader, og under dem Register og Login. Klikker du på Kunder eller Skader, står der, at siden ikke findes: dem laver du i de næste lektioner.",
-        loesning: R`<div class="nav-item px-3">
-    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Overblik
-    </NavLink>
-</div>
+      { t: "ide", h: "Ryd op: slet eksempelsiderne",
+        md: "Eksempelsiderne fra skabelonen skal ikke med i dit projekt.",
+        win: ["Højreklik på `Counter.razor` i mappen `Components/Pages` i Solution Explorer → **Delete**.", "Gør det samme med `Weather.razor` og `Auth.razor`.", "Kør appen. Menuen har stadig links til Counter og Weather, men de fører nu til en side om, at adressen ikke findes. Menuen retter du i lektionen om HTML, når du ved, hvad den er lavet af."],
+        mac: ["Højreklik på `Counter.razor` i mappen `Components/Pages` i Rider → **Delete**.", "Gør det samme med `Weather.razor` og `Auth.razor`.", "Kør appen. Menuen har stadig links til Counter og Weather, men de fører nu til en side om, at adressen ikke findes. Menuen retter du i lektionen om HTML, når du ved, hvad den er lavet af."] }
 
-<div class="nav-item px-3">
-    <NavLink class="nav-link" href="kunder">
-        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Kunder
-    </NavLink>
-</div>
-
-<div class="nav-item px-3">
-    <NavLink class="nav-link" href="skader">
-        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Skader
-    </NavLink>
-</div>`,
-        md2: "`NavLink` er et link, som Blazor selv markerer med en farve, når du står på den side. `<span class=\"bi …\">` er det lille ikon foran teksten." },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvad er lagdelt arkitektur, og hvordan ser man den i dit projekt?",
-        svar: "Lagdelt arkitektur betyder, at programmet er delt i lag, der hver har ét ansvar. I SkadeApp viser siderne i Components/Pages data, services i mappen Services henter og gemmer data, og modellerne og databasen i Models og Data beskriver og gemmer kunder og skader. Siderne taler kun med services, aldrig direkte med databasen, så jeg kan skifte databasen ud uden at røre siderne.",
-        noegle: ["ansvar", "sider", "services", "database", "skifte ud"] }
     ] },
 
   // ------------------------------------------------------------------

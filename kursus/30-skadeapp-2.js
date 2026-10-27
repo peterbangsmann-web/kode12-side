@@ -46,6 +46,7 @@ Console.WriteLine(Regex.IsMatch("22334455", @"^\d{8}$"));
 Console.WriteLine(Regex.IsMatch("2233 4455", @"^\d{8}$"));
 Console.WriteLine(Regex.IsMatch("1234", @"^\d{8}$"));`,
         noter: [
+          ["using System.Text.RegularExpressions;", "Regulære udtryk ligger i dette namespace. Uden linjen kender compileren ikke `Regex`."],
           ["^", "Mønsteret starter ved tekstens begyndelse."],
           ["\\d", "Ét ciffer (0–9)."],
           ["{8}", "Det forrige skal gentages præcis 8 gange."],
@@ -100,7 +101,8 @@ class Kunde
 }`,
         noter: [
           ["using System.ComponentModel.DataAnnotations;", "Her bor attributterne og `Validator`."],
-          ["TryValidateObject", "Prøver alle reglerne og lægger fejlene i listen `fejl`."]
+          ["TryValidateObject", "Prøver alle reglerne og lægger fejlene i listen `fejl`."],
+          ["ValidationResult og ValidationContext", "Det, `Validator` skal bruge: en liste til fejlene og oplysninger om objektet. Det skal du ikke kunne skrive selv; i din app gør formularen det for dig."]
         ],
         output: "Skriv kundens navn.\nDet er ikke en gyldig e-mail.\nTelefonnummeret skal være 8 cifre." },
       { t: "forudsig",
@@ -870,6 +872,17 @@ public class SkadeService : ISkadeService
 builder.Services.AddScoped<IKundeService, KundeService>();
 builder.Services.AddScoped<ISkadeService, SkadeService>();`,
         md2: "`AddScoped` betyder, at hver browserfane får sit eget service-objekt, som lever, så længe fanen er åben." },
+      { t: "laes", h: "Nu kan du se lagene",
+        md: "Med services på plads har dit projekt alle tre lag fra lektion 1, og du har selv bygget dem:\n\n- **Siderne** (`Components/Pages`, kommer i de næste lektioner) viser data og tager imod klik. De kender kun interfacene `IKundeService` og `ISkadeService`.\n- **Services** (`Services`) bestemmer, hvordan data hentes og gemmes. Det er det eneste lag, der bruger `SkadeContext`.\n- **Modeller og database** (`Models` og `Data`) beskriver kunder og skader og gemmer dem.\n\nHvert lag taler kun med laget lige under sig. Det kaldes **lagdelt arkitektur**. Fordelen: ændrer du, hvordan data gemmes, skal du kun rette i servicen, ikke i siderne. Og hver del er lille nok til, at man kan forstå den for sig.",
+        kode: R`Sider          @inject IKundeService      viser og tager imod klik
+   │
+Services       KundeService               henter og gemmer
+   │
+Database       SkadeContext + SQLite      tabeller med data`,
+        sprog: "text" },
+      { t: "forklar", q: "Eksamensspørgsmål: Hvad er lagdelt arkitektur, og hvordan ser man den i dit projekt?",
+        svar: "Lagdelt arkitektur betyder, at programmet er delt i lag, der hver har ét ansvar. I SkadeApp viser siderne i Components/Pages data, services i mappen Services henter og gemmer data, og modellerne og databasen i Models og Data beskriver og gemmer kunder og skader. Siderne taler kun med services, aldrig direkte med databasen, så jeg kan skifte databasen ud uden at røre siderne.",
+        noegle: ["ansvar", "sider", "services", "database", "skifte ud"] },
       { t: "forklar", q: "Eksamensspørgsmål: Hvad er dependency injection, og hvorfor bruger du interfaces til dine services?",
         svar: "Dependency injection betyder, at programmet selv laver de objekter, en klasse har brug for, og giver dem til den. I Program.cs registrerer jeg AddScoped<IKundeService, KundeService>(), og siderne beder om IKundeService med @inject. KundeService får på samme måde sin DbContext-fabrik i konstruktøren. Siderne kender kun interfacet, så de er løst koblet: jeg kan skifte KundeService ud med en anden klasse uden at ændre siderne.",
         noegle: ["Program.cs", "AddScoped", "@inject", "interface", "løs kobling", "konstruktør"] }

@@ -5,8 +5,8 @@
 window.STUDIEPLAN = [
   { fra: "2026-10-13", til: "2026-10-26", titel: "Grundforløbet: modul 0–3", moduler: ["m00", "m01", "m02", "m03"], valgfri: true,
     tekst: "Det, du har nået før projektet. Resten af grundforløbet (modul 4 og frem) venter til efter eksamen: det, projektet bruger fra dem, bliver forklaret i modul 30." },
-  { fra: "2026-10-27", til: "2026-10-27", titel: "Projektet, dag 1: opret projektet og modellerne", moduler: ["m30"], lektioner: ["m30l1", "m30l2", "m30l3"],
-    tekst: "Modul 30, lektion 1–3: hvad du bygger, projektet oprettes, og klasserne `Kunde` og `Skade` med deres relation. Skriv koden selv i {{Visual Studio||Rider}}, og byg efter hver lektion." },
+  { fra: "2026-10-27", til: "2026-10-27", titel: "Projektet, dag 1: opret projektet og modellerne", moduler: ["m30"], lektioner: ["m30l0", "m30l1", "m30l2", "m30l3"],
+    tekst: "Modul 30, lektion 0–3: de store ord (Blazor, ASP.NET Core, API …), projektet oprettes, og klasserne `Kunde` og `Skade` med deres relation. Skriv koden selv i {{Visual Studio||Rider}}, og byg efter hver lektion." },
   { fra: "2026-10-28", til: "2026-10-28", titel: "Projektet, dag 2: LINQ, regler, database og services", moduler: ["m30"], lektioner: ["m30l4", "m30l5", "m30l6", "m30l7"],
     tekst: "Modul 30, lektion 4–7. Når lektion 7 er færdig, kører appen med en rigtig database bag sig. Det er den tungeste dag: hold en pause mellem hver lektion." },
   { fra: "2026-10-29", til: "2026-10-29", titel: "Projektet, dag 3: siderne, login, design og aflevering", moduler: ["m30"], lektioner: ["m30l8", "m30l9", "m30l10", "m30l11", "m30l12", "m30l13"],

@@ -7,7 +7,7 @@ if (!m) return;
 m.lektioner.push(
 
   // ------------------------------------------------------------------
-  { id: "m30l5", titel: "Validering: regler på modellen", min: 20,
+  { id: "m30l5", nr: 5, titel: "Validering: regler på modellen", min: 20,
     ord: [
       ["Validering", "At tjekke, at det, brugeren har skrevet, overholder reglerne, før det bliver gemt."],
       ["Attribut", "En markering i firkantede parenteser over en property, fx `[Required]`. Den giver propertyen en regel."],
@@ -148,7 +148,7 @@ class Kunde
           "Har en attribut et tal, står tallet først: `[StringLength(100, ErrorMessage = \"…\")]` og `[Range(1, 10_000_000, ErrorMessage = \"…\")]`",
           "Mønsteret til telefonnummeret står i trin 7: `[RegularExpression(@\"^\\d{8}$\", ErrorMessage = \"Telefonnummeret skal være 8 cifre.\")]`"
         ],
-        output: "Ingen ændring i appen endnu. Reglerne viser sig, når formularerne kommer i lektion 9.",
+        output: "Ingen ændring i appen endnu. Reglerne viser sig, når formularerne kommer i lektion 10.",
         loesning: R`// ===== Models/Kunde.cs =====
 using System.ComponentModel.DataAnnotations;
 
@@ -225,7 +225,7 @@ public enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
   ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l6", titel: "Databasen: EF Core og SQLite", min: 25,
+  { id: "m30l6", nr: 6, titel: "Databasen: EF Core og SQLite", min: 25,
     ord: [
       ["Database", "Et program, der gemmer data i tabeller, så de er der endnu, når appen starter igen."],
       ["EF Core", "Entity Framework Core: et bibliotek, der oversætter mellem dine C#-klasser og databasens tabeller. Du skriver C#, og EF Core skriver SQL'en."],
@@ -293,6 +293,7 @@ public class SkadeContext : DbContext
 }`,
         frag: true,
         noter: [
+          ["modelBuilder.Entity<Skade>()", "Vælger tabellen for `Skade`, så du kan give regler for den, fx hvordan en kolonne gemmes."],
           ["protected override", "Metoden findes i `DbContext`. `override` betyder: brug min udgave i stedet. `protected` betyder: kun klassen selv og klasser, der arver fra den, må kalde metoden."],
           ["Id = 1", "Startdata skal have faste id'er, så skaden kan pege på kunden med `KundeId = 1`."],
           ["new DateTime(2026, 8, 14)", "En fast dato: 14. august 2026."]
@@ -300,6 +301,32 @@ public class SkadeContext : DbContext
       { t: "valg", q: "Hvorfor har startdataene i `HasData` faste id'er, fx `Id = 1`?",
         svar: ["Så skaderne kan pege på den rigtige kunde med KundeId, og EF Core ved, hvilken række er hvilken", "Fordi id'er altid skal skrives i hånden", "For at gøre databasen hurtigere", "Fordi SQLite ikke kan tælle"],
         ret: 0, fordi: "En skade i startdataene skal vide, hvilken kunde den hører til (`KundeId = 1`). Det kræver, at kunden har et kendt id. Nye kunder, som brugeren opretter, får automatisk det næste id." },
+      { t: "laes", h: "Program.cs: sådan starter appen",
+        md: "Før du retter i `Program.cs`, skal du vide, hvad der står i den. Den kører først, når appen starter, og den har fem dele i fast rækkefølge:",
+        kode: R`var builder = WebApplication.CreateBuilder(args);      // 1. lav en "bygger" til appen
+
+builder.Services.AddRazorComponents()                   // 2. registrér, hvad appen skal kunne:
+    .AddInteractiveServerComponents();                  //    Blazor-sider, login, databaser, dine services …
+
+var app = builder.Build();                               // 3. byg appen
+
+app.UseAntiforgery();                                    // 4. hvordan en forespørgsel behandles:
+app.MapStaticAssets();                                   //    sikkerhed, filer fra wwwroot, siderne …
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
+app.Run();                                               // 5. start webserveren`,
+        frag: true,
+        noter: [
+          ["builder.Services.Add…", "Registrerer en **service**: noget, appen skal kunne. Alle `Add`-linjer skal stå **før** `builder.Build()`."],
+          ["app.Use… og app.Map…", "Står **efter** `Build()`. `Map` siger, hvilke adresser appen svarer på, fx dine sider."],
+          ["app.Run()", "Starter webserveren. Den kører, indtil du stopper appen."],
+          ["if (app.Environment.IsDevelopment())", "Kun mens du udvikler på din egen computer, fx en side med detaljer om fejl."]
+        ],
+        md2: "I dit projekt står der også mange linjer om login: `AddAuthentication`, `AddIdentityCookies`, `AddIdentityCore`, `AddDbContext<ApplicationDbContext>` og `MapAdditionalIdentityEndpoints`. Dem har skabelonen skrevet. Til eksamen er det nok at sige, at de sætter **ASP.NET Core Identity** op: brugere, adgangskoder og login.\n\nEn af dem slutter med `?? throw new InvalidOperationException(…)`. `??` betyder: er det til venstre `null`, så gør det til højre. `throw` stopper programmet med en fejl og en besked. Så får man en klar besked, hvis connection stringen mangler i `appsettings.json`." },
+      { t: "valg", q: "Du skal registrere en ny service med `builder.Services.AddScoped<…>()`. Hvor i `Program.cs` skal linjen stå?",
+        svar: ["Før `var app = builder.Build();`, sammen med de andre `builder.Services`-linjer", "Efter `app.Run();`", "Hvor som helst", "Inde i `appsettings.json`"],
+        ret: 0, fordi: "Services registreres på byggeren, før appen bygges. Efter `Build()` kan man ikke tilføje flere, og efter `app.Run()` kører der ikke mere kode, før appen stopper." },
       { t: "laes", h: "Fortæl appen, hvor databasen er",
         md: "Til sidst skal appen vide, hvor databasen ligger, og den skal laves, første gang appen starter. Det sker to steder.\n\nI `appsettings.json` står **connection string**en. I `Program.cs` registreres databasen, og `EnsureCreated()` laver filen med tabeller og startdata, hvis den ikke findes.",
         kode: R`// appsettings.json (nederst, før den sidste })
@@ -321,6 +348,8 @@ using (var scope = app.Services.CreateScope())
 }`,
         frag: true,
         noter: [
+          ["GetConnectionString(\"SkadeDb\")", "Henter teksten med navnet `SkadeDb` fra `ConnectionStrings` i `appsettings.json`."],
+          ["using (var scope …) og GetRequiredService", "Henter en service et øjeblik, mens appen starter, så databaserne kan laves, før den første side vises."],
           ["Migrate()", "Laver brugernes database (`app.db`) ud fra skabelonens *migrations*, hvis den mangler. Så virker login også, når projektet køres første gang et nyt sted."],
           ["Data Source=Data/skader.db", "Databasen er filen `skader.db` i mappen `Data`, ved siden af brugernes `app.db`."],
           ["AddDbContextFactory", "Registrerer en **fabrik**, der kan lave en ny `SkadeContext`, når en service beder om det. Den bruges i næste lektion."],
@@ -397,7 +426,7 @@ public class SkadeContext : DbContext
     }
 }` },
       { t: "opgave", h: "Forbind databasen: appsettings.json og Program.cs", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
-        md: "Nu skal appen vide, hvor databasen ligger, og den skal laves, første gang appen starter. Trin 8 viser de nye linjer. Det meste af `Program.cs` står der allerede: skabelonens linjer til login. Du tilføjer kun det, kravene nævner.",
+        md: "Nu skal appen vide, hvor databasen ligger, og den skal laves, første gang appen starter. Trin 10 viser de nye linjer, og trin 8 viser, hvor i filen de hører til. Det meste af `Program.cs` står der allerede: skabelonens linjer til login. Du tilføjer kun det, kravene nævner.",
         krav: [
           "`appsettings.json`: under `ConnectionStrings` står en ny linje `\"SkadeDb\": \"Data Source=Data/skader.db\"` efter `DefaultConnection` (husk kommaet mellem dem)",
           "`Program.cs` øverst: `using System.Globalization;` og de to linjer, der sætter `CultureInfo.DefaultThreadCurrentCulture` og `DefaultThreadCurrentUICulture` til `new CultureInfo(\"da-DK\")`",
@@ -407,7 +436,7 @@ public class SkadeContext : DbContext
         ],
         tip: [
           "I JSON står der komma mellem to linjer i samme `{ }`, men ikke efter den sidste.",
-          "Alle tre stykker kode i `Program.cs` står i trin 8. `using System.Globalization;` skal stå øverst sammen med de andre `using`-linjer.",
+          "Alle tre stykker kode i `Program.cs` står i trin 10. `using System.Globalization;` skal stå øverst sammen med de andre `using`-linjer.",
           "Får du fejlen, at `SkadeContext` ikke findes, mangler `using SkadeApp.Data;` øverst. Den har skabelonen sat ind, fordi `ApplicationDbContext` også ligger i `Data`."
         ],
         output: "Appen starter som før. I mappen Data ligger nu skader.db ved siden af app.db. Vinduet med serverens log viser CREATE TABLE \"Kunder\" og CREATE TABLE \"Skader\" første gang.",
@@ -518,7 +547,7 @@ app.Run();`,
   ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l7", titel: "Services: interface, async og dependency injection", min: 25,
+  { id: "m30l7", nr: 7, titel: "Services: interface, async og dependency injection", min: 25,
     ord: [
       ["Interface", "En kontrakt: en liste af metoder uden indhold. En klasse, der skriver `: IKundeService`, lover at have dem alle."],
       ["Dependency injection", "Programmet laver selv de objekter, en klasse har brug for, og giver dem til den. Klassen beder om dem i sin konstruktør eller med `@inject`."],
@@ -648,6 +677,8 @@ async Task<int> TaelKunderAsync()
           ["using var db", "Laver en `SkadeContext`, som lukkes automatisk, når metoden er færdig."],
           ["Include(k => k.Skader)", "Hent kundernes skader med. Uden den er listen `Skader` tom."],
           ["ToListAsync()", "Kør SQL'en, og lav resultatet om til en `List<Kunde>`."],
+          ["FirstOrDefaultAsync(k => k.Id == id)", "Bruges i `HentAsync`: finder den første kunde, der passer, eller `null`, hvis der ingen er."],
+          ["FindAsync(id) og Remove", "Bruges til at rette og slette: `FindAsync` finder en række ud fra dens id, og `Remove` markerer den til sletning."],
           ["SaveChangesAsync()", "Gem ændringerne. Uden den bliver kunden ikke gemt."]
         ] },
       { t: "valg", q: "I `HentAlleAsync` står `db.Kunder.Include(k => k.Skader)`. Hvad sker der, hvis du fjerner `.Include(k => k.Skader)`?",
@@ -889,7 +920,154 @@ Database       SkadeContext + SQLite      tabeller med data`,
   ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l8", titel: "Den første side: Overblik", min: 25,
+  { id: "m30lh", nr: 8, titel: "HTML: det, siderne er lavet af", min: 25,
+    ord: [
+      ["Tag", "Et ord i vinkelparenteser, der fortæller browseren, hvad noget er: `<h1>` er en overskrift. De fleste tags har et start-tag og et slut-tag med skråstreg: `<h1>…</h1>`."],
+      ["Element", "Et start-tag, indholdet og slut-tagget tilsammen: `<p>Hej</p>` er et afsnit-element."],
+      ["Attribut", "En ekstra oplysning i et start-tag, skrevet `navn=\"værdi\"`, fx `href=\"kunder\"` eller `class=\"table\"`."],
+      ["class", "En attribut, der giver et element et udseende fra CSS. I din app kommer udseendet fra Bootstrap, fx `class=\"btn btn-primary\"`."],
+      ["div", "En boks uden eget udseende. Bruges til at samle og placere andre elementer."],
+      ["Komponent (i HTML)", "Et tag med stort forbogstav, fx `<NavLink>` eller `<EditForm>`, er ikke HTML, men en Blazor-komponent. Den laver selv HTML, når siden vises."]
+    ],
+    trin: [
+      { t: "laes", h: "Tags: browseren får at vide, hvad noget er",
+        md: "HTML er tekst med **tags** omkring. Et tag står i vinkelparenteser og fortæller browseren, hvad teksten er. De fleste tags kommer i par: et start-tag og et slut-tag med en skråstreg. Alt imellem dem hører til.",
+        kode: R`<h1>Kunder</h1>
+<h2>Seneste skader</h2>
+<p>Her er alle selskabets kunder.</p>
+<p>Udbetalt i alt: <b>4.500,00 kr.</b></p>
+<a href="kunder/1">Mette Jensen</a>`,
+        sprog: "html",
+        noter: [
+          ["<h1> … </h1>", "Den store overskrift. `<h2>` er en mindre overskrift."],
+          ["<p>", "Et afsnit tekst (p for *paragraph*)."],
+          ["<b>", "Fed skrift."],
+          ["<a href=\"kunder/1\">", "Et link. `href` er adressen, linket fører til, og teksten mellem tags er det, man klikker på."]
+        ] },
+      { t: "valg", q: "Hvad viser `<a href=\"skader\">Alle skader</a>` i browseren?",
+        svar: ["Et link med teksten Alle skader, der fører til adressen /skader", "Overskriften skader", "Teksten <a href=\"skader\"> på skærmen", "En knap, der sletter skader"],
+        ret: 0, fordi: "`<a>` er et link. `href` er adressen, og teksten mellem start- og slut-tagget er det, brugeren ser og klikker på." },
+      { t: "laes", h: "Bokse inden i hinanden og class",
+        md: "Elementer kan stå **inden i** hinanden. Så står det indre element mellem det ydres start- og slut-tag. Man rykker ind, så det er nemt at se, hvad der hører til hvad.\n\n`<div>` er en boks uden eget udseende. Den bruges til at samle ting. Udseendet kommer fra attributten **class**, som peger på regler i CSS. I din app kommer de fra Bootstrap.",
+        kode: R`<div class="card">
+    <div class="card-body">
+        <div class="text-muted">Kunder</div>
+        <div class="fs-2">4</div>
+    </div>
+</div>
+
+<span class="badge text-bg-success">Godkendt</span>
+<button class="btn btn-primary">Opret kunde</button>`,
+        sprog: "html",
+        noter: [
+          ["class=\"card\"", "Bootstrap: en boks med kant. `card-body` giver luft indeni."],
+          ["text-muted / fs-2", "Grå tekst / stor skrift. Flere klasser skrives med mellemrum imellem."],
+          ["<span>", "Som `div`, men til et lille stykke inde i en linje, fx et farvet mærke."],
+          ["<button>", "En knap. `btn btn-primary` gør den til Bootstraps blå hovedknap."]
+        ],
+        md2: "Andre attributter, du møder: `style=\"max-width: 400px\"` skriver CSS direkte på ét element, og `title=\"…\"` er en lille tekst, der vises, når musen står over elementet." },
+      { t: "orden", sprog: "html", q: "Sæt linjerne i rækkefølge, så tallet står inde i `card-body`, og `card-body` står inde i `card`.",
+        linjer: [R`<div class="card">`, R`    <div class="card-body">`, R`        <div class="fs-2">13.900,00 kr.</div>`, R`    </div>`, R`</div>`],
+        fordi: "Det ydre element åbnes først og lukkes sidst. Indenfor åbnes `card-body`, så kommer tallet, og `card-body` lukkes, før `card` lukkes." },
+      { t: "laes", h: "Tabeller",
+        md: "Kundelisten og skaderne er tabeller. En tabel er bygget af rækker (`<tr>`), og hver række har celler: `<th>` til overskrifter og `<td>` til data. Overskriftsrækken står i `<thead>`, datarækkerne i `<tbody>`.",
+        kode: R`<table class="table">
+    <thead>
+        <tr><th>Navn</th><th>Telefon</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Mette Jensen</td><td>22334455</td></tr>
+        <tr><td>Ali Hassan</td><td>40506070</td></tr>
+    </tbody>
+</table>`,
+        sprog: "html",
+        noter: [
+          ["<tr>", "En række (*table row*)."],
+          ["<th> / <td>", "En overskriftscelle / en almindelig celle."],
+          ["class=\"table\"", "Bootstrap giver tabellen streger og luft."],
+          ["I din app", "Rækkerne i `<tbody>` laves med en `@foreach` i C#: én `<tr>` pr. kunde."]
+        ] },
+      { t: "orden", sprog: "html", q: "Sæt linjerne i rækkefølge, så tabellen har overskriftsrækken først og så én række med data.",
+        linjer: [R`<table class="table">`, R`    <tr><th>Dato</th><th>Beløb</th></tr>`, R`    <tr><td>14-08-2026</td><td>4.500,00 kr.</td></tr>`, R`</table>`],
+        fordi: "`<table>` åbner tabellen. Overskriftsrækken med `<th>` kommer før datarækken med `<td>`, og `</table>` lukker til sidst." },
+      { t: "laes", h: "Felter, knapper og rullelister",
+        md: "Formularer er bygget af felter, man kan skrive i, og knapper. Nogle tags har intet indhold og intet slut-tag. De lukkes med `/>` i stedet.",
+        kode: R`<label>Søg</label>
+<input placeholder="Skriv et navn …" />
+<button type="submit">Søg</button>
+
+<select>
+    <option value="Alle">Alle</option>
+    <option value="Godkendt">Godkendt</option>
+</select>`,
+        sprog: "html",
+        noter: [
+          ["<label>", "Teksten over et felt."],
+          ["<input … />", "Et felt, man kan skrive i. `placeholder` er den grå hjælpetekst, der står, indtil man skriver."],
+          ["type=\"submit\"", "Knappen sender formularen, den står i."],
+          ["<select> og <option>", "En rulleliste. Hver `option` er en mulighed. `value` er værdien, programmet får, når den vælges."]
+        ] },
+      { t: "udfyld", sprog: "html", q: "Udfyld, så siden har et felt med den grå hjælpetekst `Søg …` og en knap med teksten `Søg`.",
+        kode: R`<[[input]] [[placeholder]]="Søg …" />
+<[[button]]>Søg</button>`,
+        fordi: "`<input />` er feltet, og `placeholder` er hjælpeteksten. `<button>` er knappen; teksten mellem tags er det, der står på den." },
+      { t: "laes", h: "Razor: HTML med C# og Blazor-komponenter",
+        md: "En `.razor`-fil er HTML, hvor `@` skifter til C#. Det ser du i lektionen om den første side.\n\nNogle tags har **stort forbogstav**, fx `<NavLink>`, `<PageTitle>` og `<EditForm>`. De er ikke HTML. De er **Blazor-komponenter**: små færdige dele, der selv laver HTML, når siden vises. Du bruger dem, som om de var tags.\n\nSådan ser ét link i din menu ud (`Components/Layout/NavMenu.razor`):",
+        kode: R`<div class="nav-item px-3">
+    <NavLink class="nav-link" href="kunder">
+        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Kunder
+    </NavLink>
+</div>`,
+        sprog: "razor",
+        noter: [
+          ["<div class=\"nav-item px-3\">", "Én række i menuen. `px-3` er Bootstrap: luft i siderne."],
+          ["<NavLink … href=\"kunder\">", "Blazors udgave af `<a>`. Den farver selv linket, når du står på den side."],
+          ["<span class=\"bi …\">", "Det lille ikon foran teksten. `aria-hidden=\"true\"` gør, at skærmlæsere springer ikonet over."],
+          ["Match=\"NavLinkMatch.All\"", "Står kun på linket til forsiden (`href=\"\"`): så lyser det kun, når man står præcis på forsiden."],
+          ["<PageTitle>", "Teksten på browserens fane."]
+        ],
+        md2: "Længere nede i `NavMenu.razor` står `<AuthorizeView>` med links til at logge ind og ud. Den del handler om login, som du lærer i lektion 13. Lad den stå uændret indtil da." },
+      { t: "valg", q: "I en `.razor`-fil står både `<div>` og `<NavLink>`. Hvordan kan du se, at `<NavLink>` er en Blazor-komponent og ikke HTML?",
+        svar: ["Den starter med stort bogstav", "Den står altid øverst i filen", "Den har en class", "Det kan man ikke se"],
+        ret: 0, fordi: "HTML-tags skrives med små bogstaver. Tags med stort forbogstav er komponenter, og Blazor laver dem om til almindelig HTML, når siden vises." },
+      { t: "opgave", h: "Lav menuen", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
+        md: "Nu ved du, hvad menuen er lavet af. Åbn `Components/Layout/NavMenu.razor` i dit projekt. Øverst står fire links fra skabelonen: **Home**, **Counter**, **Weather** og **Auth Required**. Dem skal du erstatte med dine tre sider. Linkene, der står der, er dit mønster (trin 9 viser opbygningen).",
+        krav: [
+                    "I `NavMenu.razor` er de fire første links (**Home**, **Counter**, **Weather** og **Auth Required**) erstattet af tre: **Overblik** til forsiden, **Kunder** til adressen `kunder` og **Skader** til adressen `skader`",
+          "Resten af `NavMenu.razor`, delen med `AuthorizeView`, er uændret",
+          "Appen kører, og menuen viser Overblik, Kunder og Skader"
+        ],
+        tip: [
+          "Hvert link er en `<div class=\"nav-item px-3\">` med en `<NavLink>` indeni. Kopiér hele Home-linket tre gange, og ret teksten og `href` i hver.",
+          "Forsiden har `href=\"\"` og `Match=\"NavLinkMatch.All\"`: så lyser linket kun, når du står præcis på forsiden. Kunder og Skader har kun `href=\"kunder\"` og `href=\"skader\"`.",
+          "Ikonet er `<span class=\"bi …\">` foran teksten. Genbrug ikonerne fra Home, Counter og Weather."
+        ],
+        output: "Menuen viser Overblik, Kunder og Skader, og under dem Register og Login. Klikker du på Kunder eller Skader, står der, at siden ikke findes: dem laver du i de næste lektioner.",
+        loesning: R`<div class="nav-item px-3">
+    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Overblik
+    </NavLink>
+</div>
+
+<div class="nav-item px-3">
+    <NavLink class="nav-link" href="kunder">
+        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Kunder
+    </NavLink>
+</div>
+
+<div class="nav-item px-3">
+    <NavLink class="nav-link" href="skader">
+        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Skader
+    </NavLink>
+</div>`,
+        md2: "`NavLink` er et link, som Blazor selv markerer med en farve, når du står på den side. `<span class=\"bi …\">` er det lille ikon foran teksten." },
+      { t: "forklar", q: "Eksamensspørgsmål: Hvad er forskellen på HTML, CSS og en Blazor-komponent i din app?",
+        svar: "HTML bestemmer indholdet, fx overskrifter, tabeller, felter og knapper. CSS bestemmer udseendet; i min app kommer det meste fra Bootstrap gennem class-attributter som btn og table. En Blazor-komponent er et tag med stort forbogstav, fx NavLink eller EditForm, eller mine egne som StatusMaerke. Den indeholder HTML og C# og laver selv HTML, når siden vises.",
+        noegle: ["indhold", "udseende", "Bootstrap", "class", "komponent", "stort forbogstav"] }
+    ] },
+
+  // ------------------------------------------------------------------
+  { id: "m30l8", nr: 9, titel: "Den første side: Overblik", min: 25,
     ord: [
       ["Razor", "Måden, man skriver HTML og C# sammen på i en `.razor`-fil. `@` skifter fra HTML til C#."],
       ["@page", "Giver siden en adresse, fx `@page \"/\"` for forsiden."],
@@ -958,9 +1136,11 @@ else
 }`,
         sprog: "razor", frag: true,
         noter: [
+          ["HttpContext og [CascadingParameter]", "Oplysninger om den forespørgsel, der kører lige nu. Blazor giver dem selv til komponenten. Skabelonens kode, som du ikke skal ændre."],
           ["AcceptsInteractiveRouting()", "Sand for dine egne sider, falsk for login-siderne."],
           ["? … : null", "Er betingelsen sand, bruges det før kolonet, ellers `null` (ingen interaktivitet)."],
-          ["prerender: false", "Rettelsen: skabelonen skrev bare `InteractiveServer`."]
+          ["prerender: false", "Rettelsen: skabelonen skrev bare `InteractiveServer`."],
+          ["new InteractiveServerRenderMode(…)", "Et objekt, der betyder \"Interactive Server\" med de indstillinger, du giver det. `IComponentRenderMode?` er typen; `?` fordi den kan være `null`."]
         ],
         md2: "Prisen er, at siden er et kort øjeblik om at komme frem, mens forbindelsen åbnes. Det er fint i en app til sagsbehandlere." },
       { t: "ide", h: "Ret App.razor og _Imports.razor",
@@ -974,7 +1154,7 @@ HttpContext.AcceptsInteractiveRouting() ? new InteractiveServerRenderMode(preren
 @using SkadeApp.Models
 @using SkadeApp.Services`,
         sprog: "razor", frag: true,
-        md2: "Skriv også `<html lang=\"da\">` i stedet for `<html lang=\"en\">` øverst i `App.razor`. Det fortæller browseren, at siden er på dansk." },
+        md2: "`@using` i en `.razor`-fil er det samme som `using` i en `.cs`-fil. Linjerne i `_Imports.razor` gælder for alle `.razor`-filer i projektet.\n\nSkriv også `<html lang=\"da\">` i stedet for `<html lang=\"en\">` øverst i `App.razor`. Det fortæller browseren, at siden er på dansk." },
       { t: "laes", h: "En lille genbrugelig komponent",
         md: "Status skal vises på tre sider som et farvet mærke: grå, gul, grøn eller rød. I stedet for at skrive det tre gange laver man én **komponent**, som får en værdi udefra som **parameter**. Farven vælges med et **switch-udtryk**.\n\nHer er en anden komponent bygget på samme måde, `TypeMaerke`, der viser en skades **type** som et mærke. Din `StatusMaerke` skal du selv skrive i trin 9 ud fra dette mønster.",
         kode: R`@* Viser en skadetype som et farvet mærke. *@
@@ -1044,6 +1224,17 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
         _ => "text-bg-danger"
     };
 }` },
+      { t: "laes", h: "Tre små ting til visningen",
+        md: "Tre ting bruges på alle dine sider, når data skal vises pænt:",
+        kode: R`@skade.Beloeb.ToString("C")          4.500,00 kr.
+@skade.Dato.ToString("dd-MM-yyyy")    14-08-2026
+@skade.Kunde?.Navn                    Mette Jensen (eller ingenting, hvis Kunde er null)`,
+        sprog: "text",
+        noter: [
+          ["ToString(\"C\")", "Skriver et tal som et beløb i landets valuta (C for *currency*). Med dansk opsætning: `4.500,00 kr.`"],
+          ["ToString(\"dd-MM-yyyy\")", "Skriver en dato: dag, måned og år med bindestreger."],
+          ["?.", "Er det til venstre `null`, gives `null` i stedet for at gå ned. På en side skrives `null` som ingenting."]
+        ] },
       { t: "opgave", h: "Overblik, del 1: hent data, og vis tre tal", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
         md: "Nu skal forsiden vise rigtige data. Erstat indholdet af `Components/Pages/Home.razor` med startkoden nedenfor. HTML-delen med de tre bokse er skrevet for dig (det er Bootstrap). Du skriver C#-delen: hvor data kommer fra, og hvad der står i boksene. Trin 1 og 3 viser byggestenene.",
         krav: [

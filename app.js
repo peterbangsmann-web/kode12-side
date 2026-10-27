@@ -675,7 +675,7 @@
     var da = dageTil(AFLEVERING), de = dageTil(EKSAMEN);
     function dageTekst(x) { return x > 1 ? "om " + x + " dage" : x === 1 ? "i morgen" : x === 0 ? "i dag" : "overstået"; }
     var html = '<div class="helt"><div class="kort stort">' +
-      (n ? '<span class="maerke">' + (faerdige ? "Fortsæt her" : "Start her") + "</span><h1>" + esc(n.l.titel) + '</h1><p class="svag">' + esc(n.m.titel) + " · lektion " + (n.i + 1) + " af " + n.m.lektioner.length + (n.l.min ? " · ca. " + n.l.min + " min" : "") + "</p>" +
+      (n ? '<span class="maerke">' + (faerdige ? "Fortsæt her" : "Start her") + "</span><h1>" + esc(n.l.titel) + '</h1><p class="svag">' + esc(n.m.titel) + " · lektion " + (n.l.nr != null ? n.l.nr : n.i + 1) + " af " + n.m.lektioner.length + (n.l.min ? " · ca. " + n.l.min + " min" : "") + "</p>" +
         '<div class="rk"><a class="knap pri stor" href="#/l/' + n.l.id + '">' + (faerdige ? "Fortsæt" : "Kom i gang") + " →</a>" + (f ? '<a class="knap" href="#/rep">Repetér ' + f + " opgaver</a>" : "") + "</div>"
         : '<h1>Du har lavet alle lektioner 🎉</h1><p>Brug Repetition hver dag, så det sidder til eksamen.</p><a class="knap pri" href="#/rep">Repetition</a>') +
       '</div><div class="kort"><div class="tal3"><div><b>' + faerdige + "</b><span>lektioner færdige</span></div><div><b>" + stribe() + "</b><span>dage i træk</span></div><div><b>" + (S.dage[dato()] || 0) + "</b><span>trin i dag</span></div></div>" +
@@ -710,7 +710,7 @@
     html += '<div class="lekliste">' + (m.lektioner || []).map(function (l, i) {
       var f = S.lek[l.id], opg = l.trin.filter(function (s) { return KAN_TJEKKES[s.t]; }).length;
       var prog = l.trin.filter(function (s) { return s.t === "opgave" || s.t === "ide"; }).length, ideNavn = erMac() ? "Rider" : "Visual Studio";
-      return '<a class="lek' + (f ? " faerdig" : "") + (n && n.l === l ? " naeste" : "") + (l.vaerksted ? " vaerksted" : "") + '" href="#/l/' + l.id + '"><span class="nr">' + (f ? "✓" : l.vaerksted ? "💻" : i + 1) + '</span><span><div class="t">' + esc(l.titel) + '</div><div class="d">' +
+      return '<a class="lek' + (f ? " faerdig" : "") + (n && n.l === l ? " naeste" : "") + (l.vaerksted ? " vaerksted" : "") + '" href="#/l/' + l.id + '"><span class="nr">' + (f ? "✓" : l.vaerksted ? "💻" : l.nr != null ? l.nr : i + 1) + '</span><span><div class="t">' + esc(l.titel) + '</div><div class="d">' +
         (l.vaerksted ? prog + " programmer, du selv skriver i " + ideNavn : l.trin.length + " trin · " + opg + " øvelser" + (prog ? " · " + prog + " i " + ideNavn : "")) + (l.min ? " · ca. " + l.min + " min" : "") + '</div></span><span class="hoejre">' + (f ? "Færdig " + f.d.slice(8) + "/" + f.d.slice(5, 7) : n && n.l === l ? "Næste →" : "") + "</span></a>";
     }).join("") + "</div>";
     ramme(html, "mellem");

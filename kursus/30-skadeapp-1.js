@@ -14,7 +14,7 @@ window.KURSUS.push({
   lektioner: [
 
   // ------------------------------------------------------------------
-  { id: "m30l0", titel: "Det store overblik: hvad er alle ordene?", min: 20,
+  { id: "m30l0", nr: 0, titel: "Det store overblik: hvad er alle ordene?", min: 20,
     ord: [
       ["Browser", "Programmet, man ser hjemmesider i: Chrome, Edge eller Safari."],
       ["Server", "En computer, der kører et program og venter på, at browsere beder om noget. Mens du udvikler, er serveren din egen computer."],
@@ -76,7 +76,7 @@ Database                  tabeller med kunder og skader          SQLite + EF Cor
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l1", titel: "Hvad du bygger, og projektet oprettes", min: 20,
+  { id: "m30l1", nr: 1, titel: "Hvad du bygger, og projektet oprettes", min: 20,
     ord: [
       ["Blazor Server", "En måde at lave web-apps på, hvor al C#-koden kører på serveren. Browseren viser siden og sender klik til serveren."],
       ["Komponent", "En del af en side i Blazor, skrevet i en `.razor`-fil med HTML og C# sammen. En hel side er også en komponent."],
@@ -108,7 +108,7 @@ Models + Data      Modeller og   beskriver kunder og skader,
         svar: ["På serveren. Browseren sender klikket dertil og får ændringerne tilbage", "I browseren", "I databasen", "På brugerens telefon"],
         ret: 0, fordi: "I Blazor Server kører al C# på serveren. Browseren viser siden og holder en forbindelse åben, så klik kan sendes af sted." },
       { t: "ide", h: "Opret projektet",
-        md: "Lav projektet nu, og kør det, før du ændrer noget. Så ved du, at alt virker fra starten.\n\nProjektet laves **med login** (*Individual Accounts*). Så laver skabelonen selv siderne til at logge ind, oprette en bruger og logge ud. Dem skal du ikke skrive. Du slår login til for dine egne sider i lektion 12.",
+        md: "Lav projektet nu, og kør det, før du ændrer noget. Så ved du, at alt virker fra starten.\n\nProjektet laves **med login** (*Individual Accounts*). Så laver skabelonen selv siderne til at logge ind, oprette en bruger og logge ud. Dem skal du ikke skrive. Du slår login til for dine egne sider i lektion 13.",
         win: ["Åbn Visual Studio, og klik **Create a new project**.", "Skriv `blazor` i søgefeltet, vælg **Blazor Web App**, og klik **Next**.", "Project name: `SkadeApp`. Klik **Next**.", "Framework: **.NET 10.0**. Authentication type: **Individual Accounts**. Fjern fluebenet ved **Configure for HTTPS**.", "**Interactive render mode: Server**. **Interactivity location: Global**. Lad **Include sample pages** have flueben. Sæt **ikke** flueben i **Do not use top-level statements**: så ligner din `Program.cs` koden i lektionerne. Klik **Create**.", "Kør med den grønne pil ▶. Browseren åbner, og du ser **Hello, world!**. Klik på **Counter** i menuen, og klik på knappen et par gange. Menuen har også **Register** og **Login**: det er login-siderne fra skabelonen."],
         mac: ["Åbn en terminal i den mappe, hvor dine projekter skal ligge.", "Skriv `dotnet new blazor -n SkadeApp --auth Individual --interactivity Server --all-interactive --no-https`, og tryk Enter.", "Åbn mappen `SkadeApp` i Rider (**File → Open…**).", "Kør med den grønne pil ▶. Browseren åbner, og du ser **Hello, world!**. Klik på **Counter** i menuen, og klik på knappen et par gange. Menuen har også **Register** og **Login**: det er login-siderne fra skabelonen."],
         md2: "Uden HTTPS slipper du for spørgsmål om certifikater, når appen starter. Det er fint til et projekt, der kun kører på din egen computer." },
@@ -140,7 +140,7 @@ Models + Data      Modeller og   beskriver kunder og skader,
           ["Program.cs", "Kører først af alt, når appen starter."],
           [".razor", "En komponent: HTML og C# i samme fil."],
           ["Pages", "Her ligger siderne. En side har en `@page`-linje med sin adresse."],
-          ["Account og Data", "Login og brugere. Skabelonen har lavet det hele. Du ser nærmere på det i lektion 12."]
+          ["Account og Data", "Login og brugere. Skabelonen har lavet det hele. Du ser nærmere på det i lektion 13."]
         ],
         md2: "Tre ting fra tegningen, som du får brug for med det samme:\n\n- `Program.cs` kører **først**, når appen starter.\n- En ny **side** lægges i mappen `Components/Pages`. Linjen `@page \"/adresse\"` øverst i filen giver siden dens adresse.\n- `Layout` er det, der står **rundt om** alle sider: menuen til venstre og rammen om indholdet." },
       { t: "valg", q: "Hvilken fil kører først, når du starter SkadeApp?",
@@ -157,7 +157,7 @@ Models + Data      Modeller og   beskriver kunder og skader,
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l2", titel: "Klasser og objekter: Kunde", min: 20,
+  { id: "m30l2", nr: 2, titel: "Klasser og objekter: Kunde", min: 20,
     ord: [
       ["Klasse", "En skabelon, der beskriver en slags ting: hvilke oplysninger den har. `class Kunde { … }`."],
       ["Objekt", "Én konkret ting lavet ud fra en klasse, fx kunden Mette. Laves med `new`."],
@@ -335,7 +335,7 @@ public class Kunde
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l3", titel: "Skade, enum og relationen", min: 22,
+  { id: "m30l3", nr: 3, titel: "Skade, enum og relationen", min: 22,
     ord: [
       ["enum", "En type med en fast liste af værdier, fx `enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`."],
       ["decimal", "Taltype til penge. Regner præcist med kroner og øre."],
@@ -503,7 +503,7 @@ public List<Skade> Skader { get; set; } = new();`,
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l4", titel: "Beregnede properties og LINQ", min: 22,
+  { id: "m30l4", nr: 4, titel: "Beregnede properties og LINQ", min: 22,
     ord: [
       ["Beregnet property", "En property uden `set`, som regnes ud, hver gang den læses: `public bool ErAaben => …;`. Den gemmes ikke i databasen."],
       ["Lambda", "En lille funktion skrevet kort: `s => s.Beloeb` betyder: tag en skade `s`, og giv dens beløb."],

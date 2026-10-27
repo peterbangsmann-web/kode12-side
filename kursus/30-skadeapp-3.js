@@ -7,7 +7,7 @@ if (!m) return;
 m.lektioner.push(
 
   // ------------------------------------------------------------------
-  { id: "m30l9", titel: "Kundelisten: søgning og formular", min: 25,
+  { id: "m30l9", nr: 10, titel: "Kundelisten: søgning og formular", min: 25,
     ord: [
       ["@bind", "Binder et felt i `@code` til et input-felt begge veje: skriver brugeren, ændres feltet, og ændres feltet, ændres input-feltet."],
       ["@bind:event", "Bestemmer, hvornår `@bind` opdaterer. `oninput` betyder ved hvert tastetryk."],
@@ -46,7 +46,8 @@ m.lektioner.push(
         noter: [
           ["IEnumerable<Kunde>", "\"Noget, man kan gå igennem med foreach\". Det er den type, `Where` og `OrderBy` giver."],
           ["kunder!", "Udråbstegnet lover compileren, at `kunder` ikke er `null` her. Siden tjekker det, før listen vises."],
-          ["Contains(…, OrdinalIgnoreCase)", "Indeholder teksten søgeordet, uanset store og små bogstaver?"],
+          ["Any()", "LINQ: svarer `true`, hvis der er mindst ét element. `!Fundne.Any()` betyder: der er ingen."],
+          ["Contains(…, StringComparison.OrdinalIgnoreCase)", "Indeholder teksten søgeordet, uanset store og små bogstaver?"],
           ["Tomt søgeord", "Alle tekster indeholder den tomme tekst, så med et tomt søgefelt vises alle kunder."]
         ] },
       { t: "forudsig",
@@ -310,7 +311,7 @@ private IEnumerable<Kunde> Fundne => kunder!
   ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l10", titel: "Kundesiden: ruteparameter, ret og slet", min: 30,
+  { id: "m30l10", nr: 11, titel: "Kundesiden: ruteparameter, ret og slet", min: 30,
     ord: [
       ["Ruteparameter", "En del af adressen, som siden får som værdi: i `/kunder/3` er 3 parameteren."],
       ["{Id:int}", "I `@page \"/kunder/{Id:int}\"`: her står et tal, som kommer i propertyen `Id`. `:int` betyder, at kun tal passer."],
@@ -409,7 +410,7 @@ class Kunde
         svar: ["De slettes også (cascade delete), fordi en skade ikke kan stå uden kunde", "De bliver liggende uden kunde", "Sletningen afvises, fordi han har skader", "De flyttes til en anden kunde"],
         ret: 0, fordi: "Fremmednøglen `KundeId` er påkrævet, så EF Core har sat den op med cascade delete. Derfor spørger siden også: \"Slet Ali Hassan og alle kundens skader?\"" },
       { t: "laes", h: "Skift status, og anmeld en skade",
-        md: "Status skiftes med en rulleliste ud for hver skade. Når man vælger, kommer en `ChangeEventArgs` med. `e.Value` er teksten fra det valgte, fx `\"Godkendt\"`, og `Enum.Parse` laver den om til en `SkadeStatus`.\n\nFormularen **Anmeld ny skade** er en `EditForm` ligesom på kundelisten, men med andre felter: `InputDate` til datoen, `InputSelect` til typen, `InputTextArea` til beskrivelsen og `InputNumber` til beløbet. Før skaden gemmes, får den kundens id: `nySkade.KundeId = Id;`.",
+        md: "Status skiftes med en rulleliste ud for hver skade. Når man vælger noget, kører det, der står i `@onchange`, og der kommer en `ChangeEventArgs` med. `e.Value` er teksten fra det valgte, fx `\"Godkendt\"`, og `Enum.Parse` laver den om til en `SkadeStatus`.\n\nFormularen **Anmeld ny skade** er en `EditForm` ligesom på kundelisten, men med andre felter: `InputDate` til datoen, `InputSelect` til typen, `InputTextArea` til beskrivelsen og `InputNumber` til beløbet. Før skaden gemmes, får den kundens id: `nySkade.KundeId = Id;`.",
         kode: R`private async Task SkiftStatus(int skadeId, ChangeEventArgs e)
 {
     var status = Enum.Parse<SkadeStatus>(e.Value!.ToString()!);
@@ -854,7 +855,7 @@ else
   ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l11", titel: "Skadesiden og test af hele appen", min: 25,
+  { id: "m30l11", nr: 12, titel: "Skadesiden og test af hele appen", min: 25,
     ord: [
       ["Filtrering", "At vise kun de elementer, der passer, fx kun godkendte skader. Gøres med `Where`."],
       ["Sortering", "At sætte elementerne i rækkefølge. Gøres med `OrderBy` eller `OrderByDescending`."],
@@ -929,7 +930,7 @@ foreach (decimal b in beloeb.[[OrderByDescending]](b => b).[[Take]](3))
         tip: [
           "En rulleliste med `@bind`: `<select class=\"form-select\" @bind=\"statusFilter\"> <option value=\"Alle\">Alle</option> … </select>`",
           "Tabellen er den samme som Seneste skader på overblikket, bare med `Viste` i stedet for `skader.OrderByDescending(…).Take(5)`.",
-          "Skriv `var viste = Viste.ToList();` øverst i `else`-delen, så tabellen, antallet (`viste.Count`) og summen (`viste.Sum(s => s.Beloeb)`) bruger samme liste."
+          "Skriv `var viste = Viste.ToList();` øverst i `else`-delen. `ToList()` laver resultatet om til en almindelig liste, så det kun regnes ud én gang, så tabellen, antallet (`viste.Count`) og summen (`viste.Sum(s => s.Beloeb)`) bruger samme liste."
         ],
         output: "Skadesiden viser alle syv skader med den nyeste øverst og 7 skader · i alt 68.049,00 kr. Med filteret Godkendt er der tre.",
         loesning: R`@page "/skader"
@@ -1047,7 +1048,7 @@ Console.WriteLine(udbetalt.ToString("C"));`,
   ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l12", titel: "Login: kun for medarbejdere", min: 30,
+  { id: "m30l12", nr: 13, titel: "Login: kun for medarbejdere", min: 30,
     ord: [
       ["Authentication", "At finde ud af, hvem brugeren er: log ind med e-mail og adgangskode."],
       ["Autorisation", "At bestemme, hvad brugeren må: fx at kun brugere, der er logget ind, må se kunderne."],
@@ -1108,7 +1109,8 @@ Components/Routes.razor     AuthorizeRouteView: sender til login, hvis man ikke 
         sprog: "razor", frag: true,
         noter: [
           ["@context.User.Identity?.Name", "Navnet på den bruger, der er logget ind. Her er det e-mailen."],
-          ["Log ud", "En lille formular, der sender til `Account/Logout`. Den har skabelonen lavet."]
+          ["Log ud", "En lille `<form>`, der sender til `Account/Logout`, når man klikker. `<AntiforgeryToken />` beskytter mod falske formularer fra andre hjemmesider. Den har skabelonen lavet."],
+          ["@code nederst i NavMenu.razor", "Skabelonens kode. Den husker den adresse, du står på (`currentUrl`), så du kommer tilbage dertil efter login. `@implements IDisposable` og `Dispose` rydder op, når menuen forsvinder. Du skal ikke skrive eller ændre den."]
         ] },
       { t: "valg", q: "Menuen har `<AuthorizeView>` med `<Authorized>` og `<NotAuthorized>`. Hvad ser en bruger, der ikke er logget ind?",
         svar: ["Kun det, der står i <NotAuthorized>: Log ind og Opret bruger", "Alle links, men de virker ikke", "Ingen menu", "Både <Authorized> og <NotAuthorized>"],
@@ -1238,7 +1240,7 @@ options.SignIn.RequireConfirmedAccount = false;
   ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l13", titel: "Eget udseende og et SVG-diagram", min: 30,
+  { id: "m30l13", nr: 14, titel: "Eget udseende og et SVG-diagram", min: 30,
     ord: [
       ["CSS", "Sproget, der bestemmer udseendet: farver, størrelser og placering."],
       ["Scoped CSS", "En `.razor.css`-fil, der kun gælder for én komponent, fx `MainLayout.razor.css`."],
@@ -1334,7 +1336,8 @@ background-image: linear-gradient(180deg, #1b4332 0%, #2d6a4f 70%);
         noter: [
           ["viewBox=\"0 0 26 30\"", "Koordinaterne går fra 0 til 26 vandret og fra 0 til 30 lodret."],
           ["path d=\"M13 1 L25 5 …\"", "En streg: `M` flytter pennen, `L` tegner en linje, `V` en lodret linje, `C` en kurve, `Z` lukker figuren."],
-          ["fill / stroke", "`fill` er farven indeni, `stroke` er farven på stregen."],
+          ["width og height", "Hvor stort logoet vises på siden."],
+          ["fill / stroke", "`fill` er farven indeni, `stroke` er farven på stregen. `stroke-width` er stregens tykkelse."],
           ["aria-hidden=\"true\"", "Skærmlæsere springer logoet over, fordi teksten SkadeApp står lige ved siden af."]
         ] },
       { t: "valg", q: "I en SVG står en firkant med `y=\"10\"` og en anden med `y=\"40\"`. Hvilken står længst nede på skærmen?",
@@ -1463,7 +1466,7 @@ Console.WriteLine(260.0 * antal / stoerste);`,
 
 @* Home.razor, lige under <h2 class="h4">Skader pr. status</h2>: *@
 <StatusDiagram Skader="skader" />`,
-        md2: "Diagrammet bruger de samme skader som resten af overblikket. Skift en skade til **Godkendt** på kundesiden, og gå tilbage til **Overblik**: søjlen er blevet længere." },
+        md2: "Diagrammet bruger de samme skader som resten af overblikket. Skift en skade til **Godkendt** på kundesiden, og gå tilbage til **Overblik**: søjlen er blevet længere.\n\n`role=\"img\"` og `aria-label` fortæller skærmlæsere, at det er et billede, og hvad det viser. `Math.Max(1, …)` giver det største af de to tal." },
       { t: "forklar", q: "Eksamensspørgsmål: Hvordan tegner du diagrammet på overbliksiden, og hvorfor bruger du heltal?",
         svar: "Diagrammet er en komponent, StatusDiagram, som får listen med skader som parameter. For hver status tæller den skaderne med LINQ og tegner en SVG-rect, hvor bredden er 260 gange antallet delt med det største antal. Jeg ganger før jeg deler, fordi heltalsdivision ellers giver 0. Jeg bruger heltal, fordi et kommatal ville blive skrevet med dansk komma, og SVG kræver punktum.",
         noegle: ["komponent", "parameter", "SVG", "rect", "heltal", "dansk komma"] }

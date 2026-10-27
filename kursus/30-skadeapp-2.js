@@ -216,17 +216,17 @@ public enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
     ord: [
       ["Database", "Et program, der gemmer data i tabeller, så de er der endnu, når appen starter igen."],
       ["EF Core", "Entity Framework Core: et bibliotek, der oversætter mellem dine C#-klasser og databasens tabeller. Du skriver C#, og EF Core skriver SQL'en."],
-      ["SQLite", "En database, der ligger i én fil (`skader.db`). Kræver ingen databaseserver."],
-      ["NuGet-pakke", "Et færdigt bibliotek, man henter ind i sit projekt, fx `Microsoft.EntityFrameworkCore.Sqlite`."],
+      ["SQLite", "En database, der ligger i én fil (`Data/skader.db`). Kræver ingen databaseserver."],
+      ["NuGet-pakke", "Et færdigt bibliotek, som projektet bruger, fx `Microsoft.EntityFrameworkCore.Sqlite`. Står i `SkadeApp.csproj`."],
       ["DbContext", "Klassen, der er forbindelsen til databasen. Hvert `DbSet` i den bliver til en tabel."],
       ["DbSet", "En tabel set fra C#: `DbSet<Kunde> Kunder` er tabellen med kunder."],
-      ["Connection string", "Teksten, der fortæller, hvor databasen er: `Data Source=skader.db`."],
+      ["Connection string", "Teksten, der fortæller, hvor databasen er: `Data Source=Data/skader.db`."],
       ["Seed data", "Startdata, som databasen fyldes med, når den laves første gang."],
       ["EnsureCreated", "Laver databasen med alle tabeller, hvis den ikke findes. Findes den, gør den ingenting."]
     ],
     trin: [
       { t: "laes", h: "Fra klasser til tabeller",
-        md: "Når appen lukkes, forsvinder alt, der kun ligger i variabler. Derfor gemmes kunder og skader i en **database**.\n\nDu skriver ikke selv SQL. **EF Core** oversætter: hver klasse bliver til en tabel, hver property til en kolonne, og hvert objekt til en række. Beder du om alle kunder i C#, skriver EF Core den SQL, der henter dem.\n\nDatabasen er **SQLite**: hele databasen ligger i én fil, `skader.db`, i projektmappen. Der er ingen databaseserver at installere, og censor kan køre din zip-fil uden opsætning.",
+        md: "Når appen lukkes, forsvinder alt, der kun ligger i variabler. Derfor gemmes kunder og skader i en **database**.\n\nDu skriver ikke selv SQL. **EF Core** oversætter: hver klasse bliver til en tabel, hver property til en kolonne, og hvert objekt til en række. Beder du om alle kunder i C#, skriver EF Core den SQL, der henter dem.\n\nDatabasen er **SQLite**: hele databasen ligger i én fil, `skader.db`, i mappen `Data`. Der er ingen databaseserver at installere, og censor kan køre din zip-fil uden opsætning.\n\nSkabelonen har allerede lavet en SQLite-database til brugerne, `app.db`, med sin egen `ApplicationDbContext`. Kunder og skader får deres egen database ved siden af. Så er login og forretningsdata adskilt.",
         kode: R`C#                              Database
 class Kunde                 →   tabellen Kunder
 public string Navn          →   kolonnen Navn
@@ -235,11 +235,11 @@ new Kunde { Navn = "Ali" }  →   en række i Kunder`,
       { t: "valg", q: "Hvad gør EF Core i dit projekt?",
         svar: ["Oversætter mellem dine C#-klasser og databasens tabeller og skriver SQL'en for dig", "Tegner siderne i browseren", "Tjekker, at e-mails er gyldige", "Er selve databasefilen"],
         ret: 0, fordi: "EF Core er bindeleddet: du arbejder med objekter i C#, og EF Core gemmer og henter dem i tabellerne. Databasefilen er `skader.db`, og SQLite er databasen." },
-      { t: "ide", h: "Hent EF Core til SQLite",
-        md: "EF Core er ikke en del af projektet fra starten. Du henter det som en **NuGet-pakke**. Versionen skal passe til .NET 10.",
-        win: ["Højreklik på projektet **SkadeApp** i Solution Explorer → **Manage NuGet Packages…**.", "Klik på fanen **Browse**, og søg efter `Microsoft.EntityFrameworkCore.Sqlite`.", "Vælg pakken, vælg version **10.0.12** i listen til højre, og klik **Install**. Godkend, hvis du bliver spurgt."],
-        mac: ["Åbn terminalen i Rider (vinduet **Terminal** nederst). Den står i mappen med `SkadeApp.csproj`.", "Skriv `dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 10.0.12`, og tryk Enter.", "Vent, til der står, at pakken er tilføjet."],
-        md2: "Åbn `SkadeApp.csproj` (dobbeltklik på projektet). Nu står der en linje med `PackageReference` og pakkens navn." },
+      { t: "ide", h: "EF Core er allerede i projektet",
+        md: "EF Core er et færdigt bibliotek, en **NuGet-pakke**. Fordi du lavede projektet med login, har skabelonen allerede hentet EF Core til SQLite: login-siderne gemmer brugerne i en database. Du skal bare se, at den er der.",
+        win: ["Dobbeltklik på projektet **SkadeApp** i Solution Explorer. Filen `SkadeApp.csproj` åbner.", "Find linjen med `Microsoft.EntityFrameworkCore.Sqlite`. Tallet efter `Version` er pakkens version.", "Højreklik på projektet → **Manage NuGet Packages…** → fanen **Installed**. Her står de samme pakker."],
+        mac: ["Dobbeltklik på projektet **SkadeApp** i Rider. Filen `SkadeApp.csproj` åbner.", "Find linjen med `Microsoft.EntityFrameworkCore.Sqlite`. Tallet efter `Version` er pakkens version."],
+        md2: "Havde du lavet projektet uden login, skulle du selv hente pakken: {{højreklik på projektet → **Manage NuGet Packages…** → **Browse**||i terminalen med `dotnet add package Microsoft.EntityFrameworkCore.Sqlite`}}." },
       { t: "laes", h: "DbContext: forbindelsen til databasen",
         md: "EF Core skal vide, hvilke tabeller databasen har. Det står i en klasse, der arver fra `DbContext`. At **arve** betyder, at din klasse får alt det, `DbContext` kan, og selv lægger lidt til: her de to tabeller.",
         kode: R`using Microsoft.EntityFrameworkCore;
@@ -291,7 +291,7 @@ public class SkadeContext : DbContext
         md: "Til sidst skal appen vide, hvor databasen ligger, og den skal laves, første gang appen starter. Det sker to steder.\n\nI `appsettings.json` står **connection string**en. I `Program.cs` registreres databasen, og `EnsureCreated()` laver filen med tabeller og startdata, hvis den ikke findes.",
         kode: R`// appsettings.json (nederst, før den sidste })
 "ConnectionStrings": {
-  "SkadeDb": "Data Source=skader.db"
+  "SkadeDb": "Data Source=Data/skader.db"
 }
 
 // Program.cs
@@ -300,21 +300,24 @@ builder.Services.AddDbContextFactory<SkadeContext>(options =>
 
 using (var scope = app.Services.CreateScope())
 {
+    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+
     var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<SkadeContext>>();
     using var db = factory.CreateDbContext();
     db.Database.EnsureCreated();
 }`,
         frag: true,
         noter: [
-          ["Data Source=skader.db", "Databasen er filen `skader.db` i projektmappen."],
+          ["Migrate()", "Laver brugernes database (`app.db`) ud fra skabelonens *migrations*, hvis den mangler. Så virker login også, når projektet køres første gang et nyt sted."],
+          ["Data Source=Data/skader.db", "Databasen er filen `skader.db` i mappen `Data`, ved siden af brugernes `app.db`."],
           ["AddDbContextFactory", "Registrerer en **fabrik**, der kan lave en ny `SkadeContext`, når en service beder om det. Den bruges i næste lektion."],
           ["UseSqlite(…)", "Brug SQLite med den connection string, der hedder `SkadeDb`."],
           ["EnsureCreated()", "Laver databasen, hvis filen ikke findes. Findes den, sker der ingenting."]
         ] },
       { t: "ide", h: "Byg databasen ind i dit projekt",
-        md: "Nu laver du databasen. Det er tre filer.",
-        win: ["Højreklik på projektet → **Add → New Folder** → `Data`. Højreklik på `Data` → **Add → Class…** → `SkadeContext.cs`. Skriv den første fil nedenfor.", "Åbn `appsettings.json`, og ret den, så den ser ud som den anden fil.", "Åbn `Program.cs`, og ret den, så den ser ud som den tredje fil.", "Kør appen. Den starter som før. Se i mappen med projektet (højreklik på projektet → **Open Folder in File Explorer**): nu ligger filen `skader.db` der."],
-        mac: ["Højreklik på projektet → **Add → Directory** → `Data`. Højreklik på `Data` → **Add → Class/Interface** → `SkadeContext`. Skriv den første fil nedenfor.", "Åbn `appsettings.json`, og ret den, så den ser ud som den anden fil.", "Åbn `Program.cs`, og ret den, så den ser ud som den tredje fil.", "Kør appen. Den starter som før. Se i projektmappen i Finder: nu ligger filen `skader.db` der."],
+        md: "Nu laver du databasen. Det er tre filer. Mappen `Data` findes allerede: skabelonen har lagt brugernes database der.",
+        win: ["Højreklik på mappen `Data` → **Add → Class…** → `SkadeContext.cs`. Skriv den første fil nedenfor.", "Åbn `appsettings.json`, og ret den, så den ser ud som den anden fil (der kommer én linje til).", "Åbn `Program.cs`, og ret den, så den ser ud som den tredje fil. Det meste står der allerede: skabelonens linjer til login. Du tilføjer linjerne om dansk format, `SkadeContext` og blokken med `using (var scope …)`.", "Kør appen. Den starter som før. Se i mappen `Data` (højreklik på den → **Open Folder in File Explorer**): nu ligger filen `skader.db` der."],
+        mac: ["Højreklik på mappen `Data` → **Add → Class/Interface** → `SkadeContext`. Skriv den første fil nedenfor.", "Åbn `appsettings.json`, og ret den, så den ser ud som den anden fil (der kommer én linje til).", "Åbn `Program.cs`, og ret den, så den ser ud som den tredje fil. Det meste står der allerede: skabelonens linjer til login. Du tilføjer linjerne om dansk format, `SkadeContext` og blokken med `using (var scope …)`.", "Kør appen. Den starter som før. Se i mappen `Data` i Finder: nu ligger filen `skader.db` der."],
         kode: R`// ===== Data/SkadeContext.cs =====
 using Microsoft.EntityFrameworkCore;
 using SkadeApp.Models;
@@ -357,22 +360,26 @@ public class SkadeContext : DbContext
 
 // ===== appsettings.json =====
 {
+  "ConnectionStrings": {
+    "DefaultConnection": "DataSource=Data/app.db;Cache=Shared",
+    "SkadeDb": "Data Source=Data/skader.db"
+  },
   "Logging": {
     "LogLevel": {
       "Default": "Information",
       "Microsoft.AspNetCore": "Warning"
     }
   },
-  "AllowedHosts": "*",
-  "ConnectionStrings": {
-    "SkadeDb": "Data Source=skader.db"
-  }
+  "AllowedHosts": "*"
 }
 
 // ===== Program.cs =====
 using System.Globalization;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SkadeApp.Components;
+using SkadeApp.Components.Account;
 using SkadeApp.Data;
 
 // Dansk format på tal og beløb (fx 4.500,00 kr.).
@@ -384,21 +391,56 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// ---- Login: lavet af skabelonen (Individual Accounts) med ASP.NET Core Identity ----
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
+    .AddIdentityCookies();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(connectionString));
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddIdentityCore<ApplicationUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
+    })
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+// ---- SkadeApp: kunder og skader ----
 // Databasen: SQLite-filen fra appsettings.json. En fabrik laver en ny DbContext, hver gang en service beder om det.
 builder.Services.AddDbContextFactory<SkadeContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("SkadeDb")));
 
 var app = builder.Build();
 
-// Lav databasen med tabeller og startdata, hvis filen ikke findes endnu.
+// Lav databaserne, hvis de ikke findes: brugerne (med skabelonens migrations) og kunder og skader (med startdata).
 using (var scope = app.Services.CreateScope())
 {
+    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+
     var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<SkadeContext>>();
     using var db = factory.CreateDbContext();
     db.Database.EnsureCreated();
 }
 
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint();
+}
+else
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
 }
@@ -409,11 +451,14 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+// Ekstra adresser, som login-siderne i Components/Account bruger (fx log ud).
+app.MapAdditionalIdentityEndpoints();
+
 app.Run();`,
         frag: true,
         md2: "De to linjer med `CultureInfo` gør, at beløb vises på dansk, fx `4.500,00 kr.`, uanset hvordan computeren er sat op. Når appen kører, skriver vinduet med serverens log de SQL-sætninger, EF Core sender til databasen. Kig efter `CREATE TABLE` første gang." },
-      { t: "valg", q: "Du tilføjer en ny property i `Kunde`, starter appen, og den går ned med en fejl om en kolonne, der ikke findes. `skader.db` lå der i forvejen. Hvad er årsagen?",
-        svar: ["EnsureCreated laver kun databasen, når filen ikke findes. Den gamle fil har ikke den nye kolonne. Stop appen, slet skader.db, og kør igen", "Propertyen skal også skrives i appsettings.json", "SQLite kan ikke have mere end fire kolonner", "NuGet-pakken er forkert"],
+      { t: "valg", q: "Du tilføjer en ny property i `Kunde`, starter appen, og den går ned med en fejl om en kolonne, der ikke findes. `Data/skader.db` lå der i forvejen. Hvad er årsagen?",
+        svar: ["EnsureCreated laver kun databasen, når filen ikke findes. Den gamle fil har ikke den nye kolonne. Stop appen, slet Data/skader.db, og kør igen", "Propertyen skal også skrives i appsettings.json", "SQLite kan ikke have mere end fire kolonner", "NuGet-pakken er forkert"],
         ret: 0, fordi: "`EnsureCreated()` ændrer ikke en database, der allerede findes. Slet filen, så laves den forfra med den nye kolonne og startdataene. (Store projekter bruger i stedet *migrations*, som kan ændre en database uden at slette data.)" },
       { t: "forklar", q: "Eksamensspørgsmål: Hvad er EF Core, og hvorfor har du valgt SQLite?",
         svar: "EF Core er en ORM: den oversætter mellem mine C#-klasser og databasens tabeller, så jeg arbejder med objekter, og EF Core skriver SQL'en. SkadeContext har et DbSet for hver tabel. Jeg har valgt SQLite, fordi hele databasen ligger i én fil, så projektet kan køres uden en databaseserver, fx af censor. EnsureCreated laver databasen med startdata første gang.",
@@ -778,21 +823,29 @@ else
         svar: ["Fordi siden tegnes, før data er hentet. Indtil da er skader null, og så vises \"Henter data …\"", "Fordi der måske ikke er nogen skader i databasen", "For at skjule siden for brugere uden login", "Fordi null betyder 0"],
         ret: 0, fordi: "`OnInitializedAsync` venter på databasen, men siden tegnes med det samme. En tom database giver en tom liste, ikke `null`." },
       { t: "laes", h: "Slå prerendering fra",
-        md: "Normalt tegner serveren siden to gange, når den åbnes: én gang som almindelig HTML, så den kommer hurtigt frem (det hedder **prerendering**), og én gang mere, når forbindelsen til browseren er oppe. Så kører `OnInitializedAsync` også to gange: databasen spørges to gange, og et breakpoint stopper to gange. Det forvirrer, når man fejlsøger.\n\nI SkadeApp er prerendering slået fra i `App.razor`. Så kører alt kun én gang.",
-        kode: R`<HeadOutlet @rendermode="new InteractiveServerRenderMode(prerender: false)" />
-...
-<Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />`,
+        md: "Normalt tegner serveren siden to gange, når den åbnes: én gang som almindelig HTML, så den kommer hurtigt frem (det hedder **prerendering**), og én gang mere, når forbindelsen til browseren er oppe. Så kører `OnInitializedAsync` også to gange: databasen spørges to gange, og et breakpoint stopper to gange. Det forvirrer, når man fejlsøger.\n\nI SkadeApp er prerendering slået fra i `App.razor`. Så kører alt kun én gang.\n\nI `App.razor` bestemmer en property, `PageRenderMode`, hvordan siderne kører. Login-siderne i `Components/Account` skal være almindelige sider uden interaktivitet, og for dem giver den `null`. Alle andre sider bliver Interactive Server, nu uden prerendering.",
+        kode: R`@code {
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    private IComponentRenderMode? PageRenderMode =>
+        HttpContext.AcceptsInteractiveRouting() ? new InteractiveServerRenderMode(prerender: false) : null;
+}`,
         sprog: "razor", frag: true,
+        noter: [
+          ["AcceptsInteractiveRouting()", "Sand for dine egne sider, falsk for login-siderne."],
+          ["? … : null", "Er betingelsen sand, bruges det før kolonet, ellers `null` (ingen interaktivitet)."],
+          ["prerender: false", "Rettelsen: skabelonen skrev bare `InteractiveServer`."]
+        ],
         md2: "Prisen er, at siden er et kort øjeblik om at komme frem, mens forbindelsen åbnes. Det er fint i en app til sagsbehandlere." },
       { t: "ide", h: "Ret App.razor og _Imports.razor",
         md: "To små rettelser, før du laver siderne.",
-        win: ["Åbn `Components/App.razor`. Find de to linjer med `@rendermode=\"InteractiveServer\"`, og ret dem til `@rendermode=\"new InteractiveServerRenderMode(prerender: false)\"`, som vist nedenfor.", "Åbn `Components/_Imports.razor`, og tilføj de to `using`-linjer nederst. Så kan alle sider bruge dine modeller og services uden at skrive `using` selv.", "Byg projektet."],
-        mac: ["Åbn `Components/App.razor`. Find de to linjer med `@rendermode=\"InteractiveServer\"`, og ret dem til `@rendermode=\"new InteractiveServerRenderMode(prerender: false)\"`, som vist nedenfor.", "Åbn `Components/_Imports.razor`, og tilføj de to `using`-linjer nederst. Så kan alle sider bruge dine modeller og services uden at skrive `using` selv.", "Byg projektet."],
-        kode: R`<!-- Components/App.razor: de to linjer -->
-<HeadOutlet @rendermode="new InteractiveServerRenderMode(prerender: false)" />
-<Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
+        win: ["Åbn `Components/App.razor`. Find linjen `HttpContext.AcceptsInteractiveRouting() ? InteractiveServer : null;` nederst, og ret `InteractiveServer` til `new InteractiveServerRenderMode(prerender: false)`, som vist nedenfor.", "Åbn `Components/_Imports.razor`, og tilføj de to `using`-linjer nederst. Så kan alle sider bruge dine modeller og services uden at skrive `using` selv.", "Byg projektet."],
+        mac: ["Åbn `Components/App.razor`. Find linjen `HttpContext.AcceptsInteractiveRouting() ? InteractiveServer : null;` nederst, og ret `InteractiveServer` til `new InteractiveServerRenderMode(prerender: false)`, som vist nedenfor.", "Åbn `Components/_Imports.razor`, og tilføj de to `using`-linjer nederst. Så kan alle sider bruge dine modeller og services uden at skrive `using` selv.", "Byg projektet."],
+        kode: R`@* Components/App.razor: linjen nederst i @code *@
+HttpContext.AcceptsInteractiveRouting() ? new InteractiveServerRenderMode(prerender: false) : null;
 
-<!-- Components/_Imports.razor: nederst -->
+@* Components/_Imports.razor: nederst *@
 @using SkadeApp.Models
 @using SkadeApp.Services`,
         sprog: "razor", frag: true,

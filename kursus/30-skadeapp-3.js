@@ -705,7 +705,7 @@ Console.WriteLine(udbetalt.ToString("C"));`,
         output: "13.900,00 kr.",
         fordi: "4500 + 6200 + 3200 = 13900. `\"C\"` skriver det som danske kroner med to decimaler. Det er tallet på din forside." },
       { t: "ide", h: "Test hele appen, som censor ville",
-        md: "Nu er appen færdig. Gå den igennem fra ende til anden, før du afleverer. Start forfra med de rigtige startdata: stop appen, slet `skader.db` i projektmappen, og kør igen.",
+        md: "Nu er appen færdig. Gå den igennem fra ende til anden, før du afleverer. Start forfra med de rigtige startdata: stop appen, slet `skader.db` i mappen `Data`, og kør igen. (Lader du `app.db` ligge, beholder du din bruger.)",
         win: ["**Overblik**: 4 kunder, 3 åbne skader, 13.900,00 kr. udbetalt.", "**Kunder**: søg på `søren`, så på `zzz`. Prøv at oprette en tom kunde og en med forkert e-mail og telefon. Opret så en rigtig kunde.", "**Kundesiden** for din nye kunde: anmeld en skade på 12.000 kr. Prøv først at anmelde uden beskrivelse. Sæt skaden til **Godkendt**: udbetalt skal være 12.000,00 kr.", "Ret kunden, og prøv både **Annullér** og **Gem**.", "**Overblik** igen: nu er der udbetalt 25.900,00 kr. **Skader**: 8 skader. Filtrér på **Godkendt** (4 skader), og sortér efter beløb.", "Slet skaden, og slet så kunden. Du kommer tilbage til kundelisten, og kunden er væk.", "Skriv `/kunder/999` i adresselinjen: \"Kunden findes ikke.\""],
         mac: ["**Overblik**: 4 kunder, 3 åbne skader, 13.900,00 kr. udbetalt.", "**Kunder**: søg på `søren`, så på `zzz`. Prøv at oprette en tom kunde og en med forkert e-mail og telefon. Opret så en rigtig kunde.", "**Kundesiden** for din nye kunde: anmeld en skade på 12.000 kr. Prøv først at anmelde uden beskrivelse. Sæt skaden til **Godkendt**: udbetalt skal være 12.000,00 kr.", "Ret kunden, og prøv både **Annullér** og **Gem**.", "**Overblik** igen: nu er der udbetalt 25.900,00 kr. **Skader**: 8 skader. Filtrér på **Godkendt** (4 skader), og sortér efter beløb.", "Slet skaden, og slet så kunden. Du kommer tilbage til kundelisten, og kunden er væk.", "Skriv `/kunder/999` i adresselinjen: \"Kunden findes ikke.\""],
         md2: "Virker et punkt ikke, så sammenlign den fil, det handler om, med facit i `Desktop\\c#\\C#  Ekasmen\\Facit\\SkadeApp`. Sæt et breakpoint i den metode, der skulle køre, og se, om den bliver kaldt." },
@@ -715,6 +715,356 @@ Console.WriteLine(udbetalt.ToString("C"));`,
       { t: "forklar", q: "Eksamensspørgsmål: Vis din app for censor på to minutter. Hvad viser du, og i hvilken rækkefølge?",
         svar: "Jeg starter på Overblik og forklarer problemet: en sagsbehandler skal holde styr på kunder og skader. Så går jeg til Kunder, søger og opretter en kunde, også med en fejl, så valideringen ses. På kundesiden anmelder jeg en skade og sætter den til Godkendt, så det udbetalte beløb ændrer sig. Til sidst viser jeg Skader med filter og sortering, og Overblik igen, hvor tallene er opdateret. Undervejs peger jeg på, at siderne bruger services, og at data gemmes med EF Core i SQLite.",
         noegle: ["problemet", "validering", "kundesiden", "Godkendt", "filter", "services"] }
+  ] },
+
+  // ------------------------------------------------------------------
+  { id: "m30l12", titel: "Login: kun for medarbejdere", min: 30,
+    ord: [
+      ["Authentication", "At finde ud af, hvem brugeren er: log ind med e-mail og adgangskode."],
+      ["Autorisation", "At bestemme, hvad brugeren må: fx at kun brugere, der er logget ind, må se kunderne."],
+      ["ASP.NET Core Identity", "Microsofts færdige system til brugere og login. Gemmer brugerne i en database og klarer adgangskoder og cookies."],
+      ["Hash", "En adgangskode laves om til en lang kode, der ikke kan regnes tilbage. Databasen gemmer kun hashen, aldrig selve adgangskoden."],
+      ["Cookie", "En lille tekst, browseren gemmer og sender med hver gang. Efter login fortæller den serveren, hvem du er."],
+      ["[Authorize]", "En attribut på en side: kun brugere, der er logget ind, må se den. Skrives `@attribute [Authorize]` i en `.razor`-fil."],
+      ["AuthorizeView", "En komponent, der viser én ting til brugere, der er logget ind (`<Authorized>`), og noget andet til alle andre (`<NotAuthorized>`)."]
+    ],
+    trin: [
+      { t: "laes", h: "Hvorfor login?",
+        md: "SkadeApp indeholder kunders navne, e-mails, telefonnumre og skader. Det er personoplysninger, og dem må kun selskabets medarbejdere se. Derfor skal man logge ind.\n\nDer er to ord, du skal kunne holde ude fra hinanden til eksamen:\n\n- **Authentication**: hvem er du? Brugeren logger ind med e-mail og adgangskode.\n- **Autorisation**: hvad må du? Siderne med kunder og skader må kun ses af brugere, der er logget ind.",
+        md2: "Underviseren sagde i undervisningen, at han gerne ser login i projektet. Det har SkadeApp nu." },
+      { t: "valg", q: "En sagsbehandler skriver sin e-mail og adgangskode og bliver logget ind. Hvad hedder det, der lige skete?",
+        svar: ["Authentication: systemet har fundet ud af, hvem brugeren er", "Autorisation", "Validering", "Dependency injection"],
+        ret: 0, fordi: "Authentication er at finde ud af, hvem man er. Autorisation kommer bagefter: at bestemme, hvad den bruger må, fx se kundelisten." },
+      { t: "laes", h: "Det har skabelonen lavet",
+        md: "Da du valgte **Individual Accounts** i lektion 1, lavede skabelonen hele login-delen med **ASP.NET Core Identity**. Du skal ikke skrive den, men du skal vide, hvad der er:",
+        kode: R`Components/Account          login-siderne: Login, Register, log ud, skift adgangskode …
+Data/ApplicationUser.cs     klassen for en bruger
+Data/ApplicationDbContext.cs  databasen med brugerne (app.db)
+Data/Migrations             opskriften på brugertabellerne
+Program.cs                  AddAuthentication, AddIdentityCookies, AddIdentityCore …
+Components/Routes.razor     AuthorizeRouteView: sender til login, hvis man ikke må se siden`,
+        sprog: "text",
+        noter: [
+          ["Adgangskoder", "Gemmes som en **hash**. Selv den, der kan se databasen, kan ikke læse adgangskoderne."],
+          ["Cookie", "Efter login gemmer browseren en cookie, så serveren kan se, hvem du er, uden at du logger ind igen."],
+          ["Migrations", "Brugertabellerne bliver lavet med migrations. Det er den metode, underviseren brugte med `Add-Migration` og `Update-Database`."]
+        ],
+        md2: "Login-siderne er på engelsk, fordi skabelonen er det. Det er helt i orden: de er ikke en del af din egen kode." },
+      { t: "valg", q: "Hvordan gemmer ASP.NET Core Identity en brugers adgangskode i databasen?",
+        svar: ["Som en hash, der ikke kan regnes tilbage til adgangskoden", "Som almindelig tekst", "I en cookie i browseren", "Den gemmes slet ikke"],
+        ret: 0, fordi: "Ved login laver Identity en hash af det, brugeren skriver, og sammenligner den med den gemte hash. Selve adgangskoden står aldrig i databasen." },
+      { t: "laes", h: "[Authorize]: siden kræver login",
+        md: "En side bliver beskyttet med én linje under `@page`: `@attribute [Authorize]`. Prøver en bruger, der ikke er logget ind, at åbne siden, sender `AuthorizeRouteView` i `Routes.razor` brugeren til login-siden. Efter login kommer man tilbage til den side, man ville se.",
+        kode: R`@page "/kunder"
+@attribute [Authorize]
+@inject IKundeService KundeService`,
+        sprog: "razor", frag: true,
+        noter: [
+          ["@attribute [Authorize]", "Sætter attributten `[Authorize]` på siden. Kræver `@using Microsoft.AspNetCore.Authorization`, som du lægger i `_Imports.razor`."],
+          ["Uden linjen", "Siden er åben for alle, også uden login."]
+        ] },
+      { t: "valg", q: "Kundelisten har `@attribute [Authorize]`. En bruger, der ikke er logget ind, skriver adressen `/kunder`. Hvad sker der?",
+        svar: ["Brugeren bliver sendt til login-siden, og efter login vises kundelisten", "Kundelisten vises alligevel", "Siden viser en tom tabel", "Appen går ned"],
+        ret: 0, fordi: "`AuthorizeRouteView` i `Routes.razor` ser, at brugeren ikke må se siden, og sender til login. Adressen, man ville til, huskes, så man kommer derhen bagefter." },
+      { t: "laes", h: "Menuen: AuthorizeView",
+        md: "Menuen skal vise **Overblik**, **Kunder** og **Skader** til brugere, der er logget ind, og **Log ind** og **Opret bruger** til alle andre. Det gør `AuthorizeView`: indholdet i `<Authorized>` vises, når man er logget ind, og indholdet i `<NotAuthorized>`, når man ikke er.",
+        kode: R`<AuthorizeView>
+    <Authorized>
+        ... Overblik, Kunder, Skader, @context.User.Identity?.Name og Log ud
+    </Authorized>
+    <NotAuthorized>
+        ... Log ind og Opret bruger
+    </NotAuthorized>
+</AuthorizeView>`,
+        sprog: "razor", frag: true,
+        noter: [
+          ["@context.User.Identity?.Name", "Navnet på den bruger, der er logget ind. Her er det e-mailen."],
+          ["Log ud", "En lille formular, der sender til `Account/Logout`. Den har skabelonen lavet."]
+        ] },
+      { t: "valg", q: "Menuen har `<AuthorizeView>` med `<Authorized>` og `<NotAuthorized>`. Hvad ser en bruger, der ikke er logget ind?",
+        svar: ["Kun det, der står i <NotAuthorized>: Log ind og Opret bruger", "Alle links, men de virker ikke", "Ingen menu", "Både <Authorized> og <NotAuthorized>"],
+        ret: 0, fordi: "`AuthorizeView` viser én af de to dele. Linkene til dine sider står i `<Authorized>`, så de vises først efter login." },
+      { t: "ide", h: "Slå login til for dine sider",
+        md: "Fire små rettelser. Til sidst er alle dine sider beskyttet.",
+        win: ["`Program.cs`: find `options.SignIn.RequireConfirmedAccount = true;`, og ret `true` til `false`. Appen sender ingen e-mails, så en ny bruger skal ikke bekræfte sin e-mail.", "`Components/_Imports.razor`: tilføj `@using Microsoft.AspNetCore.Authorization` nederst.", "Skriv `@attribute [Authorize]` på linjen lige under `@page` i `Home.razor`, `Kunder.razor`, `KundeDetaljer.razor` og `Skader.razor`.", "`Components/Layout/NavMenu.razor`: ret den, så den ser ud som koden nedenfor. Dine tre links flyttes ind i `<Authorized>`, og teksterne bliver danske."],
+        mac: ["`Program.cs`: find `options.SignIn.RequireConfirmedAccount = true;`, og ret `true` til `false`. Appen sender ingen e-mails, så en ny bruger skal ikke bekræfte sin e-mail.", "`Components/_Imports.razor`: tilføj `@using Microsoft.AspNetCore.Authorization` nederst.", "Skriv `@attribute [Authorize]` på linjen lige under `@page` i `Home.razor`, `Kunder.razor`, `KundeDetaljer.razor` og `Skader.razor`.", "`Components/Layout/NavMenu.razor`: ret den, så den ser ud som koden nedenfor. Dine tre links flyttes ind i `<Authorized>`, og teksterne bliver danske."],
+        kode: R`@implements IDisposable
+
+@inject NavigationManager NavigationManager
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">SkadeApp</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="nav flex-column">
+        @* AuthorizeView viser den første del til brugere, der er logget ind, og den anden del til alle andre. *@
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Overblik
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="kunder">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Kunder
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="skader">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Skader
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Manage">
+                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span>
+                        <span class="d-inline-block text-truncate" style="max-width: 150px">@context.User.Identity?.Name</span>
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <form action="Account/Logout" method="post">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                        <button type="submit" class="nav-link">
+                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Log ud
+                        </button>
+                    </form>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Login">
+                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Log ind
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Register">
+                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Opret bruger
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+    </nav>
+</div>
+
+@code {
+    private string? currentUrl;
+
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}`,
+        sprog: "razor", frag: true,
+        md2: "`@code`-delen nederst har skabelonen skrevet. Den husker den adresse, du står på (`currentUrl`), så du kommer tilbage dertil, når du logger ind igen efter at have logget ud. Den er uændret: du skal kun rette i HTML-delen ovenover." },
+      { t: "ide", h: "Prøv login",
+        md: "Nu prøver du login, som en ny medarbejder ville.",
+        win: ["Kør appen. Du bliver sendt til siden **Log in**, fordi forsiden kræver login. Menuen viser kun **Log ind** og **Opret bruger**.", "Klik **Opret bruger**. Skriv en e-mail, fx `sagsbehandler@skadeapp.dk`, og en adgangskode to gange, fx `Skade123!`. Klik **Register**.", "Du er logget ind og ser overblikket. Menuen viser dine tre sider, din e-mail og **Log ud**.", "Klik **Log ud**. Skriv adressen `/skader`: du bliver sendt til login.", "Log ind med en forkert adgangskode: der står *Invalid login attempt*. Log ind med den rigtige: du kommer til skadesiden."],
+        mac: ["Kør appen. Du bliver sendt til siden **Log in**, fordi forsiden kræver login. Menuen viser kun **Log ind** og **Opret bruger**.", "Klik **Opret bruger**. Skriv en e-mail, fx `sagsbehandler@skadeapp.dk`, og en adgangskode to gange, fx `Skade123!`. Klik **Register**.", "Du er logget ind og ser overblikket. Menuen viser dine tre sider, din e-mail og **Log ud**.", "Klik **Log ud**. Skriv adressen `/skader`: du bliver sendt til login.", "Log ind med en forkert adgangskode: der står *Invalid login attempt*. Log ind med den rigtige: du kommer til skadesiden."],
+        md2: "Adgangskoden skal være mindst 6 tegn og have et stort bogstav, et lille bogstav, et tal og et tegn som `!`. Det er Identitys regler fra starten. Brugeren gemmes i `Data/app.db`, så den er der også næste gang." },
+      { t: "forklar", q: "Eksamensspørgsmål: Hvordan har du sikret, at kun medarbejdere kan se kunderne?",
+        svar: "Projektet bruger ASP.NET Core Identity, som skabelonen lavede, da jeg valgte Individual Accounts. Brugerne gemmes i deres egen database, og adgangskoderne gemmes som hash. Mine sider har @attribute [Authorize], så en bruger, der ikke er logget ind, bliver sendt til login af AuthorizeRouteView. Menuen bruger AuthorizeView, så linkene til kunder og skader kun vises efter login. Det er authentication (hvem er du) og autorisation (hvad må du).",
+        noegle: ["Identity", "hash", "[Authorize]", "AuthorizeView", "authentication", "autorisation"] }
+  ] },
+
+  // ------------------------------------------------------------------
+  { id: "m30l13", titel: "Eget udseende og et SVG-diagram", min: 30,
+    ord: [
+      ["CSS", "Sproget, der bestemmer udseendet: farver, størrelser og placering."],
+      ["Scoped CSS", "En `.razor.css`-fil, der kun gælder for én komponent, fx `MainLayout.razor.css`."],
+      ["SVG", "Grafik beskrevet med tekst: figurer med koordinater. Kan skrives direkte i en `.razor`-fil og bliver skarp i alle størrelser."],
+      ["viewBox", "Det koordinatsystem, en SVG tegnes i: `viewBox=\"0 0 420 160\"` er 420 enheder bredt og 160 højt."],
+      ["rect", "En firkant i SVG: `x` og `y` er øverste venstre hjørne, `width` og `height` er størrelsen."],
+      ["Heltalsdivision", "Deler man to `int`, smides decimalerne væk: `7 / 2` er 3."]
+    ],
+    trin: [
+      { t: "laes", h: "Egne farver",
+        md: "Skabelonen er blå og lilla. SkadeApp får sine egne farver: mørkegrøn. To filer bestemmer udseendet:\n\n- `wwwroot/app.css` gælder **hele appen**, fx farven på links og knapper.\n- `Components/Layout/MainLayout.razor.css` gælder **kun layoutet**, fx baggrunden i menuen. En `.razor.css`-fil med samme navn som en komponent kaldes **scoped CSS**: den rører ikke andre komponenter.",
+        kode: R`/* wwwroot/app.css: SkadeApps egne farver i stedet for skabelonens blå */
+a, .btn-link {
+    color: #2d6a4f;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #2d6a4f;
+    border-color: #1b4332;
+}
+
+/* MainLayout.razor.css: menuens baggrund */
+.sidebar {
+    background-image: linear-gradient(180deg, #1b4332 0%, #2d6a4f 70%);
+}`,
+        sprog: "css",
+        noter: [
+          ["#2d6a4f", "En farve skrevet som rød, grøn og blå i sekstentalssystemet. Denne er mørkegrøn."],
+          [".btn-primary", "Bootstraps klasse til den vigtigste knap. Din regel ændrer dens farve."],
+          ["linear-gradient", "En overgang fra én farve øverst til en anden længere nede."]
+        ] },
+      { t: "valg", q: "Du vil ændre farven på alle knapper med klassen `btn-primary` i hele appen. Hvilken fil skal du rette i?",
+        svar: ["wwwroot/app.css, fordi den gælder for hele appen", "MainLayout.razor.css", "NavMenu.razor", "Program.cs"],
+        ret: 0, fordi: "`app.css` gælder overalt. En `.razor.css`-fil gælder kun for sin egen komponent, så en regel i `MainLayout.razor.css` ville ikke ramme knapperne på dine sider." },
+      { t: "ide", h: "Giv appen dine farver",
+        md: "Ret de tre filer. Farverne må gerne være dine egne, hvis du hellere vil have en anden.",
+        win: ["`wwwroot/app.css`: erstat reglerne for `a, .btn-link` og `.btn-primary` med koden nedenfor, så knapper og links bliver grønne.", "`Components/Layout/MainLayout.razor.css`: find `.sidebar`, og ret `background-image` til den grønne overgang fra trin 1.", "`Components/Layout/MainLayout.razor`: erstat linket **About** øverst med `<span class=\"text-muted\">Skadesbehandling for et forsikringsselskab</span>`, og oversæt fejlteksten nederst til dansk.", "Kør appen, og se de nye farver."],
+        mac: ["`wwwroot/app.css`: erstat reglerne for `a, .btn-link` og `.btn-primary` med koden nedenfor, så knapper og links bliver grønne.", "`Components/Layout/MainLayout.razor.css`: find `.sidebar`, og ret `background-image` til den grønne overgang fra trin 1.", "`Components/Layout/MainLayout.razor`: erstat linket **About** øverst med `<span class=\"text-muted\">Skadesbehandling for et forsikringsselskab</span>`, og oversæt fejlteksten nederst til dansk.", "Kør appen, og se de nye farver."],
+        kode: R`/* SkadeApps egne farver: grøn i stedet for skabelonens blå */
+a, .btn-link {
+    color: #2d6a4f;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #2d6a4f;
+    border-color: #1b4332;
+}
+
+.btn-primary:hover {
+    background-color: #1b4332;
+    border-color: #1b4332;
+}
+
+.btn-outline-primary {
+    color: #2d6a4f;
+    border-color: #2d6a4f;
+}
+
+.btn-outline-primary:hover {
+    color: #fff;
+    background-color: #2d6a4f;
+    border-color: #2d6a4f;
+}`,
+        sprog: "css",
+        md2: "`:hover` er udseendet, mens musen står over knappen. `btn-outline-primary` er knappen **Ret kunde**, som kun har en kant." },
+      { t: "laes", h: "SVG: tegn med koordinater",
+        md: "**SVG** er grafik skrevet som tekst. Hver figur har koordinater. Punktet (0, 0) er **øverst til venstre**: `x` vokser mod højre, og `y` vokser **nedad**. Her er logoet til menuen: et skjold med et flueben.",
+        kode: R`<svg width="26" height="30" viewBox="0 0 26 30" aria-hidden="true">
+    <path d="M13 1 L25 5 V14 C25 22 19 27 13 29 C7 27 1 22 1 14 V5 Z" fill="#f4a261" />
+    <path d="M7 15 L11.5 19.5 L19 11" stroke="#1b4332" stroke-width="3" fill="none"
+          stroke-linecap="round" stroke-linejoin="round" />
+</svg>`,
+        sprog: "html",
+        noter: [
+          ["viewBox=\"0 0 26 30\"", "Koordinaterne går fra 0 til 26 vandret og fra 0 til 30 lodret."],
+          ["path d=\"M13 1 L25 5 …\"", "En streg: `M` flytter pennen, `L` tegner en linje, `V` en lodret linje, `C` en kurve, `Z` lukker figuren."],
+          ["fill / stroke", "`fill` er farven indeni, `stroke` er farven på stregen."],
+          ["aria-hidden=\"true\"", "Skærmlæsere springer logoet over, fordi teksten SkadeApp står lige ved siden af."]
+        ] },
+      { t: "valg", q: "I en SVG står en firkant med `y=\"10\"` og en anden med `y=\"40\"`. Hvilken står længst nede på skærmen?",
+        svar: ["Den med y=\"40\", fordi y vokser nedad i SVG", "Den med y=\"10\"", "De står ved siden af hinanden", "Det afhænger af x"],
+        ret: 0, fordi: "I SVG er (0, 0) øverst til venstre, og `y` bliver større, jo længere ned man kommer. Det er omvendt af en graf i matematik." },
+      { t: "ide", h: "Sæt logoet i menuen",
+        md: "Logoet skal stå foran navnet SkadeApp øverst i menuen.",
+        win: ["Åbn `Components/Layout/NavMenu.razor`.", "Erstat linjen `<a class=\"navbar-brand\" href=\"\">SkadeApp</a>` med koden nedenfor.", "Kør appen. Skjoldet står i menuen."],
+        mac: ["Åbn `Components/Layout/NavMenu.razor`.", "Erstat linjen `<a class=\"navbar-brand\" href=\"\">SkadeApp</a>` med koden nedenfor.", "Kør appen. Skjoldet står i menuen."],
+        kode: R`<a class="navbar-brand d-flex align-items-center gap-2" href="">
+    @* Logoet er tegnet med SVG: et skjold med et flueben. *@
+    <svg width="26" height="30" viewBox="0 0 26 30" aria-hidden="true">
+        <path d="M13 1 L25 5 V14 C25 22 19 27 13 29 C7 27 1 22 1 14 V5 Z" fill="#f4a261" />
+        <path d="M7 15 L11.5 19.5 L19 11" stroke="#1b4332" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    SkadeApp
+</a>`,
+        sprog: "razor", frag: true,
+        md2: "`d-flex align-items-center gap-2` er Bootstrap: logo og tekst står på én linje, midt for hinanden, med lidt luft imellem." },
+      { t: "laes", h: "Et diagram, der regner selv",
+        md: "Overblikket får et søjlediagram: én vandret søjle pr. status, og jo flere skader, jo længere søjle. Det er en komponent, `StatusDiagram`, der får skaderne som parameter og tegner en `rect` for hver status. Den længste søjle er 260 enheder.",
+        kode: R`@for (int i = 0; i < statusser.Length; i++)
+{
+    var status = statusser[i];
+    int antal = Antal(status);
+    int bredde = 260 * antal / Stoerste;   // heltal: SVG skal have punktum, ikke dansk komma
+    int y = i * 40;
+
+    <g>
+        <text x="0" y="@(y + 25)" font-size="15">@status</text>
+        <rect x="100" y="@(y + 8)" width="@bredde" height="24" rx="4" fill="@Farve(status)" />
+        <text x="@(108 + bredde)" y="@(y + 25)" font-size="15">@antal</text>
+    </g>
+}`,
+        sprog: "razor", frag: true,
+        noter: [
+          ["for-løkken", "Én gang pr. status. `i` bruges til at lægge rækkerne 40 enheder under hinanden."],
+          ["260 * antal / Stoerste", "Søjlens længde: den status med flest skader får 260, de andre en del af det."],
+          ["int, ikke double", "Et kommatal ville blive skrevet med dansk komma, fx `173,3`. SVG kræver punktum, så `width=\"173,3\"` virker ikke. Heltal har intet komma."],
+          ["<g>", "Samler én række. Den skal være der, fordi Razor ellers læser `<text>` som sit eget tag."]
+        ] },
+      { t: "forudsig",
+        q: "Godkendt har 3 skader (flest), og Anmeldt har 2. Hvad skriver programmet? Husk, at `int` delt med `int` smider decimalerne væk.",
+        kode: R`int antal = 2;
+int stoerste = 3;
+
+Console.WriteLine(260 * antal / stoerste);
+Console.WriteLine(antal / stoerste * 260);
+Console.WriteLine(260.0 * antal / stoerste);`,
+        output: "173\n0\n173,33333333333334",
+        fordi: "Første linje: 260 × 2 = 520, og 520 / 3 = 173 (decimalerne smides væk). Anden linje: 2 / 3 er 0 i heltal, og 0 × 260 er 0. Derfor ganger diagrammet **før** det deler. Tredje linje er et kommatal, og det skrives med dansk komma: det er derfor, diagrammet bruger heltal." },
+      { t: "ide", h: "Lav diagrammet",
+        md: "Lav komponenten, og sæt den på overbliksiden.",
+        win: ["Højreklik på mappen `Components` → **Add → Razor Component…** → `StatusDiagram.razor`. Erstat indholdet med koden nedenfor.", "Åbn `Components/Pages/Home.razor`. Lige under overskriften `<h2 class=\"h4\">Skader pr. status</h2>` skriver du `<StatusDiagram Skader=\"skader\" />`.", "Kør appen. Overblikket viser fire søjler: Anmeldt 2, Behandles 1, Godkendt 3 og Afvist 1. Godkendt er den længste."],
+        mac: ["Højreklik på mappen `Components` → **Add → File**, og kald filen `StatusDiagram.razor`. Skriv koden nedenfor.", "Åbn `Components/Pages/Home.razor`. Lige under overskriften `<h2 class=\"h4\">Skader pr. status</h2>` skriver du `<StatusDiagram Skader=\"skader\" />`.", "Kør appen. Overblikket viser fire søjler: Anmeldt 2, Behandles 1, Godkendt 3 og Afvist 1. Godkendt er den længste."],
+        kode: R`@* Et søjlediagram tegnet med SVG: én vandret søjle pr. status. Søjlens længde passer til antallet af skader. *@
+<svg viewBox="0 0 420 @(statusser.Length * 40)" width="100%" style="max-width: 520px" role="img" aria-label="Antal skader pr. status">
+    @for (int i = 0; i < statusser.Length; i++)
+    {
+        var status = statusser[i];
+        int antal = Antal(status);
+        int bredde = 260 * antal / Stoerste;   // heltal: SVG skal have punktum, ikke dansk komma
+        int y = i * 40;
+
+        @* <g> samler én række. Den skal være der, fordi Razor ellers læser <text> som sit eget tag. *@
+        <g>
+            <text x="0" y="@(y + 25)" font-size="15">@status</text>
+            <rect x="100" y="@(y + 8)" width="@bredde" height="24" rx="4" fill="@Farve(status)" />
+            <text x="@(108 + bredde)" y="@(y + 25)" font-size="15">@antal</text>
+        </g>
+    }
+</svg>
+
+@code {
+    [Parameter] public List<Skade> Skader { get; set; } = new();
+
+    private SkadeStatus[] statusser = Enum.GetValues<SkadeStatus>();
+
+    private int Antal(SkadeStatus status) => Skader.Count(s => s.Status == status);
+
+    // Den længste søjle er den status, der har flest skader. Mindst 1, så vi aldrig deler med 0.
+    private int Stoerste => Math.Max(1, statusser.Max(s => Antal(s)));
+
+    // Samme farver som StatusMaerke (Bootstraps farver).
+    private string Farve(SkadeStatus status) => status switch
+    {
+        SkadeStatus.Anmeldt => "#6c757d",
+        SkadeStatus.Behandles => "#ffc107",
+        SkadeStatus.Godkendt => "#198754",
+        _ => "#dc3545"
+    };
+}`,
+        sprog: "razor", frag: true,
+        md2: "Diagrammet bruger de samme skader som resten af overblikket, så det passer altid med tallene. Skift en skade til **Godkendt** på kundesiden, og gå tilbage til **Overblik**: søjlen er blevet længere." },
+      { t: "forklar", q: "Eksamensspørgsmål: Hvordan tegner du diagrammet på overbliksiden, og hvorfor bruger du heltal?",
+        svar: "Diagrammet er en komponent, StatusDiagram, som får listen med skader som parameter. For hver status tæller den skaderne med LINQ og tegner en SVG-rect, hvor bredden er 260 gange antallet delt med det største antal. Jeg ganger før jeg deler, fordi heltalsdivision ellers giver 0. Jeg bruger heltal, fordi et kommatal ville blive skrevet med dansk komma, og SVG kræver punktum.",
+        noegle: ["komponent", "parameter", "SVG", "rect", "heltal", "dansk komma"] }
   ] },
 
   // ------------------------------------------------------------------
@@ -786,7 +1136,7 @@ Console.WriteLine(udbetalt.ToString("C"));`,
         ],
         tip: [
           "Start i `Kunde.cs`: kopiér `Telefon` med dens to attributter, og ret navn, mønster og beskeder.",
-          "Mønsteret er `^\\d{4}$`. I `HasData` skal hver kunde have `Postnummer = \"…\"`, ellers fejler valideringen ikke, men databasen får tomme postnumre. Stop appen, og slet `skader.db`, før du kører igen.",
+          "Mønsteret er `^\\d{4}$`. I `HasData` skal hver kunde have `Postnummer = \"…\"`, ellers fejler valideringen ikke, men databasen får tomme postnumre. Stop appen, og slet `Data/skader.db`, før du kører igen.",
           "I `OpdaterAsync` mangler `gemt.Postnummer = kunde.Postnummer;`. I `StartRet` på kundesiden skal kopien også have `Postnummer = kunde.Postnummer`."
         ],
         output: "(Ingen udskrift: opret en kunde med postnummeret 800 og se fejlbeskeden, ret det til 8000, og se det i listen.)",
@@ -815,9 +1165,9 @@ rettet = new Kunde { Id = kunde!.Id, Navn = kunde.Navn, Email = kunde.Email, Tel
         ekstra: ["Vis postnummeret på kundesiden ved siden af e-mail og telefon.", "Lad søgefeltet på kundelisten også søge på postnummer."] },
       { t: "ide", h: "Aflevering: zip-filen og WISEflow",
         md: "Du afleverer to filer på WISEflow: projektet som en **zip-fil** og dispositionen som en **pdf**. Fristen er **fredag 30/10 kl. 12:00**. Upload hellere torsdag end fredag morgen.\n\nZip-filen skal kun indeholde din kode, ikke de filer, der laves, når projektet bygges eller køres.",
-        win: ["Luk Visual Studio, så ingen filer er i brug.", "Åbn mappen med projektet i Stifinder (den mappe, hvor `SkadeApp.csproj` ligger).", "Slet mapperne `bin` og `obj` og filen `skader.db` (og `skader.db-shm` og `skader.db-wal`, hvis de findes). De laves igen, næste gang projektet køres.", "Gå én mappe op, højreklik på mappen `SkadeApp` → **Komprimer til ZIP-fil**.", "Åbn zip-filen, og tjek, at `Program.cs`, `Components`, `Models`, `Services` og `Data` er med.", "Log ind på WISEflow med MitID (linket står i mailen fra kurser@itucation.dk), og upload zip-filen og pdf'en med dispositionen."],
-        mac: ["Luk Rider, så ingen filer er i brug.", "Åbn mappen med projektet i Finder (den mappe, hvor `SkadeApp.csproj` ligger).", "Slet mapperne `bin` og `obj` og filen `skader.db` (og `skader.db-shm` og `skader.db-wal`, hvis de findes). De laves igen, næste gang projektet køres.", "Gå én mappe op, højreklik på mappen `SkadeApp` → **Komprimer \"SkadeApp\"**.", "Åbn zip-filen, og tjek, at `Program.cs`, `Components`, `Models`, `Services` og `Data` er med.", "Log ind på WISEflow med MitID (linket står i mailen fra kurser@itucation.dk), og upload zip-filen og pdf'en med dispositionen."],
-        md2: "Dispositionen er højst én side i stikord. Lektionen om dispositionen i modul 28 viser, hvad den skal indeholde. Vi skriver den sammen ud fra dit projekt." }
+        win: ["Luk Visual Studio, så ingen filer er i brug.", "Åbn mappen med projektet i Stifinder (den mappe, hvor `SkadeApp.csproj` ligger).", "Slet mapperne `bin` og `obj`. Slet også `skader.db` og `app.db` i mappen `Data` (og filerne, der ender på `-shm` og `-wal`, hvis de findes). Alt sammen laves igen, næste gang projektet køres.", "Gå én mappe op, højreklik på mappen `SkadeApp` → **Komprimer til ZIP-fil**.", "Åbn zip-filen, og tjek, at `Program.cs`, `Components`, `Models`, `Services` og `Data` er med.", "Log ind på WISEflow med MitID (linket står i mailen fra kurser@itucation.dk), og upload zip-filen og pdf'en med dispositionen."],
+        mac: ["Luk Rider, så ingen filer er i brug.", "Åbn mappen med projektet i Finder (den mappe, hvor `SkadeApp.csproj` ligger).", "Slet mapperne `bin` og `obj`. Slet også `skader.db` og `app.db` i mappen `Data` (og filerne, der ender på `-shm` og `-wal`, hvis de findes). Alt sammen laves igen, næste gang projektet køres.", "Gå én mappe op, højreklik på mappen `SkadeApp` → **Komprimer \"SkadeApp\"**.", "Åbn zip-filen, og tjek, at `Program.cs`, `Components`, `Models`, `Services` og `Data` er med.", "Log ind på WISEflow med MitID (linket står i mailen fra kurser@itucation.dk), og upload zip-filen og pdf'en med dispositionen."],
+        md2: "Skriv i dispositionen, at man opretter en bruger med **Opret bruger**, når appen starter første gang: databaserne er tomme for brugere.\n\nDispositionen er højst én side i stikord. Lektionen om dispositionen i modul 28 viser, hvad den skal indeholde. Vi skriver den sammen ud fra dit projekt." }
   ] }
 
 );

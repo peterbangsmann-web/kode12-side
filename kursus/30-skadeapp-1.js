@@ -10,7 +10,7 @@ window.KURSUS.push({
   id: "m30", nr: -1, del: "Eksamensprojekt", ikon: "🛡️",
   titel: "Eksamensprojekt: SkadeApp trin for trin",
   dag: "Aflevering fredag 30/10 kl. 12 · Mundtlig eksamen 6/11",
-  intro: "I dette modul bygger du dit eksamensprojekt, **SkadeApp**, fra en tom mappe til en færdig app. Det er et lille system til et forsikringsselskab: kunder, deres skadesanmeldelser og et overblik over, hvad der er udbetalt.\n\nHver lektion forklarer de ting, du skal bruge, og slutter med, at du bygger den næste del i dit eget projekt. Du behøver ikke have lavet modul 4–29 først: det, projektet bruger fra dem, bliver forklaret her.\n\nKommer du i tidsnød, ligger et færdigt og afprøvet projekt i mappen `Desktop\\c#\\C#  Ekasmen\\Facit\\SkadeApp`. Brug det til at sammenligne med, når noget driller.",
+  intro: "I dette modul bygger du dit eksamensprojekt, **SkadeApp**, fra en tom mappe til en færdig app. Det er et lille system til et forsikringsselskab: kunder, deres skadesanmeldelser og et overblik over, hvad der er udbetalt. Kun medarbejdere, der er logget ind, kan bruge det.\n\nHver lektion forklarer de ting, du skal bruge, og slutter med, at du bygger den næste del i dit eget projekt. Du behøver ikke have lavet modul 4–29 først: det, projektet bruger fra dem, bliver forklaret her.\n\nKommer du i tidsnød, ligger et færdigt og afprøvet projekt i mappen `Desktop\\c#\\C#  Ekasmen\\Facit\\SkadeApp`. Brug det til at sammenligne med, når noget driller.",
   lektioner: [
 
   // ------------------------------------------------------------------
@@ -24,7 +24,7 @@ window.KURSUS.push({
     ],
     trin: [
       { t: "laes", h: "Hvad SkadeApp kan",
-        md: "En sagsbehandler i et forsikringsselskab skal holde styr på kunder og deres skader: hvem har anmeldt hvad, hvor meget koster det, og er skaden godkendt endnu? Det er problemet, din app løser. Det er også begrundelsen i dispositionen: du har selv arbejdet med forsikring i seks år.\n\nAppen har fire sider:\n\n- **Overblik**: antal kunder, antal åbne skader, hvor meget der er udbetalt, og de seneste skader.\n- **Kunder**: en liste, man kan søge i, og en formular til nye kunder.\n- **Kundesiden**: én kundes oplysninger og skader. Her kan man rette og slette kunden, anmelde en ny skade og skifte en skades status.\n- **Skader**: alle skader, som kan filtreres efter status og sorteres.\n\nData gemmes i en database, så de er der endnu, når appen startes igen.",
+        md: "En sagsbehandler i et forsikringsselskab skal holde styr på kunder og deres skader: hvem har anmeldt hvad, hvor meget koster det, og er skaden godkendt endnu? Det er problemet, din app løser. Det er også begrundelsen i dispositionen: du har selv arbejdet med forsikring i seks år.\n\nAppen har fire sider:\n\n- **Overblik**: antal kunder, antal åbne skader, hvor meget der er udbetalt, og de seneste skader.\n- **Kunder**: en liste, man kan søge i, og en formular til nye kunder.\n- **Kundesiden**: én kundes oplysninger og skader. Her kan man rette og slette kunden, anmelde en ny skade og skifte en skades status.\n- **Skader**: alle skader, som kan filtreres efter status og sorteres.\n\nData gemmes i en database, så de er der endnu, når appen startes igen. Man skal logge ind for at se siderne, fordi kundernes oplysninger er personlige.",
         md2: "Projektet bruger skabelon 2 fra projektkravene: **Blazor Server**." },
       { t: "laes", h: "Tre lag med hver sit ansvar",
         md: "Koden er delt i tre lag. Hvert lag har sin egen mappe og ét ansvar.",
@@ -46,9 +46,9 @@ Models + Data      Modeller og   beskriver kunder og skader,
         svar: ["På serveren. Browseren sender klikket dertil og får ændringerne tilbage", "I browseren", "I databasen", "På brugerens telefon"],
         ret: 0, fordi: "I Blazor Server kører al C# på serveren. Browseren viser siden og holder en forbindelse åben, så klik kan sendes af sted." },
       { t: "ide", h: "Opret projektet",
-        md: "Lav projektet nu, og kør det, før du ændrer noget. Så ved du, at alt virker fra starten.",
-        win: ["Åbn Visual Studio, og klik **Create a new project**.", "Skriv `blazor` i søgefeltet, vælg **Blazor Web App**, og klik **Next**.", "Project name: `SkadeApp`. Klik **Next**.", "Framework: **.NET 10.0**. Authentication type: **None**. Fjern fluebenet ved **Configure for HTTPS**.", "**Interactive render mode: Server**. **Interactivity location: Global**. Lad **Include sample pages** have flueben. Klik **Create**.", "Kør med den grønne pil ▶. Browseren åbner, og du ser **Hello, world!**. Klik på **Counter** i menuen, og klik på knappen et par gange."],
-        mac: ["Åbn en terminal i den mappe, hvor dine projekter skal ligge.", "Skriv `dotnet new blazor -n SkadeApp --interactivity Server --all-interactive --no-https`, og tryk Enter.", "Åbn mappen `SkadeApp` i Rider (**File → Open…**).", "Kør med den grønne pil ▶. Browseren åbner, og du ser **Hello, world!**. Klik på **Counter** i menuen, og klik på knappen et par gange."],
+        md: "Lav projektet nu, og kør det, før du ændrer noget. Så ved du, at alt virker fra starten.\n\nProjektet laves **med login** (*Individual Accounts*). Så laver skabelonen selv siderne til at logge ind, oprette en bruger og logge ud. Dem skal du ikke skrive. Du slår login til for dine egne sider i lektion 12.",
+        win: ["Åbn Visual Studio, og klik **Create a new project**.", "Skriv `blazor` i søgefeltet, vælg **Blazor Web App**, og klik **Next**.", "Project name: `SkadeApp`. Klik **Next**.", "Framework: **.NET 10.0**. Authentication type: **Individual Accounts**. Fjern fluebenet ved **Configure for HTTPS**.", "**Interactive render mode: Server**. **Interactivity location: Global**. Lad **Include sample pages** have flueben. Klik **Create**.", "Kør med den grønne pil ▶. Browseren åbner, og du ser **Hello, world!**. Klik på **Counter** i menuen, og klik på knappen et par gange. Menuen har også **Register** og **Login**: det er login-siderne fra skabelonen."],
+        mac: ["Åbn en terminal i den mappe, hvor dine projekter skal ligge.", "Skriv `dotnet new blazor -n SkadeApp --auth Individual --interactivity Server --all-interactive --no-https`, og tryk Enter.", "Åbn mappen `SkadeApp` i Rider (**File → Open…**).", "Kør med den grønne pil ▶. Browseren åbner, og du ser **Hello, world!**. Klik på **Counter** i menuen, og klik på knappen et par gange. Menuen har også **Register** og **Login**: det er login-siderne fra skabelonen."],
         md2: "Uden HTTPS slipper du for spørgsmål om certifikater, når appen starter. Det er fint til et projekt, der kun kører på din egen computer." },
       { t: "laes", h: "Filerne i projektet",
         md: "Skabelonen har lavet en række filer. Dem her skal du kende:",
@@ -59,19 +59,26 @@ Models + Data      Modeller og   beskriver kunder og skader,
 │   ├── App.razor              selve HTML-siden rundt om det hele
 │   ├── Routes.razor           finder den side, der passer til adressen
 │   ├── _Imports.razor         using-linjer, der gælder for alle .razor-filer
+│   ├── Account                login-siderne fra skabelonen (dem rører du ikke)
 │   ├── Layout
 │   │   ├── MainLayout.razor   menuen til venstre og indholdet til højre
 │   │   └── NavMenu.razor      linkene i menuen
 │   └── Pages
 │       ├── Home.razor         forsiden ( / )
 │       ├── Counter.razor      eksempel, som du sletter
-│       └── Weather.razor      eksempel, som du sletter
+│       ├── Weather.razor      eksempel, som du sletter
+│       └── Auth.razor         eksempel, som du sletter
+├── Data                       databasen med brugerne (lavet af skabelonen)
+│   ├── ApplicationDbContext.cs
+│   ├── ApplicationUser.cs
+│   └── Migrations
 └── wwwroot                    CSS og billeder (Bootstrap ligger her)`,
         sprog: "text",
         noter: [
           ["Program.cs", "Kører først af alt, når appen starter."],
           [".razor", "En komponent: HTML og C# i samme fil."],
-          ["Pages", "Her ligger siderne. En side har en `@page`-linje med sin adresse."]
+          ["Pages", "Her ligger siderne. En side har en `@page`-linje med sin adresse."],
+          ["Account og Data", "Login og brugere. Skabelonen har lavet det hele. Du ser nærmere på det i lektion 12."]
         ] },
       { t: "valg", q: "Hvilken fil kører først, når du starter SkadeApp?",
         svar: ["Program.cs", "Home.razor", "App.razor", "NavMenu.razor"],
@@ -80,40 +87,28 @@ Models + Data      Modeller og   beskriver kunder og skader,
         svar: ["I mappen Components/Pages", "I mappen wwwroot", "Ved siden af Program.cs", "I mappen Components/Layout"],
         ret: 0, fordi: "Siderne ligger i `Components/Pages`. Det er `@page \"/skader\"` øverst i filen, der giver siden dens adresse. `Layout` er til det, der står rundt om alle sider." },
       { t: "ide", h: "Ryd op og lav menuen",
-        md: "Eksempelsiderne skal ikke med i dit projekt.",
-        win: ["Højreklik på `Counter.razor` i Solution Explorer → **Delete**. Gør det samme med `Weather.razor`.", "Åbn `Components/Layout/NavMenu.razor`, og ret den, så den ser ud som koden nedenfor. Skriv selv i stedet for at kopiere.", "Kør appen. Klik på **Kunder** og **Skader**: siderne findes ikke endnu, så du ser en side om, at adressen ikke findes. Det retter du i de næste lektioner."],
-        mac: ["Højreklik på `Counter.razor` i Rider → **Delete**. Gør det samme med `Weather.razor`.", "Åbn `Components/Layout/NavMenu.razor`, og ret den, så den ser ud som koden nedenfor. Skriv selv i stedet for at kopiere.", "Kør appen. Klik på **Kunder** og **Skader**: siderne findes ikke endnu, så du ser en side om, at adressen ikke findes. Det retter du i de næste lektioner."],
-        kode: R`<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">SkadeApp</a>
-    </div>
+        md: "Eksempelsiderne skal ikke med i dit projekt, og menuen skal have dine tre sider.",
+        win: ["Højreklik på `Counter.razor` i Solution Explorer → **Delete**. Gør det samme med `Weather.razor` og `Auth.razor` (alle tre ligger i `Components/Pages`).", "Åbn `Components/Layout/NavMenu.razor`. Find de fire første links: **Home**, **Counter**, **Weather** og **Auth Required**. Erstat dem med de tre links nedenfor. Lad resten af filen stå (delen med `AuthorizeView`, **Register**, **Login** og **Logout**).", "Kør appen. Klik på **Kunder** og **Skader**: siderne findes ikke endnu, så du ser en side om, at adressen ikke findes. Det retter du i de næste lektioner."],
+        mac: ["Højreklik på `Counter.razor` i Rider → **Delete**. Gør det samme med `Weather.razor` og `Auth.razor` (alle tre ligger i `Components/Pages`).", "Åbn `Components/Layout/NavMenu.razor`. Find de fire første links: **Home**, **Counter**, **Weather** og **Auth Required**. Erstat dem med de tre links nedenfor. Lad resten af filen stå (delen med `AuthorizeView`, **Register**, **Login** og **Logout**).", "Kør appen. Klik på **Kunder** og **Skader**: siderne findes ikke endnu, så du ser en side om, at adressen ikke findes. Det retter du i de næste lektioner."],
+        kode: R`<div class="nav-item px-3">
+    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Overblik
+    </NavLink>
 </div>
 
-<input type="checkbox" title="Menu" class="navbar-toggler" />
+<div class="nav-item px-3">
+    <NavLink class="nav-link" href="kunder">
+        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Kunder
+    </NavLink>
+</div>
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Overblik
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="kunder">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Kunder
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="skader">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Skader
-            </NavLink>
-        </div>
-    </nav>
+<div class="nav-item px-3">
+    <NavLink class="nav-link" href="skader">
+        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Skader
+    </NavLink>
 </div>`,
         sprog: "razor", frag: true,
-        md2: "`NavLink` er et link, som Blazor selv markerer med en farve, når du står på den side. `href=\"kunder\"` er adressen `/kunder`." },
+        md2: "`NavLink` er et link, som Blazor selv markerer med en farve, når du står på den side. `href=\"kunder\"` er adressen `/kunder`. `<span class=\"bi …\">` er det lille ikon foran teksten." },
       { t: "forklar", q: "Eksamensspørgsmål: Hvad er lagdelt arkitektur, og hvordan ser man den i dit projekt?",
         svar: "Lagdelt arkitektur betyder, at programmet er delt i lag, der hver har ét ansvar. I SkadeApp viser siderne i Components/Pages data, services i mappen Services henter og gemmer data, og modellerne og databasen i Models og Data beskriver og gemmer kunder og skader. Siderne taler kun med services, aldrig direkte med databasen, så jeg kan skifte databasen ud uden at røre siderne.",
         noegle: ["ansvar", "sider", "services", "database", "skifte ud"] }

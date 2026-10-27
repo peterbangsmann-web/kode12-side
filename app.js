@@ -152,7 +152,8 @@
         (m.lektioner || []).forEach(function (l) {
           var her = {}, haft = {};
           l.trin.forEach(function (t) {
-            if (t.t === "opgave" && t.projekt && !haft[t.projekt] && set[t.projekt]) _mappeForslag.push([t, (l.vaerksted ? "Vaerksted" : "Modul") + String(m.id).replace(/\D/g, "")]);
+            // fortsaet: true = opgaven bygger videre i et projekt fra en tidligere lektion (fx SkadeApp i modul 30), så intet forslag om en ny mappe
+            if (t.t === "opgave" && t.projekt && !t.fortsaet && !haft[t.projekt] && set[t.projekt]) _mappeForslag.push([t, (l.vaerksted ? "Vaerksted" : "Modul") + String(m.id).replace(/\D/g, "")]);
             if (t.projekt) { her[t.projekt] = 1; haft[t.projekt] = 1; }
             var tekst = [t.md, t.md2].concat(t.win || [], t.mac || []).join(" ");
             OPRET.forEach(function (re) { var x; re.lastIndex = 0; while ((x = re.exec(tekst))) her[x[1]] = 1; });

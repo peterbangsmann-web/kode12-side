@@ -1071,7 +1071,7 @@ Console.WriteLine(260.0 * antal / stoerste);`,
   { id: "m30v", titel: "Værksted: udvid SkadeApp, find fejlen, og aflever", vaerksted: true, min: 120, ord: [], trin: [
       { t: "laes", h: "Arbejd selv i dit eget projekt",
         md: "I værkstedet arbejder du videre i **dit eget SkadeApp-projekt** uden en opskrift. Opgaverne er ekstra: de gør projektet stærkere til eksamen, men appen virker også uden dem.\n\nEn Blazor-side skriver ikke noget i et sort vindue, som siden her kan sammenligne. Så gør sådan: læs kravene, byg, kør, og sæt flueben, efterhånden som kravene virker. Løsningsforslaget ligger bag en knap.\n\nVigtigst er den sidste opgave: afleveringen. Den skal være på WISEflow **før fredag 30/10 kl. 12:00**." },
-      { t: "opgave", h: "Søg i skaderne", projekt: "SkadeApp", frag: true, fri: true, sprog: "razor",
+      { t: "opgave", h: "Søg i skaderne", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
         md: "Arbejd i dit SkadeApp-projekt. Skadesiden skal have et søgefelt ligesom kundelisten, så man kan finde en skade ud fra beskrivelsen eller kundens navn.",
         krav: [
           "Over tabellen på `Skader.razor` står et søgefelt med pladsholderteksten `Søg i beskrivelse eller kundenavn …`",
@@ -1098,7 +1098,7 @@ Console.WriteLine(260.0 * antal / stoerste);`,
     //                           || (s.Kunde?.Navn ?? "").Contains(soegeord, StringComparison.OrdinalIgnoreCase));
 }`,
         ekstra: ["Vis antallet af fundne skader i overskriften, fx `Alle skader (2)`.", "Lav søgningen, så den også finder skader ud fra typen, fx `bil`."] },
-      { t: "opgave", h: "Fejlfinding: den nye kunde forsvinder", projekt: "SkadeApp", frag: true, fri: true,
+      { t: "opgave", h: "Fejlfinding: den nye kunde forsvinder", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true,
         md: "Arbejd i dit SkadeApp-projekt. En kollega har \"ryddet op\" i `KundeService`, og nu sker der noget mærkeligt: når man opretter en kunde, kommer den grønne besked, men kunden står ikke i listen, og den er heller ikke der efter en genindlæsning. Erstat metoden `OpretAsync` i din `KundeService` med kollegaens udgave nedenfor, og find fejlen **med debuggeren**, før du læser tipsene.",
         krav: [
           "Du har sat et breakpoint i `OpretAsync` og gået metoden igennem én linje ad gangen",
@@ -1124,7 +1124,7 @@ Console.WriteLine(260.0 * antal / stoerste);`,
 }`,
         fordi: "Uden `SaveChangesAsync` bliver ændringen aldrig sendt til databasen. Compileren giver kun en advarsel (CS1998: en `async`-metode uden `await`), ikke en fejl, så appen kører. Læs advarslerne i {{Error List||Problems}}: de peger ofte lige på fejlen.",
         ekstra: ["Hvorfor kom den grønne besked alligevel? Find linjen i `Kunder.razor`, der skriver den, og forklar, hvorfor den ikke ved, om kunden blev gemt."] },
-      { t: "opgave", h: "Postnummer på kunden", projekt: "SkadeApp", frag: true, fri: true,
+      { t: "opgave", h: "Postnummer på kunden", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true,
         md: "Arbejd i dit SkadeApp-projekt. Selskabet vil kende kundens postnummer. Det er en opgave gennem alle lag: modellen, reglen, databasen, formularerne og tabellen. Husk, at databasen skal laves forfra, når modellen ændres.",
         krav: [
           "`Kunde` har en ny property `Postnummer` (string)",

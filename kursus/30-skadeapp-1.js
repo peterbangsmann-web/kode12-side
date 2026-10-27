@@ -87,11 +87,21 @@ Models + Data      Modeller og   beskriver kunder og skader,
       { t: "valg", q: "Du skal lave en ny side med adressen `/skader`. Hvor skal filen ligge?",
         svar: ["I mappen Components/Pages", "I mappen wwwroot", "Ved siden af Program.cs", "I mappen Components/Layout"],
         ret: 0, fordi: "Siderne ligger i `Components/Pages`. Det er `@page \"/skader\"` øverst i filen, der giver siden dens adresse. `Layout` er til det, der står rundt om alle sider." },
-      { t: "ide", h: "Ryd op og lav menuen",
-        md: "Eksempelsiderne skal ikke med i dit projekt, og menuen skal have dine tre sider.",
-        win: ["Højreklik på `Counter.razor` i Solution Explorer → **Delete**. Gør det samme med `Weather.razor` og `Auth.razor` (alle tre ligger i `Components/Pages`).", "Åbn `Components/Layout/NavMenu.razor`. Find de fire første links: **Home**, **Counter**, **Weather** og **Auth Required**. Erstat dem med de tre links nedenfor. Lad resten af filen stå (delen med `AuthorizeView`, **Register**, **Login** og **Logout**).", "Kør appen. Klik på **Kunder** og **Skader**: siderne findes ikke endnu, så du ser en side om, at adressen ikke findes. Det retter du i de næste lektioner."],
-        mac: ["Højreklik på `Counter.razor` i Rider → **Delete**. Gør det samme med `Weather.razor` og `Auth.razor` (alle tre ligger i `Components/Pages`).", "Åbn `Components/Layout/NavMenu.razor`. Find de fire første links: **Home**, **Counter**, **Weather** og **Auth Required**. Erstat dem med de tre links nedenfor. Lad resten af filen stå (delen med `AuthorizeView`, **Register**, **Login** og **Logout**).", "Kør appen. Klik på **Kunder** og **Skader**: siderne findes ikke endnu, så du ser en side om, at adressen ikke findes. Det retter du i de næste lektioner."],
-        kode: R`<div class="nav-item px-3">
+      { t: "opgave", h: "Ryd op og lav menuen", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
+        md: "Arbejd videre i dit SkadeApp-projekt. Eksempelsiderne skal væk, og menuen skal have dine tre sider. Linkene, der står i `Components/Layout/NavMenu.razor` i forvejen, er dit mønster.\n\nEn fil slettes ved at højreklikke på den i {{Solution Explorer||Rider}} og vælge **Delete**.",
+        krav: [
+          "`Counter.razor`, `Weather.razor` og `Auth.razor` i `Components/Pages` er slettet",
+          "I `NavMenu.razor` er de fire første links (**Home**, **Counter**, **Weather** og **Auth Required**) erstattet af tre: **Overblik** til forsiden, **Kunder** til adressen `kunder` og **Skader** til adressen `skader`",
+          "Resten af `NavMenu.razor`, delen med `AuthorizeView`, er uændret",
+          "Appen kører, og menuen viser Overblik, Kunder og Skader"
+        ],
+        tip: [
+          "Hvert link er en `<div class=\"nav-item px-3\">` med en `<NavLink>` indeni. Kopiér hele Home-linket tre gange, og ret teksten og `href` i hver.",
+          "Forsiden har `href=\"\"` og `Match=\"NavLinkMatch.All\"`: så lyser linket kun, når du står præcis på forsiden. Kunder og Skader har kun `href=\"kunder\"` og `href=\"skader\"`.",
+          "Ikonet er `<span class=\"bi …\">` foran teksten. Genbrug ikonerne fra Home, Counter og Weather."
+        ],
+        output: "Menuen viser Overblik, Kunder og Skader, og under dem Register og Login. Klikker du på Kunder eller Skader, står der, at siden ikke findes: dem laver du i de næste lektioner.",
+        loesning: R`<div class="nav-item px-3">
     <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
         <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Overblik
     </NavLink>
@@ -108,8 +118,7 @@ Models + Data      Modeller og   beskriver kunder og skader,
         <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Skader
     </NavLink>
 </div>`,
-        sprog: "razor", frag: true,
-        md2: "`NavLink` er et link, som Blazor selv markerer med en farve, når du står på den side. `href=\"kunder\"` er adressen `/kunder`. `<span class=\"bi …\">` er det lille ikon foran teksten." },
+        md2: "`NavLink` er et link, som Blazor selv markerer med en farve, når du står på den side. `<span class=\"bi …\">` er det lille ikon foran teksten." },
       { t: "forklar", q: "Eksamensspørgsmål: Hvad er lagdelt arkitektur, og hvordan ser man den i dit projekt?",
         svar: "Lagdelt arkitektur betyder, at programmet er delt i lag, der hver har ét ansvar. I SkadeApp viser siderne i Components/Pages data, services i mappen Services henter og gemmer data, og modellerne og databasen i Models og Data beskriver og gemmer kunder og skader. Siderne taler kun med services, aldrig direkte med databasen, så jeg kan skifte databasen ud uden at røre siderne.",
         noegle: ["ansvar", "sider", "services", "database", "skifte ud"] }
@@ -265,11 +274,29 @@ public class Kunde
           ["namespace SkadeApp.Models;", "Klassen hører til `SkadeApp.Models`. Semikolonet betyder: det gælder hele filen."],
           ["public class", "Klassen må bruges af alle andre filer i projektet."]
         ] },
-      { t: "ide", h: "Lav Kunde.cs i dit projekt",
-        md: "Nu får dit projekt sin første model. Skriv klassen selv.",
-        win: ["Højreklik på projektet **SkadeApp** i Solution Explorer → **Add → New Folder** → `Models`.", "Højreklik på `Models` → **Add → Class…** → `Kunde.cs` → **Add**.", "Erstat indholdet med koden fra trin 8.", "Byg projektet med **Build → Build Solution**. Der må ikke komme fejl i **Error List**."],
-        mac: ["Højreklik på projektet **SkadeApp** i Rider → **Add → Directory** → `Models`.", "Højreklik på `Models` → **Add → Class/Interface** → `Kunde`.", "Erstat indholdet med koden fra trin 8.", "Byg projektet med **Build → Build Solution**. Der må ikke komme fejl i vinduet **Problems**."],
-        md2: "Klassen gør ikke noget synligt endnu. Den bliver brugt, når databasen og siderne kommer til." },
+      { t: "opgave", h: "Lav Kunde.cs i dit projekt", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
+        md: "Nu får dit projekt sin første model. Du skrev klassen i trin 7. Nu skal den i sin egen fil med et namespace, som i trin 8.\n\n{{Højreklik på projektet **SkadeApp** i Solution Explorer → **Add → New Folder** → `Models`. Højreklik på `Models` → **Add → Class…** → `Kunde.cs` → **Add**.||Højreklik på projektet **SkadeApp** i Rider → **Add → Directory** → `Models`. Højreklik på `Models` → **Add → Class/Interface** → `Kunde`.}} Slet det, der står i filen, og skriv selv.",
+        krav: [
+          "Filen `Models/Kunde.cs` findes",
+          "Øverst står `namespace SkadeApp.Models;`",
+          "`public class Kunde` med fire properties: `Id` (`int`), `Navn`, `Email` og `Telefon` (alle tre `string` med startværdien `\"\"`)",
+          "Projektet kan bygges uden fejl (**Build → Build Solution**), og der står ingen fejl i Error List eller Problems"
+        ],
+        tip: [
+          "Rækkefølgen i filen: først `namespace SkadeApp.Models;`, så klassen.",
+          "En property skrives `public type Navn { get; set; }`. Tekster får ` = \"\";` til sidst.",
+          "To af linjerne: `public int Id { get; set; }` og `public string Email { get; set; } = \"\";`"
+        ],
+        output: "Ingen ændring i appen endnu. Klassen bliver brugt, når databasen og siderne kommer til.",
+        loesning: R`namespace SkadeApp.Models;
+
+public class Kunde
+{
+    public int Id { get; set; }
+    public string Navn { get; set; } = "";
+    public string Email { get; set; } = "";
+    public string Telefon { get; set; } = "";
+}` },
       { t: "forklar", q: "Eksamensspørgsmål: Hvad er forskellen på en klasse og et objekt? Brug dit eget projekt som eksempel.",
         svar: "En klasse er en skabelon, der beskriver, hvilke oplysninger en slags ting har. Klassen Kunde siger, at en kunde har Id, Navn, Email og Telefon. Et objekt er én konkret kunde, lavet med new, fx Mette Jensen med sit eget telefonnummer. Der er én klasse, men mange objekter.",
         noegle: ["skabelon", "new", "konkret", "properties", "mange objekter"] }
@@ -390,11 +417,23 @@ class Skade
 }`,
         output: "Mette har 2 skader",
         fordi: "Kunden har en `List<Skade>`, og skaden har fremmednøglen `KundeId`. `= new();` laver en tom liste, så `Add` virker med det samme." },
-      { t: "ide", h: "Lav Skade.cs, og giv Kunde sine skader",
-        md: "Nu laver du den anden model og relationen. `Kunde?` betyder, at kunden må være `null`: når en skade hentes uden sin kunde, er der ingen kunde at vise.",
-        win: ["Højreklik på `Models` → **Add → Class…** → `Skade.cs`. Skriv koden nedenfor.", "Åbn `Kunde.cs`, og tilføj denne linje under `Telefon`: `public List<Skade> Skader { get; set; } = new();`", "Byg projektet (**Build → Build Solution**)."],
-        mac: ["Højreklik på `Models` → **Add → Class/Interface** → `Skade`. Skriv koden nedenfor.", "Åbn `Kunde.cs`, og tilføj denne linje under `Telefon`: `public List<Skade> Skader { get; set; } = new();`", "Byg projektet (**Build → Build Solution**)."],
-        kode: R`namespace SkadeApp.Models;
+      { t: "opgave", h: "Lav Skade.cs, og giv Kunde sine skader", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
+        md: "Nu laver du den anden model og relationen. Lav filen `Models/Skade.cs` på samme måde som `Kunde.cs`, og skriv den selv ud fra kravene.\n\nTo nye ting: `DateTime` er typen til en dato, og `DateTime.Today` er dagens dato. `Kunde?` med spørgsmålstegn betyder, at kunden må være `null`: når en skade hentes uden sin kunde, er der ingen kunde at vise.",
+        krav: [
+          "`Models/Skade.cs` har `namespace SkadeApp.Models;` og `public class Skade`",
+          "Skade har `Id` (`int`), `Dato` (`DateTime`, startværdi `DateTime.Today`), `Type` (`SkadeType`, startværdi `SkadeType.Indbo`) og `Beskrivelse` (`string`, startværdi `\"\"`)",
+          "Skade har også `Beloeb` (`decimal`), `Status` (`SkadeStatus`, startværdi `SkadeStatus.Anmeldt`), `KundeId` (`int`) og `Kunde` (`Kunde?`)",
+          "Under klassen står to enums: `SkadeType` med `Bil, Indbo, Rejse, Ulykke` og `SkadeStatus` med `Anmeldt, Behandles, Godkendt, Afvist`",
+          "`Kunde.cs` har fået en property `Skader`: en `List<Skade>`, der starter som en tom liste",
+          "Projektet kan bygges uden fejl"
+        ],
+        tip: [
+          "En startværdi står efter `{ get; set; }` med `=`, fx `public SkadeType Type { get; set; } = SkadeType.Indbo;`",
+          "Enums står efter klassens sidste `}`, og de skal være `public`: `public enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`",
+          "Listen i Kunde skrives som i trin 9: `public List<Skade> Skader { get; set; } = new();`"
+        ],
+        output: "Ingen ændring i appen endnu. Error List / Problems er tom.",
+        loesning: R`namespace SkadeApp.Models;
 
 // En skadesanmeldelse. Hver skade hører til præcis én kunde.
 public class Skade
@@ -421,9 +460,11 @@ public class Skade
 
 public enum SkadeType { Bil, Indbo, Rejse, Ulykke }
 
-public enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
-        frag: true,
-        md2: "`DateTime` er en type til dato og klokkeslæt. `DateTime.Today` er dagens dato, så en ny skade har dags dato fra starten. Linjer, der starter med `//`, er kommentarer: de er til dig og bliver ikke kørt. Dem behøver du ikke skrive af." },
+public enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }
+
+// ===== I Kunde.cs, under Telefon =====
+public List<Skade> Skader { get; set; } = new();`,
+        md2: "Linjer, der starter med `//`, er kommentarer: de er til dig og bliver ikke kørt. Skriv gerne dine egne, med dine egne ord." },
       { t: "forklar", q: "Eksamensspørgsmål: Hvordan hænger dine to modeller sammen, og hvordan er det gemt i databasen?",
         svar: "Det er en en-til-mange-relation: én kunde kan have mange skader, og hver skade hører til én kunde. I C# har Kunde en List<Skade> Skader, og Skade har KundeId og Kunde. I databasen er der to tabeller, og relationen gemmes i fremmednøglen KundeId i tabellen Skader, som indeholder kundens Id.",
         noegle: ["en-til-mange", "List<Skade>", "KundeId", "fremmednøgle", "to tabeller"] }
@@ -612,11 +653,21 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
         ],
         loesning: R`    public decimal Udbetalt => Skader.Where(s => s.Status == SkadeStatus.Godkendt).Sum(s => s.Beloeb);`,
         output: "5500" },
-      { t: "ide", h: "Tilføj de beregnede properties",
-        md: "Tilføj tre beregnede properties i dit projekt. Skriv dem selv.",
-        win: ["Åbn `Models/Skade.cs`, og tilføj `ErAaben` nederst i klassen (før den afsluttende `}`).", "Åbn `Models/Kunde.cs`, og tilføj `Udbetalt` og `AabneSkader` under `Skader`.", "Byg projektet."],
-        mac: ["Åbn `Models/Skade.cs`, og tilføj `ErAaben` nederst i klassen (før den afsluttende `}`).", "Åbn `Models/Kunde.cs`, og tilføj `Udbetalt` og `AabneSkader` under `Skader`.", "Byg projektet."],
-        kode: R`// I Skade.cs:
+      { t: "opgave", h: "Tilføj de beregnede properties", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
+        md: "Tilføj tre beregnede properties i dine modeller. Du skrev `Udbetalt` i trin 8, og de to andre bygges på samme måde med `=>`.",
+        krav: [
+          "`Skade` har `public bool ErAaben`, som er sand, når status er `Anmeldt` eller `Behandles`",
+          "`Kunde` har `public decimal Udbetalt`: summen af `Beloeb` for de skader i `Skader`, der har status `Godkendt`",
+          "`Kunde` har `public int AabneSkader`: antallet af skader i `Skader`, der er åbne (brug `ErAaben`)",
+          "Ingen af de tre har `set`, og projektet kan bygges uden fejl"
+        ],
+        tip: [
+          "`ErAaben` står i trin 1: `=>` og to sammenligninger med `||` imellem.",
+          "`Udbetalt` er den, du skrev i trin 8: `Where` og så `Sum`.",
+          "`AabneSkader` tæller med `Count` og en lambda: `Skader.Count(s => s.ErAaben)`."
+        ],
+        output: "Ingen ændring i appen endnu. Kundelisten viser tallene senere.",
+        loesning: R`// I Skade.cs:
 // En skade er åben, så længe der ikke er truffet en afgørelse.
 public bool ErAaben => Status == SkadeStatus.Anmeldt || Status == SkadeStatus.Behandles;
 
@@ -624,9 +675,7 @@ public bool ErAaben => Status == SkadeStatus.Anmeldt || Status == SkadeStatus.Be
 // Udregnes med LINQ ud fra skaderne. Den har ingen set, så EF Core gemmer den ikke i databasen.
 public decimal Udbetalt => Skader.Where(s => s.Status == SkadeStatus.Godkendt).Sum(s => s.Beloeb);
 
-public int AabneSkader => Skader.Count(s => s.ErAaben);`,
-        frag: true,
-        md2: "`AabneSkader` bruger `ErAaben` fra skaden: den tæller de skader, der er åbne. Kundelisten viser begge tal senere." },
+public int AabneSkader => Skader.Count(s => s.ErAaben);` },
       { t: "forklar", q: "Eksamensspørgsmål: Hvad er LINQ, og hvor bruger du det i dit projekt?",
         svar: "LINQ er metoder til at søge, filtrere, sortere og regne på lister, fx Where, Count, Sum, OrderBy og GroupBy. Man giver dem en lambda, der siger, hvad de skal kigge på. I SkadeApp regner Kunde.Udbetalt summen af de godkendte skader med Where og Sum, overblikket grupperer skaderne pr. status med GroupBy, og kundelisten søger og sorterer med Where og OrderBy.",
         noegle: ["Where", "Sum", "lambda", "GroupBy", "OrderBy"] }

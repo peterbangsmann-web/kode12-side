@@ -131,11 +131,23 @@ class Kunde
 }`,
         output: "1\nTelefonnummeret skal være 8 cifre.",
         fordi: "Navn og e-mail er i orden. Telefonnummeret har kun 7 cifre, så kun det regulære udtryk fejler." },
-      { t: "ide", h: "Sæt reglerne på dine modeller",
-        md: "Nu får dine to modeller deres regler. Her er de færdige filer. Du har allerede det meste: tilføj linjen `using System.ComponentModel.DataAnnotations;` øverst og attributterne over properties.",
-        win: ["Ret `Models/Kunde.cs`, så den ser ud som den første fil nedenfor.", "Ret `Models/Skade.cs`, så den ser ud som den anden fil nedenfor.", "Byg projektet."],
-        mac: ["Ret `Models/Kunde.cs`, så den ser ud som den første fil nedenfor.", "Ret `Models/Skade.cs`, så den ser ud som den anden fil nedenfor.", "Byg projektet."],
-        kode: R`// ===== Models/Kunde.cs =====
+      { t: "opgave", h: "Sæt reglerne på dine modeller", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
+        md: "Nu får dine to modeller deres regler. Skriv attributterne selv over de rigtige properties. Fejlbeskederne skal være præcis dem i kravene, for senere lektioner tjekker, at de kommer frem.\n\nØverst i begge filer skal der stå `using System.ComponentModel.DataAnnotations;`, ellers kan compileren ikke finde attributterne.",
+        krav: [
+          "`Kunde.Navn`: `[Required]` med beskeden `Skriv kundens navn.` og `[StringLength(100)]` med `Navnet må højst være 100 tegn.`",
+          "`Kunde.Email`: `[Required]` med `Skriv kundens e-mail.` og `[EmailAddress]` med `Det er ikke en gyldig e-mail.`",
+          "`Kunde.Telefon`: `[Required]` med `Skriv kundens telefonnummer.` og `[RegularExpression]` med mønsteret for præcis 8 cifre og beskeden `Telefonnummeret skal være 8 cifre.`",
+          "`Skade.Beskrivelse`: `[Required]` med `Beskriv skaden.` og `[StringLength(500)]` med `Beskrivelsen må højst være 500 tegn.`",
+          "`Skade.Beloeb`: `[Range]` fra 1 til 10.000.000 med `Beløbet skal være mellem 1 og 10.000.000 kr.`",
+          "Begge filer har `using System.ComponentModel.DataAnnotations;`, og projektet kan bygges uden fejl"
+        ],
+        tip: [
+          "En attribut står på linjen over propertyen, i firkantede parenteser. Beskeden gives sådan: `[Required(ErrorMessage = \"Skriv kundens navn.\")]`",
+          "Har en attribut et tal, står tallet først: `[StringLength(100, ErrorMessage = \"…\")]` og `[Range(1, 10_000_000, ErrorMessage = \"…\")]`",
+          "Mønsteret til telefonnummeret står i trin 7: `[RegularExpression(@\"^\\d{8}$\", ErrorMessage = \"Telefonnummeret skal være 8 cifre.\")]`"
+        ],
+        output: "Ingen ændring i appen endnu. Reglerne viser sig, når formularerne kommer i lektion 9.",
+        loesning: R`// ===== Models/Kunde.cs =====
 using System.ComponentModel.DataAnnotations;
 
 namespace SkadeApp.Models;
@@ -204,8 +216,7 @@ public class Skade
 public enum SkadeType { Bil, Indbo, Rejse, Ulykke }
 
 public enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
-        frag: true,
-        md2: "`[Range(1, 10_000_000)]` betyder: mindst 1 og højst 10 millioner. Understregningerne i tallet gør det bare nemmere at læse; C# ser bort fra dem." },
+        md2: "`10_000_000` er bare 10 millioner. Understregningerne gør tallet nemmere at læse; C# ser bort fra dem." },
       { t: "forklar", q: "Eksamensspørgsmål: Hvordan sikrer du, at et telefonnummer er gyldigt, før det bliver gemt?",
         svar: "Over propertyen Telefon i Kunde står en RegularExpression-attribut med mønsteret ^\\d{8}$, som betyder præcis 8 cifre og intet andet, og en Required-attribut. Formularen bruger DataAnnotationsValidator, så den tjekker reglerne, før der bliver gemt, og viser min danske fejlbesked under feltet, hvis nummeret ikke passer.",
         noegle: ["RegularExpression", "^\\d{8}$", "attribut", "Required", "fejlbesked"] }

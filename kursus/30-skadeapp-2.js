@@ -375,7 +375,7 @@ using Microsoft.EntityFrameworkCore;
 using SkadeApp.Components;
 using SkadeApp.Data;
 
-// Dansk format på tal, beløb og datoer (fx 4.500,00 kr. og 14-08-2026).
+// Dansk format på tal og beløb (fx 4.500,00 kr.).
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("da-DK");
 CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("da-DK");
 
@@ -411,7 +411,7 @@ app.MapRazorComponents<App>()
 
 app.Run();`,
         frag: true,
-        md2: "De to linjer med `CultureInfo` gør, at beløb vises på dansk, fx `4.500,00 kr.`, og datoer som `14-08-2026`, uanset hvordan computeren er sat op. Når appen kører, skriver vinduet med serverens log de SQL-sætninger, EF Core sender til databasen. Kig efter `CREATE TABLE` første gang." },
+        md2: "De to linjer med `CultureInfo` gør, at beløb vises på dansk, fx `4.500,00 kr.`, uanset hvordan computeren er sat op. Når appen kører, skriver vinduet med serverens log de SQL-sætninger, EF Core sender til databasen. Kig efter `CREATE TABLE` første gang." },
       { t: "valg", q: "Du tilføjer en ny property i `Kunde`, starter appen, og den går ned med en fejl om en kolonne, der ikke findes. `skader.db` lå der i forvejen. Hvad er årsagen?",
         svar: ["EnsureCreated laver kun databasen, når filen ikke findes. Den gamle fil har ikke den nye kolonne. Stop appen, slet skader.db, og kør igen", "Propertyen skal også skrives i appsettings.json", "SQLite kan ikke have mere end fire kolonner", "NuGet-pakken er forkert"],
         ret: 0, fordi: "`EnsureCreated()` ændrer ikke en database, der allerede findes. Slet filen, så laves den forfra med den nye kolonne og startdataene. (Store projekter bruger i stedet *migrations*, som kan ændre en database uden at slette data.)" },
@@ -908,7 +908,7 @@ else
             @foreach (var skade in skader.OrderByDescending(s => s.Dato).Take(5))
             {
                 <tr>
-                    <td class="text-nowrap">@skade.Dato.ToShortDateString()</td>
+                    <td class="text-nowrap">@skade.Dato.ToString("dd-MM-yyyy")</td>
                     <td><a href="kunder/@skade.KundeId">@skade.Kunde?.Navn</a></td>
                     <td>@skade.Type</td>
                     <td>@skade.Beskrivelse</td>
@@ -932,7 +932,7 @@ else
     }
 }`,
         sprog: "razor", frag: true,
-        md2: "`ToString(\"C\")` skriver et beløb som kroner: `4.500,00 kr.` `ToShortDateString()` skriver datoen som `14-08-2026`. `@skade.Kunde?.Navn`: spørgsmålstegnet betyder, at hvis `Kunde` er `null`, skrives ingenting i stedet for at gå ned. `class=\"…\"` er Bootstrap: `card` er en boks, `row` og `col-md-4` lægger tre bokse ved siden af hinanden." },
+        md2: "`ToString(\"C\")` skriver et beløb som kroner: `4.500,00 kr.` `ToString(\"dd-MM-yyyy\")` skriver datoen som `14-08-2026`: dag, måned og år med bindestreger. Formatet er skrevet ud, fordi den korte danske dato ser forskellig ud på Windows (`14-08-2026`) og Mac (`14.08.2026`). `@skade.Kunde?.Navn`: spørgsmålstegnet betyder, at hvis `Kunde` er `null`, skrives ingenting i stedet for at gå ned. `class=\"…\"` er Bootstrap: `card` er en boks, `row` og `col-md-4` lægger tre bokse ved siden af hinanden." },
       { t: "ide", h: "Se data komme ind med debuggeren",
         md: "Nu bruger du debuggeren til at se, hvad servicen henter.",
         win: ["Sæt et breakpoint på linjen `skader = await SkadeService.HentAlleAsync();` i `Home.razor` (klik i den grå kant til venstre for linjen).", "Start med **F5**. Browseren åbner, og Visual Studio stopper på linjen.", "Tryk **F10** (Step Over) én gang. Se i vinduet **Locals**: `skader` har nu `Count = 7`.", "Fold `skader` ud med den lille pil, og fold den første skade ud. `Kunde` er udfyldt med en kunde, fordi servicen bruger `Include(s => s.Kunde)`.", "Fortsæt med **F5**, og stop debuggeren med den røde firkant."],

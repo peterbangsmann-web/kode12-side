@@ -406,7 +406,7 @@ else
                         @foreach (var skade in kunde.Skader.OrderByDescending(s => s.Dato))
                         {
                             <tr>
-                                <td class="text-nowrap">@skade.Dato.ToShortDateString()</td>
+                                <td class="text-nowrap">@skade.Dato.ToString("dd-MM-yyyy")</td>
                                 <td>@skade.Type</td>
                                 <td>@skade.Beskrivelse</td>
                                 <td class="text-end text-nowrap">@skade.Beloeb.ToString("C")</td>
@@ -645,7 +645,7 @@ else
             @foreach (var skade in viste)
             {
                 <tr>
-                    <td class="text-nowrap">@skade.Dato.ToShortDateString()</td>
+                    <td class="text-nowrap">@skade.Dato.ToString("dd-MM-yyyy")</td>
                     <td><a href="kunder/@skade.KundeId">@skade.Kunde?.Navn</a></td>
                     <td>@skade.Type</td>
                     <td>@skade.Beskrivelse</td>
@@ -692,7 +692,7 @@ else
 }`,
         sprog: "razor", frag: true,
         md2: "`var viste = Viste.ToList();` regner listen ud én gang og gemmer den, så tabellen, antallet og summen bruger den samme liste." },
-      { t: "laes", h: "Danske beløb og datoer",
+      { t: "laes", h: "Danske beløb",
         md: "I lektion 6 skrev du to linjer med `CultureInfo` øverst i `Program.cs`. De sætter appens sprog og land til dansk (`da-DK`). Derfor skriver `ToString(\"C\")` beløb som danske kroner med punktum ved tusinder og komma før øre.",
         kode: R`Console.WriteLine(4500m.ToString("C"));
 Console.WriteLine(0.5m.ToString("C"));`,

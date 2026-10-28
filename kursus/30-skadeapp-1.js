@@ -32,7 +32,7 @@ window.KURSUS.push({
     ],
     trin: [
       { t: "laes", h: "Fra konsolprogram til web-app",
-        md: "Indtil nu har du lavet **konsolprogrammer**: de kører på din egen computer og skriver i et sort vindue.\n\nEn **web-app** er delt i to:\n\n- **Serveren** er en computer, der kører dit C#-program og venter på besøg.\n- **Browseren** (Chrome, Edge, Safari) er det, brugeren ser siden i.\n\nBrowseren beder om en side, og serveren svarer. Det kaldes en *request* og et *response*, og de sendes med **HTTP**. Mens du udvikler, er serveren din egen computer. Derfor hedder adressen `http://localhost:5103`: `localhost` betyder \"denne computer\".",
+        md: "Et **konsolprogram** kører på din egen computer og skriver tekst i et sort vindue. Dem bruger du i lektion 1b til at lære C#.\n\nEn **web-app** er delt i to:\n\n- **Serveren** er en computer, der kører dit C#-program og venter på besøg.\n- **Browseren** (Chrome, Edge, Safari) er det, brugeren ser siden i.\n\nBrowseren beder om en side, og serveren svarer. Det kaldes en *request* og et *response*, og de sendes med **HTTP**. Mens du udvikler, er serveren din egen computer. Derfor hedder adressen `http://localhost:5103`: `localhost` betyder \"denne computer\".",
         kode: R`Browser                          Server (dit C#-program)
 "Giv mig /kunder"      ───────▶   finder kunderne
                        ◀───────   sender siden med kunderne
@@ -157,6 +157,179 @@ Models + Data      Modeller og   beskriver kunder og skader,
     ] },
 
   // ------------------------------------------------------------------
+  { id: "m30lc", nr: "1b", titel: "C# fra bunden: variabler, valg, løkker og metoder", min: 25,
+    ord: [
+      ["Console.WriteLine", "Skriver en linje tekst i konsolvinduet: `Console.WriteLine(\"Hej\");`."],
+      ["Variabel", "Et navn til en værdi, som programmet husker: `int antal = 3;`."],
+      ["Type", "Hvilken slags værdi en variabel kan have: `int` (heltal), `decimal` (kommatal), `string` (tekst), `bool` (sandt/falsk)."],
+      ["if / else", "Programmet vælger: koden i `if` kører kun, når betingelsen er sand. Ellers kører koden i `else`."],
+      ["Array", "Mange værdier af samme type i én variabel: `string[] navne = { \"Mette\", \"Ali\" };`. Fast længde."],
+      ["foreach", "Gentager koden én gang for hvert element: `foreach (string n in navne) { … }`."],
+      ["for", "Gentager koden et bestemt antal gange med en tæller: `for (int i = 0; i < 3; i++) { … }`."],
+      ["Metode", "Et stykke kode med et navn, som kan kaldes: `LaegSammen(3, 4)`."],
+      ["Parameter", "En værdi, metoden får med, når den kaldes. Står i parentesen efter metodens navn."],
+      ["return", "Giver en værdi tilbage fra metoden og stopper den."],
+      ["void", "Står i stedet for en type, når metoden ikke giver noget tilbage."]
+    ],
+    trin: [
+      { t: "laes", h: "Et program kører linje for linje",
+        md: "SkadeApp er skrevet i **C#**. Her lærer du det grundlæggende med små programmer, der skriver i et konsolvindue. Du kan prøve dem i et nyt konsolprojekt, men det er ikke nødvendigt: du kan se, hvad de skriver, under koden.\n\nEt C#-program kører én linje ad gangen, oppefra og ned. Hver linje slutter med semikolon `;`. Tekst står i anførselstegn.",
+        kode: R`Console.WriteLine("Velkommen til SkadeApp");
+// Denne linje er en kommentar. Den bliver ikke kørt.
+Console.WriteLine("Der er 4 kunder");`,
+        noter: [
+          ["Console.WriteLine(…)", "Skriver det, der står i parentesen, og går til næste linje."],
+          ["\"Velkommen til SkadeApp\"", "En tekst. Anførselstegnene viser, hvor teksten starter og slutter."],
+          [";", "Slutter en linje kode. Mangler den, giver compileren en fejl."],
+          ["// …", "En kommentar: en note til den, der læser koden."]
+        ],
+        output: "Velkommen til SkadeApp\nDer er 4 kunder" },
+      { t: "laes", h: "Variabler: et navn til en værdi",
+        md: "En **variabel** er et navn til en værdi, som programmet husker. Du skriver først **typen**, så navnet, så `=` og værdien. `=` betyder *læg værdien i variablen*, ikke *er lig med*.\n\nDe typer, SkadeApp bruger mest:\n\n- `int`: et heltal, fx `4`\n- `decimal`: et kommatal til penge, fx `4500.50m` (med punktum og et `m` til sidst)\n- `string`: en tekst, fx `\"Mette\"`\n- `bool`: sandt eller falsk, `true` eller `false`\n\nVariabelnavne starter med lille bogstav: `antalKunder`.",
+        kode: R`string navn = "Mette Jensen";
+int antal = 2;
+bool harAabenSkade = true;
+
+antal = antal + 1;
+antal++;
+
+Console.WriteLine(navn + " har " + antal + " skader");
+Console.WriteLine($"{navn} har {antal} skader");
+Console.WriteLine(harAabenSkade);`,
+        noter: [
+          ["antal = antal + 1;", "Tag værdien i `antal`, læg 1 til, og læg resultatet tilbage i `antal`. Nu er den 3."],
+          ["antal++;", "En kort måde at lægge 1 til. Nu er den 4."],
+          ["navn + \" har \" + …", "`+` mellem tekster sætter dem sammen til én tekst."],
+          ["$\"{navn} har {antal} skader\"", "Med `$` foran kan du skrive variabler i `{ }` direkte i teksten. Det giver det samme."],
+          ["var", "I stedet for typen kan man skrive `var`: `var antal = 2;`. Så finder compileren selv typen ud fra værdien."]
+        ],
+        output: "Mette Jensen har 4 skader\nMette Jensen har 4 skader\nTrue" },
+      { t: "forudsig",
+        kode: R`int kunder = 4;
+kunder = kunder + 2;
+kunder++;
+string tekst = "Kunder: ";
+Console.WriteLine(tekst + kunder);`,
+        output: "Kunder: 7",
+        fordi: "4 + 2 er 6, og `++` lægger 1 til, så `kunder` er 7. `+` sætter teksten og tallet sammen." },
+      { t: "laes", h: "if og else: programmet vælger",
+        md: "Med `if` kører koden kun, når **betingelsen** i parentesen er sand. Står der `else` bagefter, kører den kode i stedet, når betingelsen er falsk. Koden, der hører til, står mellem krøllede parenteser `{ }`.",
+        kode: R`decimal beloeb = 25000m;
+
+if (beloeb > 10000m)
+{
+    Console.WriteLine("Stor skade");
+}
+else
+{
+    Console.WriteLine("Lille skade");
+}
+
+string status = "Godkendt";
+if (status == "Anmeldt" || status == "Behandles")
+{
+    Console.WriteLine("Skaden er åben");
+}`,
+        noter: [
+          ["> < >= <=", "Større end, mindre end, større end eller lig med, mindre end eller lig med."],
+          ["==", "Er de to ens? To lighedstegn. Ét lighedstegn lægger en værdi i en variabel."],
+          ["!=", "Er de forskellige?"],
+          ["||", "Eller: sand, hvis mindst én af siderne er sand."],
+          ["&&", "Og: sand, hvis begge sider er sande."],
+          ["!", "Ikke: vender sand og falsk om. `!(antal > 0)` er sand, når antal ikke er større end 0."]
+        ],
+        output: "Stor skade",
+        md2: "\"Skaden er åben\" bliver ikke skrevet: status er `Godkendt`, og den er hverken `Anmeldt` eller `Behandles`." },
+      { t: "forudsig",
+        kode: R`int aabne = 0;
+bool loggetInd = true;
+
+if (aabne == 0)
+{
+    Console.WriteLine("Ingen åbne skader");
+}
+if (loggetInd && aabne > 0)
+{
+    Console.WriteLine("Vis listen");
+}
+else
+{
+    Console.WriteLine("Intet at vise");
+}`,
+        output: "Ingen åbne skader\nIntet at vise",
+        fordi: "`aabne` er 0, så den første besked skrives. `&&` kræver, at begge sider er sande, men `aabne > 0` er falsk, så `else` kører." },
+      { t: "laes", h: "Arrays og løkker: gentag for hvert element",
+        md: "Et **array** er mange værdier af samme type i én variabel. Typen får `[]` bagefter, og værdierne står i `{ }` med komma imellem. Et array har en fast længde, og `.Length` er antallet.\n\nEn **løkke** gentager kode. `foreach` kører én gang for hvert element. `for` kører et bestemt antal gange med en tæller.",
+        kode: R`string[] navne = { "Mette", "Ali", "Søren" };
+Console.WriteLine(navne.Length);
+Console.WriteLine(navne[0]);
+
+foreach (string n in navne)
+{
+    Console.WriteLine("Kunde: " + n);
+}
+
+for (int i = 0; i < 3; i++)
+{
+    Console.WriteLine(i);
+}`,
+        noter: [
+          ["string[] navne", "Et array af tekster."],
+          ["navne[0]", "Det første element. Tælleren starter ved 0, så `navne[2]` er det tredje."],
+          ["foreach (string n in navne)", "For hvert element i `navne`: læg det i `n`, og kør koden i `{ }`."],
+          ["for (int i = 0; i < 3; i++)", "Tre dele adskilt af semikolon: start `i` ved 0, fortsæt så længe `i < 3`, og læg 1 til `i` efter hver gang."]
+        ],
+        output: "3\nMette\nKunde: Mette\nKunde: Ali\nKunde: Søren\n0\n1\n2" },
+      { t: "forudsig",
+        kode: R`int[] beloeb = { 4500, 2400, 3200 };
+int sum = 0;
+foreach (int b in beloeb)
+{
+    sum = sum + b;
+}
+Console.WriteLine(sum);`,
+        output: "10100",
+        fordi: "Løkken kører tre gange og lægger hvert beløb til `sum`: 0 + 4500 + 2400 + 3200 = 10100." },
+      { t: "laes", h: "Metoder: giv koden et navn",
+        md: "En **metode** er et stykke kode med et navn. Du skriver den én gang og kalder den, så tit du vil. I parentesen står **parametrene**: de værdier, metoden får med. Foran navnet står, hvad metoden giver tilbage: en type, fx `int`, eller `void`, hvis den ikke giver noget tilbage. `return` giver værdien tilbage og stopper metoden.\n\nI et lille program står metoderne under den kode, der kalder dem.",
+        kode: R`Hils("Mette");
+int i_alt = LaegSammen(4500, 2400);
+Console.WriteLine(i_alt);
+
+static void Hils(string navn)
+{
+    Console.WriteLine("Hej " + navn);
+}
+
+static int LaegSammen(int a, int b)
+{
+    return a + b;
+}`,
+        noter: [
+          ["Hils(\"Mette\");", "Kalder metoden `Hils`. Teksten i parentesen er argumentet: den bliver til parameteren `navn`."],
+          ["static void Hils(string navn)", "`void`: giver intet tilbage. `string navn`: én parameter af typen string."],
+          ["static int LaegSammen(int a, int b)", "Giver en `int` tilbage og har to parametre."],
+          ["return a + b;", "Giver summen tilbage. Den lægges i `i_alt`, der hvor metoden blev kaldt."],
+          ["static", "Betyder, at metoden kaldes med sit navn alene. I lektion 7 møder du metoder uden `static`."],
+          ["Metodenavne", "Starter med stort bogstav: `LaegSammen`. Variabler starter med lille."]
+        ],
+        output: "Hej Mette\n6900" },
+      { t: "udfyld", q: "Udfyld, så metoden giver det dobbelte af tallet tilbage, og programmet skriver 50.",
+        kode: R`int resultat = Dobbelt(25);
+Console.WriteLine(resultat);
+
+static [[int]] Dobbelt(int tal)
+{
+    [[return]] tal * 2;
+}`,
+        output: "50",
+        fordi: "Metoden giver et heltal tilbage, så typen foran navnet er `int`. `return` giver værdien `tal * 2` tilbage til den, der kaldte." },
+      { t: "valg", q: "Hvad er forskellen på `=` og `==`?",
+        svar: ["= lægger en værdi i en variabel. == spørger, om to værdier er ens", "Der er ingen forskel", "== lægger en værdi i en variabel. = spørger, om de er ens", "= bruges kun til tekst"],
+        ret: 0, fordi: "`antal = 3;` lægger 3 i `antal`. `antal == 3` er et spørgsmål, der giver `true` eller `false`, fx i en `if`." }
+    ] },
+
+  // ------------------------------------------------------------------
   { id: "m30l2", nr: 2, titel: "Klasser og objekter: Kunde", min: 20,
     ord: [
       ["Klasse", "En skabelon, der beskriver en slags ting: hvilke oplysninger den har. `class Kunde { … }`."],
@@ -167,8 +340,8 @@ Models + Data      Modeller og   beskriver kunder og skader,
       ["Namespace", "Et efternavn til klasserne, der svarer til mappen, fx `SkadeApp.Models`. Andre filer skriver `using SkadeApp.Models;` for at bruge dem."]
     ],
     trin: [
-      { t: "laes", h: "Det kender du: variabler",
-        md: "Du kender variabler: én variabel til hver oplysning. Sådan ser to kunder ud med det, du kan nu:",
+      { t: "laes", h: "To kunder med almindelige variabler",
+        md: "I lektion 1b lavede du én variabel til hver oplysning. Sådan ser to kunder ud på den måde:",
         kode: R`string navn1 = "Mette Jensen";
 string telefon1 = "22334455";
 string navn2 = "Ali Hassan";
@@ -188,7 +361,7 @@ Console.WriteLine(navn2 + " " + telefon2);`,
         frag: true,
         noter: [
           ["class Kunde", "Her starter klassen, og den hedder `Kunde`. Alt mellem `{` og `}` hører til klassen, på samme måde som koden i en metode står mellem `{` og `}`."],
-          ["string Navn … = \"\"", "Det kender du fra en variabel: typen `string`, et navn og en startværdi. `\"\"` er en tom tekst."],
+          ["string Navn … = \"\"", "Som en variabel i lektion 1b: typen `string`, et navn og en startværdi. `\"\"` er en tom tekst."],
           ["public", "Nyt. Koden uden for klassen må bruge oplysningen. Uden `public` kan kun koden inde i klassen bruge den."],
           ["{ get; set; }", "Nyt. Oplysningen kan læses (get) og ændres (set). Skriv det altid sådan: det er et fast mønster."],
           ["Stort N i Navn", "Navne inde i en klasse starter med stort bogstav. Variabler starter med lille."]
@@ -601,10 +774,10 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
         output: "True\nFalse",
         fordi: "`ErAaben` regnes ud på ny, hver gang den læses. Efter `a.Status = SkadeStatus.Afvist;` er skaden ikke længere åben." },
       { t: "laes", h: "Lambda: en lille metode uden navn",
-        md: "Hvor mange tal i en liste er større end 3? Med det, du kender, skriver du en løkke. Med **LINQ** skriver du det på én linje, og inde i parentesen står en **lambda**: en lille metode uden navn.",
+        md: "Hvor mange tal i en liste er større end 3? Med en løkke fra lektion 1b skriver du det sådan her. Med **LINQ** skriver du det på én linje, og inde i parentesen står en **lambda**: en lille metode uden navn.",
         kode: R`List<int> tal = new List<int> { 5, 2, 8 };
 
-// Med en løkke, som du kender den:
+// Med en løkke:
 int antal = 0;
 foreach (int t in tal)
 {
@@ -623,7 +796,7 @@ Console.WriteLine(tal.Count(t => t > 3));`,
           ["Count(…)", "Kalder lambdaen én gang for hvert tal, præcis som løkken, og tæller de gange, svaret er `true`."]
         ],
         output: "2\n2",
-        md2: "Lambdaen `t => t > 3` gør det samme som denne almindelige metode, bare uden navn og uden `return`:\n\n`static bool ErStor(int t) { return t > 3; }`\n\nParameteren må hedde, hvad du vil. Man vælger tit forbogstavet: `s` for en skade, `k` for en kunde.\n\nLæg mærke til forskellen: `Count` **uden** parenteser (fra lektion 3) er antallet af alle elementer i listen. LINQ-metoden `Count(…)` **med** en lambda tæller kun dem, der passer. Står der `()` uden noget indeni, fx `gruppe.Count()`, tæller den alle." },
+        md2: "Lambdaen `t => t > 3` gør det samme som denne metode (som i lektion 1b), bare uden navn og uden `return`:\n\n`static bool ErStor(int t) { return t > 3; }`\n\nParameteren må hedde, hvad du vil. Man vælger tit forbogstavet: `s` for en skade, `k` for en kunde.\n\nLæg mærke til forskellen: `Count` **uden** parenteser (fra lektion 3) er antallet af alle elementer i listen. LINQ-metoden `Count(…)` **med** en lambda tæller kun dem, der passer. Står der `()` uden noget indeni, fx `gruppe.Count()`, tæller den alle." },
       { t: "valg", q: "Hvad betyder lambdaen `s => s.Beloeb > 5000m`?",
         svar: ["Tag en skade s, og svar på, om dens beløb er over 5000", "Sæt alle beløb til 5000", "Lav en ny skade med beløbet 5000", "Læg 5000 til beløbet"],
         ret: 0, fordi: "Til venstre for pilen står parameteren (`s`, én skade ad gangen). Til højre står det, lambdaen svarer: `true` eller `false`." },

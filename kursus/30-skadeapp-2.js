@@ -307,7 +307,7 @@ public class SkadeContext : DbContext
         noter: [
           [": DbContext", "Klassen arver fra `DbContext`, som kan tale med databasen."],
           ["konstruktøren", "Som i trin 4: samme navn som klassen. `options` indeholder bl.a. hvilken database der bruges. `: base(options)` giver dem videre til `DbContext`. Kroppen `{ }` er tom, fordi der ikke skal ske mere."],
-          ["DbContextOptions<SkadeContext>", "Typen på parameteren. Vinkelparenteserne kender du fra `List<Kunde>`: de siger, hvad den hører til."],
+          ["DbContextOptions<SkadeContext>", "Typen på parameteren. Vinkelparenteserne har du set i `List<Skade>` i lektion 3: de siger, hvad den hører til."],
           ["DbSet<Kunde> Kunder", "Tabellen `Kunder`. EF Core ser selv, at `Skade.KundeId` er en fremmednøgle til den."]
         ] },
       { t: "valg", q: "`SkadeContext` har linjen `public DbSet<Skade> Skader { get; set; }`. Hvad bliver det til i databasen?",
@@ -605,7 +605,7 @@ app.Run();`,
     ],
     trin: [
       { t: "laes", h: "Metoder, der hører til et objekt",
-        md: "De metoder, du kender, har `static` og kaldes med deres navn: `Hils();`. En klasse kan også have metoder **uden** `static`. Sådan en metode hører til hvert enkelt objekt. Den kaldes med objektet, et punktum og metodens navn, og den kan bruge objektets egne properties.\n\nDine services er bygget sådan: `KundeService.HentAlleAsync()` er en metode på service-objektet.",
+        md: "Metoderne i lektion 1b har `static` og kaldes med deres navn: `Hils(\"Mette\");`. En klasse kan også have metoder **uden** `static`. Sådan en metode hører til hvert enkelt objekt. Den kaldes med objektet, et punktum og metodens navn, og den kan bruge objektets egne properties.\n\nDine services er bygget sådan: `KundeService.HentAlleAsync()` er en metode på service-objektet.",
         kode: R`Kunde a = new Kunde { Navn = "Mette" };
 Kunde b = new Kunde { Navn = "Ali" };
 Console.WriteLine(a.Hilsen());
@@ -1214,6 +1214,7 @@ else
         sprog: "razor", frag: true,
         noter: [
           ["HttpContext og [CascadingParameter]", "Oplysninger om den forespørgsel, der kører lige nu. Blazor giver dem selv til komponenten. Skabelonens kode, som du ikke skal ændre."],
+          ["= default!", "Skabelonens måde at sige: værdien bliver sat af Blazor, før den bruges. Den skal du ikke ændre."],
           ["AcceptsInteractiveRouting()", "Sand for dine egne sider, falsk for login-siderne."],
           ["? … : null", "Er betingelsen sand, bruges det før kolonet, ellers `null` (ingen interaktivitet)."],
           ["prerender: false", "Rettelsen: skabelonen skrev bare `InteractiveServer`."],

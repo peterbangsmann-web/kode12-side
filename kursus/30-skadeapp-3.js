@@ -79,7 +79,10 @@ foreach (string n in fundne)
         sprog: "razor", frag: true,
         noter: [
           ["Model=\"nyKunde\"", "Formularen arbejder på objektet `nyKunde`."],
+          ["<DataAnnotationsValidator />", "Får formularen til at tjekke reglerne (attributterne) på modellen."],
+          ["<InputText>", "Blazors tekstfelt til en `EditForm`. Det bliver til et almindeligt `<input>` i browseren."],
           ["@bind-Value", "Som `@bind`, men til Blazors egne input-felter."],
+          ["<ValidationMessage>", "Viser fejlbeskeden for ét felt, fx \"Skriv kundens navn.\"."],
           ["For=\"() => nyKunde.Navn\"", "Hvilket felts fejlbesked der vises her. Det er en lambda uden parameter: de tomme parenteser `()` betyder, at den ikke får noget med."],
           ["type=\"submit\"", "Knappen sender formularen."]
         ] },

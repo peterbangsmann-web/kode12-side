@@ -167,8 +167,35 @@ Models + Data      Modeller og   beskriver kunder og skader,
       ["Namespace", "Et efternavn til klasserne, der svarer til mappen, fx `SkadeApp.Models`. Andre filer skriver `using SkadeApp.Models;` for at bruge dem."]
     ],
     trin: [
-      { t: "laes", h: "En klasse er en skabelon",
-        md: "Indtil nu har du haft én variabel for hver oplysning: `navn`, `telefon`. En kunde har flere oplysninger, der hører sammen. En **klasse** samler dem: den beskriver, hvad **en** kunde har. Ud fra klassen laver du **objekter**, én for hver kunde.",
+      { t: "laes", h: "Det kender du: variabler",
+        md: "Fra modul 0–3 kender du variabler: én variabel til hver oplysning. Sådan ser to kunder ud med det, du kan nu:",
+        kode: R`string navn1 = "Mette Jensen";
+string telefon1 = "22334455";
+string navn2 = "Ali Hassan";
+string telefon2 = "33445566";
+
+Console.WriteLine(navn1 + " " + telefon1);
+Console.WriteLine(navn2 + " " + telefon2);`,
+        output: "Mette Jensen 22334455\nAli Hassan 33445566",
+        md2: "Det virker med to kunder. Men der er to problemer:\n\n- SkadeApp har mange kunder, og hver kunde har fire oplysninger (id, navn, e-mail, telefon). 100 kunder ville kræve 400 variabler.\n- Intet i koden siger, at `navn1` og `telefon1` hører til den samme kunde. Det er kun tallet i navnene, der viser det.\n\nLøsningen hedder en **klasse**. Den kommer i næste trin." },
+      { t: "laes", h: "En klasse beskriver, hvad én kunde har",
+        md: "En **klasse** samler de oplysninger, der hører sammen. Klassen `Kunde` siger: en kunde har et navn og et telefonnummer. Klassen laver ikke selv nogen kunder. Den er som et tomt skema: felterne står der, men der er ikke skrevet noget i dem.",
+        kode: R`class Kunde
+{
+    public string Navn { get; set; } = "";
+    public string Telefon { get; set; } = "";
+}`,
+        frag: true,
+        noter: [
+          ["class Kunde", "Her starter klassen, og den hedder `Kunde`. Alt mellem `{` og `}` hører til klassen, på samme måde som koden i en metode står mellem `{` og `}`."],
+          ["string Navn … = \"\"", "Det kender du fra en variabel: typen `string`, et navn og en startværdi. `\"\"` er en tom tekst."],
+          ["public", "Nyt. Koden uden for klassen må bruge oplysningen. Uden `public` kan kun koden inde i klassen bruge den."],
+          ["{ get; set; }", "Nyt. Oplysningen kan læses (get) og ændres (set). Skriv det altid sådan: det er et fast mønster."],
+          ["Stort N i Navn", "Navne inde i en klasse starter med stort bogstav. Variabler starter med lille."]
+        ],
+        md2: "En oplysning i en klasse, skrevet på den måde, hedder en **property**. Sammenlign de to linjer:\n\n- Variabel: `string navn = \"\";`\n- Property: `public string Navn { get; set; } = \"\";`\n\nForskellen er `public` foran, `{ get; set; }` efter navnet og det store forbogstav." },
+      { t: "laes", h: "new laver en kunde ud fra klassen",
+        md: "For at få en rigtig kunde skriver du `new Kunde()`. Det laver et **objekt**: én konkret kunde med sine egne felter, som du kan skrive i. Laver du `new Kunde()` to gange, får du to kunder, der hver har deres eget navn.",
         kode: R`Kunde k1 = new Kunde();
 k1.Navn = "Mette Jensen";
 k1.Telefon = "22334455";
@@ -181,19 +208,20 @@ Console.WriteLine(k2.Navn);
 
 class Kunde
 {
-    public int Id { get; set; }
     public string Navn { get; set; } = "";
     public string Telefon { get; set; } = "";
 }`,
         noter: [
-          ["class Kunde", "Skabelonen. Den står nederst, efter koden der bruger den."],
-          ["{ get; set; }", "En property: værdien kan læses og ændres udefra."],
-          ["public", "Koden uden for klassen må bruge den."],
-          ["= \"\"", "Startværdien er en tom tekst. Uden den ville `Navn` være `null` (ingenting) fra starten."],
-          ["new Kunde()", "Laver et nyt objekt. `k1` og `k2` er to forskellige kunder."],
-          ["k1.Navn", "Punktum betyder: `Navn` på netop det objekt."]
+          ["Kunde k1 = new Kunde();", "Samme form som `int tal = 5;`: først typen (`Kunde`), så variablens navn (`k1`), og efter `=` værdien. Værdien er en ny kunde."],
+          ["k1.Navn = \"Mette Jensen\";", "Punktummet betyder: feltet `Navn` i netop kunden `k1`. Her skrives der i feltet."],
+          ["Console.WriteLine(k1.Navn);", "Her læses feltet `Navn` i `k1`."],
+          ["class Kunde", "Klassen står nederst. Når koden ikke står i en metode, kræver C#, at klasserne kommer efter de linjer, der kører."]
         ],
-        output: "Mette Jensen\nAli Hassan" },
+        output: "Mette Jensen\nAli Hassan",
+        md2: "Nu hører navn og telefon sammen: begge er inde i `k1`. Ordene du skal kunne til eksamen: **klassen** er beskrivelsen (`class Kunde`). Et **objekt** er én konkret kunde, lavet med `new`." },
+      { t: "valg", q: "Hvad betyder `k2.Navn` i koden fra forrige trin?",
+        svar: ["Feltet Navn i kunden k2", "En ny kunde, der hedder k2", "Navnet på klassen", "Alle kunders navne"],
+        ret: 0, fordi: "Punktummet betyder: feltet efter punktummet, i objektet før punktummet. `k2.Navn` er derfor Ali Hassan." },
       { t: "forudsig",
         q: "To objekter af samme klasse har hver deres værdier. Hvad skriver programmet?",
         kode: R`Kunde a = new Kunde();
@@ -307,7 +335,7 @@ public class Kunde
           ["public class", "Klassen må bruges af alle andre filer i projektet."]
         ] },
       { t: "opgave", h: "Lav Kunde.cs i dit projekt", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
-        md: "Nu får dit projekt sin første model. Du skrev klassen i trin 7. Nu skal den i sin egen fil med et namespace, som i trin 8.\n\n{{Højreklik på projektet **SkadeApp** i Solution Explorer → **Add → New Folder** → `Models`. Højreklik på `Models` → **Add → Class…** → `Kunde.cs` → **Add**.||Højreklik på projektet **SkadeApp** i Rider → **Add → Directory** → `Models`. Højreklik på `Models` → **Add → Class/Interface** → `Kunde`.}} Slet det, der står i filen, og skriv selv.",
+        md: "Nu får dit projekt sin første model. Du skrev klassen i trin 10. Nu skal den i sin egen fil med et namespace, som i trin 11.\n\n{{Højreklik på projektet **SkadeApp** i Solution Explorer → **Add → New Folder** → `Models`. Højreklik på `Models` → **Add → Class…** → `Kunde.cs` → **Add**.||Højreklik på projektet **SkadeApp** i Rider → **Add → Directory** → `Models`. Højreklik på `Models` → **Add → Class/Interface** → `Kunde`.}} Slet det, der står i filen, og skriv selv.",
         krav: [
           "Filen `Models/Kunde.cs` findes",
           "Øverst står `namespace SkadeApp.Models;`",

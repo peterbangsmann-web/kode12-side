@@ -231,6 +231,9 @@ public enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
       ["EF Core", "Entity Framework Core: et bibliotek, der oversætter mellem dine C#-klasser og databasens tabeller. Du skriver C#, og EF Core skriver SQL'en."],
       ["SQLite", "En database, der ligger i én fil (`Data/skader.db`). Kræver ingen databaseserver."],
       ["NuGet-pakke", "Et færdigt bibliotek, som projektet bruger, fx `Microsoft.EntityFrameworkCore.Sqlite`. Står i `SkadeApp.csproj`."],
+      ["Arv", "`class Kunde : Person`: Kunde får alt det, Person har, og kan lægge mere til."],
+      ["Konstruktør", "En metode med klassens navn og ingen returtype. Den kører, når objektet laves med `new`."],
+      ["JSON", "Et tekstformat til indstillinger: `\"navn\": \"værdi\"`, komma imellem. Bruges i `appsettings.json`."],
       ["DbContext", "Klassen, der er forbindelsen til databasen. Hvert `DbSet` i den bliver til en tabel."],
       ["DbSet", "En tabel set fra C#: `DbSet<Kunde> Kunder` er tabellen med kunder."],
       ["Connection string", "Teksten, der fortæller, hvor databasen er: `Data Source=Data/skader.db`."],
@@ -253,8 +256,39 @@ new Kunde { Navn = "Ali" }  →   en række i Kunder`,
         win: ["Dobbeltklik på projektet **SkadeApp** i Solution Explorer. Filen `SkadeApp.csproj` åbner.", "Find linjen med `Microsoft.EntityFrameworkCore.Sqlite`. Tallet efter `Version` er pakkens version.", "Højreklik på projektet → **Manage NuGet Packages…** → fanen **Installed**. Her står de samme pakker."],
         mac: ["Dobbeltklik på projektet **SkadeApp** i Rider. Filen `SkadeApp.csproj` åbner.", "Find linjen med `Microsoft.EntityFrameworkCore.Sqlite`. Tallet efter `Version` er pakkens version."],
         md2: "Havde du lavet projektet uden login, skulle du selv hente pakken: {{højreklik på projektet → **Manage NuGet Packages…** → **Browse**||i terminalen med `dotnet add package Microsoft.EntityFrameworkCore.Sqlite`}}." },
+      { t: "laes", h: "Arv og konstruktør: to ting, DbContext bruger",
+        md: "Klassen til databasen bruger to ting, du ikke har set endnu. Her er de i et lille program.\n\n**Arv**: `class Kunde : Person` betyder, at `Kunde` **arver** fra `Person`. Så har `Kunde` alt det, `Person` har (her `Navn`), plus det, `Kunde` selv lægger til (her `Telefon`).\n\n**Konstruktør**: en metode inde i klassen, der hedder det samme som klassen og ingen returtype har. Den kører automatisk, når objektet laves med `new`. Det, der står i parentesen efter `new Kunde(…)`, er argumenterne til konstruktøren.",
+        kode: R`Kunde k = new Kunde("Mette Jensen");
+k.Telefon = "22334455";
+Console.WriteLine(k.Navn + " " + k.Telefon);
+
+class Person
+{
+    public string Navn { get; set; } = "";
+}
+
+class Kunde : Person
+{
+    public string Telefon { get; set; } = "";
+
+    public Kunde(string navn)
+    {
+        Navn = navn;
+    }
+}`,
+        noter: [
+          ["class Kunde : Person", "Kolon efter klassenavnet: `Kunde` arver fra `Person`. Derfor har `k` et `Navn`, selvom det ikke står i `Kunde`."],
+          ["public Kunde(string navn)", "Konstruktøren: samme navn som klassen, ingen `void` og ingen returtype. Den har en parameter, ligesom en metode."],
+          ["Navn = navn;", "Konstruktøren lægger argumentet i propertyen `Navn`. Stort N er propertyen, lille n er parameteren."],
+          ["new Kunde(\"Mette Jensen\")", "Laver objektet og kalder konstruktøren med teksten som argument."]
+        ],
+        output: "Mette Jensen 22334455",
+        md2: "To ord mere, du møder i `SkadeContext`:\n\n- `: base(options)` efter konstruktøren betyder: giv `options` videre til konstruktøren i den klasse, der arves fra. `DbContext` skal bruge dem.\n- `override` foran en metode betyder: klassen, der arves fra, har en metode med det navn, og her er min egen udgave af den." },
+      { t: "valg", q: "Hvornår kører en konstruktør?",
+        svar: ["Når objektet laves med new", "Hver gang man læser en property", "Når programmet slutter", "Kun hvis man kalder den med navn"],
+        ret: 0, fordi: "Konstruktøren kører automatisk ved `new`. Argumenterne i parentesen efter `new Kunde(…)` bliver givet til den." },
       { t: "laes", h: "DbContext: forbindelsen til databasen",
-        md: "EF Core skal vide, hvilke tabeller databasen har. Det står i en klasse, der arver fra `DbContext`. At **arve** betyder, at din klasse får alt det, `DbContext` kan, og selv lægger lidt til: her de to tabeller.",
+        md: "EF Core skal vide, hvilke tabeller databasen har. Det står i en klasse, der arver fra `DbContext`, ligesom `Kunde` arvede fra `Person` i trin 4. Din klasse får alt det, `DbContext` kan (tale med databasen), og lægger selv de to tabeller til.",
         kode: R`using Microsoft.EntityFrameworkCore;
 using SkadeApp.Models;
 
@@ -272,7 +306,8 @@ public class SkadeContext : DbContext
         frag: true,
         noter: [
           [": DbContext", "Klassen arver fra `DbContext`, som kan tale med databasen."],
-          ["konstruktøren", "En metode med klassens navn, der kører, når objektet laves. `options` indeholder bl.a. hvilken database der bruges. `: base(options)` giver dem videre til `DbContext`."],
+          ["konstruktøren", "Som i trin 4: samme navn som klassen. `options` indeholder bl.a. hvilken database der bruges. `: base(options)` giver dem videre til `DbContext`. Kroppen `{ }` er tom, fordi der ikke skal ske mere."],
+          ["DbContextOptions<SkadeContext>", "Typen på parameteren. Vinkelparenteserne kender du fra `List<Kunde>`: de siger, hvad den hører til."],
           ["DbSet<Kunde> Kunder", "Tabellen `Kunder`. EF Core ser selv, at `Skade.KundeId` er en fremmednøgle til den."]
         ] },
       { t: "valg", q: "`SkadeContext` har linjen `public DbSet<Skade> Skader { get; set; }`. Hvad bliver det til i databasen?",
@@ -328,16 +363,23 @@ app.Run();                                               // 5. start webserveren
         svar: ["Før `var app = builder.Build();`, sammen med de andre `builder.Services`-linjer", "Efter `app.Run();`", "Hvor som helst", "Inde i `appsettings.json`"],
         ret: 0, fordi: "Services registreres på byggeren, før appen bygges. Efter `Build()` kan man ikke tilføje flere, og efter `app.Run()` kører der ikke mere kode, før appen stopper." },
       { t: "laes", h: "Fortæl appen, hvor databasen er",
-        md: "Til sidst skal appen vide, hvor databasen ligger, og den skal laves, første gang appen starter. Det sker to steder.\n\nI `appsettings.json` står **connection string**en. I `Program.cs` registreres databasen, og `EnsureCreated()` laver filen med tabeller og startdata, hvis den ikke findes.",
-        kode: R`// appsettings.json (nederst, før den sidste })
+        md: "Til sidst skal appen vide, hvor databasen ligger, og den skal laves, første gang appen starter. Det sker to steder.\n\nI `appsettings.json` står **connection string**en. Filen er skrevet i **JSON**, et tekstformat til indstillinger: hver indstilling er et navn og en værdi i anførselstegn, `\"navn\": \"værdi\"`. Der er komma mellem to indstillinger, men ikke efter den sidste, og `{ }` samler indstillinger, der hører sammen.\n\nI `Program.cs` registreres databasen, og `EnsureCreated()` laver filen med tabeller og startdata, hvis den ikke findes.\n\n`using` foran en blok eller en variabel betyder noget andet end `using` øverst i filen. Det betyder: det, der laves her, skal ryddes op (lukkes), når blokken eller metoden er færdig. Det bruges til forbindelser til databasen, så de ikke bliver stående åbne.\n\nØverst i `Program.cs` kommer også to linjer med `CultureInfo`. De sætter appens sprog og land til dansk, så beløb vises som `4.500,00 kr.`",
+        kode: R`// appsettings.json: ConnectionStrings har nu to linjer
 "ConnectionStrings": {
+  "DefaultConnection": "DataSource=Data/app.db;Cache=Shared",
   "SkadeDb": "Data Source=Data/skader.db"
 }
 
-// Program.cs
+// Program.cs øverst
+using System.Globalization;
+CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("da-DK");
+CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("da-DK");
+
+// Program.cs før builder.Build()
 builder.Services.AddDbContextFactory<SkadeContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("SkadeDb")));
 
+// Program.cs lige efter var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
@@ -348,6 +390,9 @@ using (var scope = app.Services.CreateScope())
 }`,
         frag: true,
         noter: [
+          ["\"SkadeDb\": \"…\"", "Den nye linje i JSON. Kommaet står efter linjen før, fordi `SkadeDb` nu er den sidste."],
+          ["options => options.UseSqlite(…)", "En lambda, som i lektion 4: den får `options` og fortæller, at databasen er SQLite."],
+          ["using var db = …;", "`db` lukkes automatisk, når blokken er færdig."],
           ["GetConnectionString(\"SkadeDb\")", "Henter teksten med navnet `SkadeDb` fra `ConnectionStrings` i `appsettings.json`."],
           ["using (var scope …) og GetRequiredService", "Henter en service et øjeblik, mens appen starter, så databaserne kan laves, før den første side vises."],
           ["Migrate()", "Laver brugernes database (`app.db`) ud fra skabelonens *migrations*, hvis den mangler. Så virker login også, når projektet køres første gang et nyt sted."],
@@ -357,7 +402,7 @@ using (var scope = app.Services.CreateScope())
           ["EnsureCreated()", "Laver databasen, hvis filen ikke findes. Findes den, sker der ingenting."]
         ] },
       { t: "opgave", h: "Lav SkadeContext", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
-        md: "Nu laver du forbindelsen til databasen. Mappen `Data` findes allerede: skabelonen har lagt brugernes database der. {{Højreklik på `Data` → **Add → Class…** → `SkadeContext.cs`.||Højreklik på `Data` → **Add → Class/Interface** → `SkadeContext`.}} Skriv klassen selv ud fra kravene og trin 4 og 6.\n\nStartdataene (de fire kunder og syv skader) er ikke kode, du skal lære, kun data. Dem må du kopiere nedenfor og sætte ind nederst i `OnModelCreating`.",
+        md: "Nu laver du forbindelsen til databasen. Mappen `Data` findes allerede: skabelonen har lagt brugernes database der. {{Højreklik på `Data` → **Add → Class…** → `SkadeContext.cs`.||Højreklik på `Data` → **Add → Class/Interface** → `SkadeContext`.}} Skriv klassen selv ud fra kravene og trin 6 og 8.\n\nStartdataene (de fire kunder og syv skader) er ikke kode, du skal lære, kun data. Dem må du kopiere nedenfor og sætte ind nederst i `OnModelCreating`.",
         krav: [
           "Filen har `using Microsoft.EntityFrameworkCore;`, `using SkadeApp.Models;` og `namespace SkadeApp.Data;`",
           "`public class SkadeContext : DbContext` med en konstruktør, der tager `DbContextOptions<SkadeContext> options` og giver dem videre med `: base(options)`",
@@ -367,8 +412,8 @@ using (var scope = app.Services.CreateScope())
           "Projektet kan bygges uden fejl"
         ],
         tip: [
-          "Konstruktøren står i trin 4: den har samme navn som klassen og en tom krop `{ }`.",
-          "`HasConversion` står i trin 6. Du skal bruge den to gange: én gang med `s => s.Status` og én gang med `s => s.Type`.",
+          "Konstruktøren står i trin 6: den har samme navn som klassen og en tom krop `{ }`.",
+          "`HasConversion` står i trin 8. Du skal bruge den to gange: én gang med `s => s.Status` og én gang med `s => s.Type`.",
           "Rækkefølgen i klassen: konstruktøren, de to `DbSet`, og til sidst `OnModelCreating` med de to `HasConversion`-linjer og startdataene."
         ],
         start: R`// Startdata, så appen ikke er tom første gang, den kører.
@@ -426,7 +471,7 @@ public class SkadeContext : DbContext
     }
 }` },
       { t: "opgave", h: "Forbind databasen: appsettings.json og Program.cs", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
-        md: "Nu skal appen vide, hvor databasen ligger, og den skal laves, første gang appen starter. Trin 10 viser de nye linjer, og trin 8 viser, hvor i filen de hører til. Det meste af `Program.cs` står der allerede: skabelonens linjer til login. Du tilføjer kun det, kravene nævner.",
+        md: "Nu skal appen vide, hvor databasen ligger, og den skal laves, første gang appen starter. Trin 12 viser de nye linjer, og trin 10 viser, hvor i filen de hører til. Det meste af `Program.cs` står der allerede: skabelonens linjer til login. Du tilføjer kun det, kravene nævner.",
         krav: [
           "`appsettings.json`: under `ConnectionStrings` står en ny linje `\"SkadeDb\": \"Data Source=Data/skader.db\"` efter `DefaultConnection` (husk kommaet mellem dem)",
           "`Program.cs` øverst: `using System.Globalization;` og de to linjer, der sætter `CultureInfo.DefaultThreadCurrentCulture` og `DefaultThreadCurrentUICulture` til `new CultureInfo(\"da-DK\")`",
@@ -436,7 +481,7 @@ public class SkadeContext : DbContext
         ],
         tip: [
           "I JSON står der komma mellem to linjer i samme `{ }`, men ikke efter den sidste.",
-          "Alle tre stykker kode i `Program.cs` står i trin 10. `using System.Globalization;` skal stå øverst sammen med de andre `using`-linjer.",
+          "Alle tre stykker kode i `Program.cs` står i trin 12. `using System.Globalization;` skal stå øverst sammen med de andre `using`-linjer.",
           "Får du fejlen, at `SkadeContext` ikke findes, mangler `using SkadeApp.Data;` øverst. Den har skabelonen sat ind, fordi `ApplicationDbContext` også ligger i `Data`."
         ],
         output: "Appen starter som før. I mappen Data ligger nu skader.db ved siden af app.db. Vinduet med serverens log viser CREATE TABLE \"Kunder\" og CREATE TABLE \"Skader\" første gang.",
@@ -549,6 +594,7 @@ app.Run();`,
   // ------------------------------------------------------------------
   { id: "m30l7", nr: 7, titel: "Services: interface, async og dependency injection", min: 25,
     ord: [
+      ["Metode uden static", "En metode, der hører til et objekt og kaldes med objektet: `kunde.Hilsen()`. Den kan bruge objektets properties."],
       ["Interface", "En kontrakt: en liste af metoder uden indhold. En klasse, der skriver `: IKundeService`, lover at have dem alle."],
       ["Dependency injection", "Programmet laver selv de objekter, en klasse har brug for, og giver dem til den. Klassen beder om dem i sin konstruktør eller med `@inject`."],
       ["AddScoped", "Registrerer en service i `Program.cs`: når nogen beder om interfacet, får de et objekt af klassen."],
@@ -558,6 +604,31 @@ app.Run();`,
       ["SaveChangesAsync", "Gemmer alle ændringer i databasen. Uden den bliver intet gemt."]
     ],
     trin: [
+      { t: "laes", h: "Metoder, der hører til et objekt",
+        md: "De metoder, du kender, har `static` og kaldes med deres navn: `Hils();`. En klasse kan også have metoder **uden** `static`. Sådan en metode hører til hvert enkelt objekt. Den kaldes med objektet, et punktum og metodens navn, og den kan bruge objektets egne properties.\n\nDine services er bygget sådan: `KundeService.HentAlleAsync()` er en metode på service-objektet.",
+        kode: R`Kunde a = new Kunde { Navn = "Mette" };
+Kunde b = new Kunde { Navn = "Ali" };
+Console.WriteLine(a.Hilsen());
+Console.WriteLine(b.Hilsen());
+
+class Kunde
+{
+    public string Navn { get; set; } = "";
+
+    public string Hilsen()
+    {
+        return "Kære " + Navn;
+    }
+}`,
+        noter: [
+          ["public string Hilsen()", "En metode i klassen. Ingen `static`, så den hører til objektet. `public`: koden uden for klassen må kalde den."],
+          ["return \"Kære \" + Navn;", "`Navn` er navnet på netop det objekt, metoden blev kaldt på."],
+          ["a.Hilsen()", "Kalder metoden på `a`. Inde i metoden er `Navn` derfor \"Mette\"."]
+        ],
+        output: "Kære Mette\nKære Ali" },
+      { t: "valg", q: "Hvorfor skriver `b.Hilsen()` \"Kære Ali\" og ikke \"Kære Mette\"?",
+        svar: ["Fordi metoden kaldes på b, så Navn inde i metoden er b's navn", "Fordi Ali står sidst i koden", "Fordi metoden er static", "Fordi Hilsen laver en ny kunde"],
+        ret: 0, fordi: "En metode uden `static` arbejder på det objekt, den kaldes på. `b.Hilsen()` bruger `b.Navn`." },
       { t: "laes", h: "Interface: en kontrakt",
         md: "Et **interface** er en liste af metoder uden indhold: det siger **hvad** der kan gøres, ikke **hvordan**. En klasse, der skriver `: IHilsen` efter sit navn, lover at have alle metoderne. Navnet på et interface starter med stort I.",
         kode: R`IHilsen h = new DanskHilsen();
@@ -612,6 +683,10 @@ builder.Services.AddScoped<IKundeService, KundeService>();
 // På en side (.razor):
 @inject IKundeService KundeService`,
         frag: true,
+        noter: [
+          ["AddScoped<IKundeService, KundeService>()", "I vinkelparenteserne: først interfacet, så klassen, der opfylder det."],
+          ["@inject IKundeService KundeService", "En linje øverst på en side. `@` betyder, at det er Razor, som du lærer i lektion 9. Linjen betyder: giv mig en `IKundeService`, og kald den `KundeService` på denne side."]
+        ],
         md2: "Fordelen: siderne afhænger kun af kontrakten. Vil du gemme i en anden database, skriver du en ny klasse og ændrer én linje i `Program.cs`. Siderne er uændrede. Det er det, censor mener med *løs kobling*." },
       { t: "valg", q: "En side har linjen `@inject IKundeService KundeService`. Hvor kommer objektet fra?",
         svar: ["Blazor laver en KundeService, fordi Program.cs har registreret den med AddScoped<IKundeService, KundeService>()", "Siden laver det selv med new", "Det kommer fra databasen", "Fra NuGet-pakken"],
@@ -679,7 +754,9 @@ async Task<int> TaelKunderAsync()
           ["ToListAsync()", "Kør SQL'en, og lav resultatet om til en `List<Kunde>`."],
           ["FirstOrDefaultAsync(k => k.Id == id)", "Bruges i `HentAsync`: finder den første kunde, der passer, eller `null`, hvis der ingen er."],
           ["FindAsync(id) og Remove", "Bruges til at rette og slette: `FindAsync` finder en række ud fra dens id, og `Remove` markerer den til sletning."],
-          ["SaveChangesAsync()", "Gem ændringerne. Uden den bliver kunden ikke gemt."]
+          ["SaveChangesAsync()", "Gem ændringerne. Uden den bliver kunden ikke gemt."],
+          ["_factory", "Felter, der er `private`, får tit en understreg foran navnet, så man kan se forskel på dem og parametre."],
+          ["if (gemt == null) return;", "Bruges i `OpdaterAsync` og `SletAsync`. `return;` uden en værdi stopper metoden med det samme: findes kunden ikke, er der intet at gøre."]
         ] },
       { t: "valg", q: "I `HentAlleAsync` står `db.Kunder.Include(k => k.Skader)`. Hvad sker der, hvis du fjerner `.Include(k => k.Skader)`?",
         svar: ["Kunderne hentes, men deres lister med skader er tomme, så fx antallet af skader viser 0", "Ingen kunder bliver hentet", "Appen kan ikke bygge", "Skaderne bliver slettet"],
@@ -717,7 +794,7 @@ public interface IKundeService
     Task SletAsync(int id);
 }` },
       { t: "opgave", h: "Lav KundeService", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
-        md: "Nu den rigtige service. Lav klassen `KundeService` i `Services`. Konstruktøren og `HentAlleAsync` er skrevet for dig i kopi-feltet: de er dit mønster. De fire andre metoder skriver du selv ud fra trin 7 og kravene.",
+        md: "Nu den rigtige service. Lav klassen `KundeService` i `Services`. Konstruktøren og `HentAlleAsync` er skrevet for dig i kopi-feltet: de er dit mønster. De fire andre metoder skriver du selv ud fra trin 9 og kravene.",
         krav: [
           "Klassen hedder `KundeService` og skriver `: IKundeService` (startkoden har det)",
           "`HentAsync(int id)` henter én kunde med sine skader: `Include(k => k.Skader)` og så `FirstOrDefaultAsync(k => k.Id == id)`",
@@ -820,7 +897,7 @@ public class KundeService : IKundeService
 }`,
         md2: "`FindAsync` finder en række ud fra dens id. `Remove` markerer rækken til sletning, og først `SaveChangesAsync` sletter den. Kundens skader slettes automatisk med (cascade delete)." },
       { t: "opgave", h: "Lav SkadeService, og registrér begge services", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
-        md: "Servicen til skader er bygget på samme måde som `KundeService`. Skriv både interfacet og klassen selv, og registrér så begge services i `Program.cs` (trin 3).",
+        md: "Servicen til skader er bygget på samme måde som `KundeService`. Skriv både interfacet og klassen selv, og registrér så begge services i `Program.cs` (trin 5).",
         krav: [
           "`ISkadeService` har `HentAlleAsync()` (giver `Task<List<Skade>>`), `OpretAsync(Skade skade)`, `SkiftStatusAsync(int id, SkadeStatus status)` og `SletAsync(int id)`",
           "`SkadeService : ISkadeService` får fabrikken i konstruktøren, ligesom `KundeService`",
@@ -832,7 +909,7 @@ public class KundeService : IKundeService
         tip: [
           "Kopiér `KundeService`, og ret navnene. `OpretAsync` og `SletAsync` er de samme, bare med `Skade` og `db.Skader`.",
           "`SkiftStatusAsync` ligner `OpdaterAsync`, men sætter kun én property: `skade.Status = status;`",
-          "Registreringen står i trin 3: `builder.Services.AddScoped<IKundeService, KundeService>();` og det samme for skader."
+          "Registreringen står i trin 5: `builder.Services.AddScoped<IKundeService, KundeService>();` og det samme for skader."
         ],
         output: "Appen ser ud som før, men nu kan siderne bede om IKundeService og ISkadeService.",
         loesning: R`// ===== Services/ISkadeService.cs =====

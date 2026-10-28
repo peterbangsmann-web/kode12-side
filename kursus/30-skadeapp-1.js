@@ -10,7 +10,7 @@ window.KURSUS.push({
   id: "m30", nr: -1, del: "Eksamensprojekt", ikon: "🛡️",
   titel: "Eksamensprojekt: SkadeApp trin for trin",
   dag: "Aflevering fredag 30/10 kl. 12 · Mundtlig eksamen 6/11",
-  intro: "I dette modul bygger du dit eksamensprojekt, **SkadeApp**, fra en tom mappe til en færdig app. Det er et lille system til et forsikringsselskab: kunder, deres skadesanmeldelser og et overblik over, hvad der er udbetalt. Kun medarbejdere, der er logget ind, kan bruge det.\n\nHver lektion forklarer de ting, du skal bruge, og slutter med, at du bygger den næste del i dit eget projekt. Du behøver ikke have lavet modul 4–29 først: det, projektet bruger fra dem, bliver forklaret her.\n\nKommer du i tidsnød, ligger et færdigt og afprøvet projekt i mappen `Desktop\\c#\\C#  Ekasmen\\Facit\\SkadeApp`. Brug det til at sammenligne med, når noget driller.",
+  intro: "I dette modul bygger du dit eksamensprojekt, **SkadeApp**, fra en tom mappe til en færdig app. Det er et lille system til et forsikringsselskab: kunder, deres skadesanmeldelser og et overblik over, hvad der er udbetalt. Kun medarbejdere, der er logget ind, kan bruge det.\n\nHver lektion forklarer de ting, du skal bruge, og slutter med, at du bygger den næste del i dit eget projekt. Modulet står helt for sig selv: alt, projektet bruger, bliver forklaret her, og du skal ikke bruge andre moduler til det.\n\nKommer du i tidsnød, ligger et færdigt og afprøvet projekt i mappen `Desktop\\c#\\C#  Ekasmen\\Facit\\SkadeApp`. Brug det til at sammenligne med, når noget driller.",
   lektioner: [
 
   // ------------------------------------------------------------------
@@ -168,7 +168,7 @@ Models + Data      Modeller og   beskriver kunder og skader,
     ],
     trin: [
       { t: "laes", h: "Det kender du: variabler",
-        md: "Fra modul 0–3 kender du variabler: én variabel til hver oplysning. Sådan ser to kunder ud med det, du kan nu:",
+        md: "Du kender variabler: én variabel til hver oplysning. Sådan ser to kunder ud med det, du kan nu:",
         kode: R`string navn1 = "Mette Jensen";
 string telefon1 = "22334455";
 string navn2 = "Ali Hassan";
@@ -444,7 +444,7 @@ Console.WriteLine(sum);`,
         output: "3\n10100",
         fordi: "Der er lagt tre beløb i listen. Løkken lægger dem sammen: 4500 + 2400 + 3200 = 10100." },
       { t: "laes", h: "Relationen: én kunde, mange skader",
-        md: "En skade hører til én kunde, og en kunde kan have mange skader. Det er en **en-til-mange-relation**. Den skrives sådan i de to klasser:\n\n- `Kunde` får en liste: `List<Skade> Skader`.\n- `Skade` får `KundeId` (nummeret på kunden) og `Kunde` (selve kunde-objektet).\n\nI databasen bliver det til to tabeller. Tabellen `Skader` har en kolonne `KundeId`, der indeholder kundens `Id`. Den kolonne kaldes en **fremmednøgle**.",
+        md: "En skade hører til én kunde, og en kunde kan have mange skader. Det er en **en-til-mange-relation**. Den skrives sådan i de to klasser:\n\n- `Kunde` får en liste: `List<Skade> Skader`.\n- `Skade` får `KundeId` (nummeret på kunden) og `Kunde` (selve kunde-objektet).\n\nEn **tabel** i en database ligner et regneark: hver **kolonne** er én slags oplysning (Id, Navn …), og hver **række** er én ting, fx én kunde. Databasen kommer i lektion 6. I databasen bliver det til to tabeller. Tabellen `Skader` har en kolonne `KundeId`, der indeholder kundens `Id`. Den kolonne kaldes en **fremmednøgle**.",
         kode: R`Kunder                        Skader
 Id  Navn                      Id  Beskrivelse             KundeId
 1   Mette Jensen              1   Ridse i døren           1
@@ -455,6 +455,28 @@ Id  Navn                      Id  Beskrivelse             KundeId
       { t: "valg", q: "Hvor står det i databasen, at skaden \"Kuffert forsvundet\" hører til Ali Hassan?",
         svar: ["I kolonnen KundeId i tabellen Skader, som indeholder Alis Id", "I en kolonne i tabellen Kunder med alle hans skader", "I klassen Kunde", "Det står ingen steder"],
         ret: 0, fordi: "Relationen gemmes i fremmednøglen `KundeId` på skaden. Kundens liste `Skader` findes kun i C#: EF Core fylder den ud fra `KundeId`." },
+      { t: "laes", h: "null, spørgsmålstegnet og new()",
+        md: "Tre små ting, før du skriver klasserne med relationen.\n\n**null** betyder *ingenting*. En variabel med et objekt kan være `null`: der er ingen kunde i den endnu. Skriver du `k.Navn`, mens `k` er `null`, går programmet ned med fejlen `NullReferenceException`.\n\nEt **spørgsmålstegn** efter typen, fx `Kunde?`, betyder: denne variabel må godt være `null`. Uden spørgsmålstegnet advarer compileren dig, hvis den kan blive `null`. En skade får `public Kunde? Kunde`, fordi skaden kan være hentet uden sin kunde.\n\n`new()` uden klassenavn er en kort måde at skrive `new List<Skade>()` på. Den kan bruges, når typen allerede står til venstre: `public List<Skade> Skader { get; set; } = new();` starter med en tom liste.",
+        kode: R`Kunde? k = null;
+Console.WriteLine(k == null);
+
+k = new();
+k.Navn = "Mette";
+Console.WriteLine(k.Navn);
+
+class Kunde
+{
+    public string Navn { get; set; } = "";
+}`,
+        noter: [
+          ["Kunde? k = null;", "`k` må være `null`, og det er den fra starten: der er ingen kunde endnu."],
+          ["k == null", "Spørger, om der er en kunde i `k`. Svaret er `True`."],
+          ["k = new();", "Det samme som `k = new Kunde();`. Typen står allerede ved `Kunde? k`."]
+        ],
+        output: "True\nMette" },
+      { t: "valg", q: "En skade har `public Kunde? Kunde { get; set; }`. Hvad betyder spørgsmålstegnet?",
+        svar: ["At Kunde må være null, altså at der ikke er nogen kunde i den", "At kunden er valgfri at skrive i koden", "At Kunde er en liste", "At man skal spørge brugeren"],
+        ret: 0, fordi: "`?` efter typen betyder, at værdien må være `null`. Det sker fx, når skaden er hentet fra databasen uden sin kunde." },
       { t: "udfyld", q: "Udfyld, så en kunde kan have en liste af skader, og en skade ved, hvilken kunde den hører til.",
         kode: R`Kunde k = new Kunde { Id = 1, Navn = "Mette" };
 k.Skader.Add(new Skade { Id = 1, Beskrivelse = "Ridse i døren", KundeId = 1 });
@@ -490,7 +512,7 @@ class Skade
         tip: [
           "En startværdi står efter `{ get; set; }` med `=`, fx `public SkadeType Type { get; set; } = SkadeType.Indbo;`",
           "Enums står efter klassens sidste `}`, og de skal være `public`: `public enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`",
-          "Listen i Kunde skrives som i trin 9: `public List<Skade> Skader { get; set; } = new();`"
+          "Listen i Kunde skrives som i trin 11: `public List<Skade> Skader { get; set; } = new();`"
         ],
         output: "Ingen ændring i appen endnu. Error List / Problems er tom.",
         loesning: R`namespace SkadeApp.Models;
@@ -578,6 +600,33 @@ class Skade
 enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
         output: "True\nFalse",
         fordi: "`ErAaben` regnes ud på ny, hver gang den læses. Efter `a.Status = SkadeStatus.Afvist;` er skaden ikke længere åben." },
+      { t: "laes", h: "Lambda: en lille metode uden navn",
+        md: "Hvor mange tal i en liste er større end 3? Med det, du kender, skriver du en løkke. Med **LINQ** skriver du det på én linje, og inde i parentesen står en **lambda**: en lille metode uden navn.",
+        kode: R`List<int> tal = new List<int> { 5, 2, 8 };
+
+// Med en løkke, som du kender den:
+int antal = 0;
+foreach (int t in tal)
+{
+    if (t > 3)
+    {
+        antal++;
+    }
+}
+Console.WriteLine(antal);
+
+// Med LINQ og en lambda:
+Console.WriteLine(tal.Count(t => t > 3));`,
+        noter: [
+          ["new List<int> { 5, 2, 8 }", "En liste, der fyldes med det samme. Et komma mellem hvert element."],
+          ["t => t > 3", "Lambdaen. Til venstre for pilen står parameteren `t` (ét tal ad gangen). Til højre står det, den svarer: er `t` større end 3?"],
+          ["Count(…)", "Kalder lambdaen én gang for hvert tal, præcis som løkken, og tæller de gange, svaret er `true`."]
+        ],
+        output: "2\n2",
+        md2: "Lambdaen `t => t > 3` gør det samme som denne almindelige metode, bare uden navn og uden `return`:\n\n`static bool ErStor(int t) { return t > 3; }`\n\nParameteren må hedde, hvad du vil. Man vælger tit forbogstavet: `s` for en skade, `k` for en kunde.\n\nLæg mærke til forskellen: `Count` **uden** parenteser (fra lektion 3) er antallet af alle elementer i listen. LINQ-metoden `Count(…)` **med** en lambda tæller kun dem, der passer. Står der `()` uden noget indeni, fx `gruppe.Count()`, tæller den alle." },
+      { t: "valg", q: "Hvad betyder lambdaen `s => s.Beloeb > 5000m`?",
+        svar: ["Tag en skade s, og svar på, om dens beløb er over 5000", "Sæt alle beløb til 5000", "Lav en ny skade med beløbet 5000", "Læg 5000 til beløbet"],
+        ret: 0, fordi: "Til venstre for pilen står parameteren (`s`, én skade ad gangen). Til højre står det, lambdaen svarer: `true` eller `false`." },
       { t: "laes", h: "LINQ: spørg en liste",
         md: "Overblikket skal vise, hvor mange skader der er godkendt, og hvor meget de koster i alt. Det kunne du gøre med en løkke, men **LINQ** gør det på én linje.\n\n`Where` beholder de elementer, der passer. `Count` tæller dem, og `Sum` lægger dem sammen. Inde i parenteserne står en **lambda**: `s => s.Status == SkadeStatus.Godkendt` betyder \"tag en skade `s`, og svar på, om den er godkendt\".",
         kode: R`List<Skade> skader = new List<Skade>
@@ -606,7 +655,8 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
           ["Where(…)", "Beholder kun de godkendte skader."],
           [".Sum(s => s.Beloeb)", "Lægger beløbene sammen for dem, der er tilbage."]
         ],
-        output: "2\n10700" },
+        output: "2\n10700",
+        md2: "`Where(…).Sum(…)` er to metoder efter hinanden: `Sum` arbejder på det, `Where` gav. Lambdaen i `Sum` siger, hvilket tal der skal lægges sammen. På en liste, der kun indeholder tal, kan `Sum()` stå uden lambda: så lægges tallene selv sammen." },
       { t: "forudsig",
         q: "Samme slags liste som før. Hvad skriver programmet?",
         kode: R`List<Skade> skader = new List<Skade>
@@ -714,7 +764,7 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
         loesning: R`    public decimal Udbetalt => Skader.Where(s => s.Status == SkadeStatus.Godkendt).Sum(s => s.Beloeb);`,
         output: "5500" },
       { t: "opgave", h: "Tilføj de beregnede properties", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
-        md: "Tilføj tre beregnede properties i dine modeller. Du skrev `Udbetalt` i trin 8, og de to andre bygges på samme måde med `=>`.",
+        md: "Tilføj tre beregnede properties i dine modeller. Du skrev `Udbetalt` i trin 10, og de to andre bygges på samme måde med `=>`.",
         krav: [
           "`Skade` har `public bool ErAaben`, som er sand, når status er `Anmeldt` eller `Behandles`",
           "`Kunde` har `public decimal Udbetalt`: summen af `Beloeb` for de skader i `Skader`, der har status `Godkendt`",
@@ -723,7 +773,7 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
         ],
         tip: [
           "`ErAaben` står i trin 1: `=>` og to sammenligninger med `||` imellem.",
-          "`Udbetalt` er den, du skrev i trin 8: `Where` og så `Sum`.",
+          "`Udbetalt` er den, du skrev i trin 10: `Where` og så `Sum`.",
           "`AabneSkader` tæller med `Count` og en lambda: `Skader.Count(s => s.ErAaben)`."
         ],
         output: "Ingen ændring i appen endnu. Kundelisten viser tallene senere.",

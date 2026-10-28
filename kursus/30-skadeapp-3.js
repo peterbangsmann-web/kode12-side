@@ -80,7 +80,7 @@ foreach (string n in fundne)
         noter: [
           ["Model=\"nyKunde\"", "Formularen arbejder på objektet `nyKunde`."],
           ["@bind-Value", "Som `@bind`, men til Blazors egne input-felter."],
-          ["For=\"() => nyKunde.Navn\"", "Hvilket felts fejlbesked der vises her."],
+          ["For=\"() => nyKunde.Navn\"", "Hvilket felts fejlbesked der vises her. Det er en lambda uden parameter: de tomme parenteser `()` betyder, at den ikke får noget med."],
           ["type=\"submit\"", "Knappen sender formularen."]
         ] },
       { t: "valg", q: "En bruger klikker **Opret kunde** med et tomt navn. Formularen har `OnValidSubmit=\"OpretKunde\"`. Hvad sker der?",
@@ -304,7 +304,7 @@ private IEnumerable<Kunde> Fundne => kunder!
         kunder = await KundeService.HentAlleAsync(); // hent listen igen med den nye kunde
     }
 }`,
-        md2: "`$\"{nyKunde.Navn} er oprettet.\"` sætter navnet ind i teksten, ligesom du kender det fra modul 1." },
+        md2: "`$\"{nyKunde.Navn} er oprettet.\"` sætter navnet ind i teksten: det, der står i `{ }`, bliver sat ind, hvor det står." },
       { t: "forklar", q: "Eksamensspørgsmål: Hvordan virker valideringen i din formular, fra attributten til den røde tekst?",
         svar: "Reglerne står som attributter på modellen, fx [Required] og [RegularExpression] på Kunde. Formularen er en EditForm med Model=\"nyKunde\" og en DataAnnotationsValidator, som læser attributterne. Når man klikker på knappen, tjekker den alle regler. Er en regel brudt, viser ValidationMessage beskeden fra ErrorMessage under feltet, og OnValidSubmit kører ikke. Først når alt er i orden, kaldes OpretKunde, som gemmer gennem servicen.",
         noegle: ["attributter", "EditForm", "DataAnnotationsValidator", "ValidationMessage", "OnValidSubmit"] }
@@ -1572,7 +1572,7 @@ rettet = new Kunde { Id = kunde!.Id, Navn = kunde.Navn, Email = kunde.Email, Tel
         md: "Du afleverer to filer på WISEflow: projektet som en **zip-fil** og dispositionen som en **pdf**. Fristen er **fredag 30/10 kl. 12:00**. Upload hellere torsdag end fredag morgen.\n\nZip-filen skal kun indeholde din kode, ikke de filer, der laves, når projektet bygges eller køres.",
         win: ["Luk Visual Studio, så ingen filer er i brug.", "Åbn mappen med projektet i Stifinder (den mappe, hvor `SkadeApp.csproj` ligger).", "Slet mapperne `bin` og `obj`. Slet også `skader.db` og `app.db` i mappen `Data` (og filerne, der ender på `-shm` og `-wal`, hvis de findes). Alt sammen laves igen, næste gang projektet køres.", "Gå én mappe op, højreklik på mappen `SkadeApp` → **Komprimer til ZIP-fil**.", "Åbn zip-filen, og tjek, at `Program.cs`, `Components`, `Models`, `Services` og `Data` er med.", "Log ind på WISEflow med MitID (linket står i mailen fra kurser@itucation.dk), og upload zip-filen og pdf'en med dispositionen."],
         mac: ["Luk Rider, så ingen filer er i brug.", "Åbn mappen med projektet i Finder (den mappe, hvor `SkadeApp.csproj` ligger).", "Slet mapperne `bin` og `obj`. Slet også `skader.db` og `app.db` i mappen `Data` (og filerne, der ender på `-shm` og `-wal`, hvis de findes). Alt sammen laves igen, næste gang projektet køres.", "Gå én mappe op, højreklik på mappen `SkadeApp` → **Komprimer \"SkadeApp\"**.", "Åbn zip-filen, og tjek, at `Program.cs`, `Components`, `Models`, `Services` og `Data` er med.", "Log ind på WISEflow med MitID (linket står i mailen fra kurser@itucation.dk), og upload zip-filen og pdf'en med dispositionen."],
-        md2: "Skriv i dispositionen, at man opretter en bruger med **Opret bruger**, når appen starter første gang: databaserne er tomme for brugere.\n\nDispositionen er højst én side i stikord. Lektionen om dispositionen i modul 28 viser, hvad den skal indeholde. Vi skriver den sammen ud fra dit projekt." }
+        md2: "Skriv i dispositionen, at man opretter en bruger med **Opret bruger**, når appen starter første gang: databaserne er tomme for brugere.\n\nDispositionen er højst én side i stikord. Vi skriver den sammen ud fra dit projekt." }
   ] }
 
 );

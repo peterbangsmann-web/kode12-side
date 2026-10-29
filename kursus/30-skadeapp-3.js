@@ -1073,14 +1073,13 @@ Console.WriteLine(udbetalt.ToString("C"));`,
         kode: R`Components/Account          login-siderne: Login, Register, log ud, skift adgangskode …
 Data/ApplicationUser.cs     klassen for en bruger
 Data/ApplicationDbContext.cs  databasen med brugerne (app.db)
-Data/Migrations             opskriften på brugertabellerne
 Program.cs                  AddAuthentication, AddIdentityCookies, AddIdentityCore …
 Components/Routes.razor     AuthorizeRouteView: sender til login, hvis man ikke må se siden`,
         sprog: "text",
         noter: [
           ["Adgangskoder", "Gemmes som en **hash**. Selv den, der kan se databasen, kan ikke læse adgangskoderne."],
           ["Cookie", "Efter login gemmer browseren en cookie, så serveren kan se, hvem du er, uden at du logger ind igen."],
-          ["Migrations", "Brugertabellerne bliver lavet med migrations. Det er den metode, underviseren brugte med `Add-Migration` og `Update-Database`."]
+          ["EnsureCreated", "Brugertabellerne bliver lavet med `EnsureCreated()` i `Program.cs`, ligesom dine egne tabeller. Underviseren brugte i stedet *migrations* med `Add-Migration` og `Update-Database`: de kan ændre en database, der allerede har data, uden at slette den."]
         ],
         md2: "Login-siderne er på engelsk, fordi skabelonen er det. Det er helt i orden: de er ikke en del af din egen kode." },
       { t: "valg", q: "Hvordan gemmer ASP.NET Core Identity en brugers adgangskode i databasen?",

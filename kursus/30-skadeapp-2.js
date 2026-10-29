@@ -251,11 +251,13 @@ new Kunde { Navn = "Ali" }  →   en række i Kunder`,
       { t: "valg", q: "Hvad gør EF Core i dit projekt?",
         svar: ["Oversætter mellem dine C#-klasser og databasens tabeller og skriver SQL'en for dig", "Tegner siderne i browseren", "Tjekker, at e-mails er gyldige", "Er selve databasefilen"],
         ret: 0, fordi: "EF Core er bindeleddet: du arbejder med objekter i C#, og EF Core gemmer og henter dem i tabellerne. Databasefilen er `skader.db`, og SQLite er databasen." },
-      { t: "ide", h: "EF Core er allerede i projektet",
-        md: "EF Core er et færdigt bibliotek, en **NuGet-pakke**. Fordi du lavede projektet med login, har skabelonen allerede hentet EF Core til SQLite: login-siderne gemmer brugerne i en database. Du skal bare se, at den er der.",
-        win: ["Dobbeltklik på projektet **SkadeApp** i Solution Explorer. Filen `SkadeApp.csproj` åbner.", "Find linjen med `Microsoft.EntityFrameworkCore.Sqlite`. Tallet efter `Version` er pakkens version.", "Højreklik på projektet → **Manage NuGet Packages…** → fanen **Installed**. Her står de samme pakker."],
-        mac: ["Højreklik på projektet **SkadeApp** i Rider → **Edit → Edit 'SkadeApp.csproj'**. Filen `SkadeApp.csproj` åbner.", "Find linjen med `Microsoft.EntityFrameworkCore.Sqlite`. Tallet efter `Version` er pakkens version.", "Højreklik på projektet → **Manage NuGet Packages**. Nederst åbner vinduet NuGet, og i listen over installerede pakker står de samme pakker."],
-        md2: "Havde du lavet projektet uden login, skulle du selv hente pakken: {{højreklik på projektet → **Manage NuGet Packages…** → **Browse**||i terminalen med `dotnet add package Microsoft.EntityFrameworkCore.Sqlite`}}." },
+      { t: "ide", h: "Login skal også bruge SQLite",
+        md: "EF Core er et færdigt bibliotek, en **NuGet-pakke**. Fordi du lavede projektet med login, har skabelonen allerede hentet EF Core: login-siderne gemmer brugerne i en database.
+
+Men **Visual Studio** sætter login op med **SQL Server LocalDB**. Den database findes kun på Windows. På en Mac, og måske hos censor, kan man så ikke oprette en bruger. Derfor skifter du login over til SQLite, ligesom resten af appen. Det er fire små rettelser. Lavede du projektet med `dotnet new` i terminalen, bruger det allerede SQLite, og så er du færdig efter trin 1.",
+        win: ["Dobbeltklik på projektet **SkadeApp** i Solution Explorer. Filen `SkadeApp.csproj` åbner. Står der `Microsoft.EntityFrameworkCore.Sqlite`, er du færdig. Står der `Microsoft.EntityFrameworkCore.SqlServer`, så ret `SqlServer` til `Sqlite` i den linje, og gem.", "Åbn `appsettings.json`. Ret hele linjen med `DefaultConnection` til `\"DefaultConnection\": \"DataSource=Data/app.db;Cache=Shared\"`.", "Åbn `Program.cs`. Find `options.UseSqlServer(connectionString)`, og ret `UseSqlServer` til `UseSqlite`.", "Højreklik på mappen `Data/Migrations` → **Delete**. Filerne i den var skrevet til SQL Server. I lektionens næste opgave laves brugertabellerne med `EnsureCreated()` i stedet.", "Byg projektet. Der må ikke være røde fejl."],
+        mac: ["Højreklik på projektet **SkadeApp** i Rider → **Edit → Edit 'SkadeApp.csproj'**. Står der `Microsoft.EntityFrameworkCore.Sqlite`, er du færdig. Står der `Microsoft.EntityFrameworkCore.SqlServer`, så ret `SqlServer` til `Sqlite` i den linje, og gem. Viser Rider en knap om at gendanne pakker (**Restore**), så klik på den.", "Åbn `appsettings.json`. Ret hele linjen med `DefaultConnection` til `\"DefaultConnection\": \"DataSource=Data/app.db;Cache=Shared\"`.", "Åbn `Program.cs`. Find `options.UseSqlServer(connectionString)`, og ret `UseSqlServer` til `UseSqlite`.", "Højreklik på mappen `Data/Migrations` → **Delete**. Filerne i den var skrevet til SQL Server. I lektionens næste opgave laves brugertabellerne med `EnsureCreated()` i stedet.", "Byg projektet. Der må ikke være røde fejl."],
+        md2: "Nu bruger både login og dine egne data SQLite. Brugerne kommer i `Data/app.db`, og kunder og skader kommer i `Data/skader.db`, som du laver om lidt." },
       { t: "laes", h: "Arv og konstruktør: to ting, DbContext bruger",
         md: "Klassen til databasen bruger to ting, du ikke har set endnu. Her er de i et lille program.\n\n**Arv**: `class Kunde : Person` betyder, at `Kunde` **arver** fra `Person`. Så har `Kunde` alt det, `Person` har (her `Navn`), plus det, `Kunde` selv lægger til (her `Telefon`).\n\n**Konstruktør**: en metode inde i klassen, der hedder det samme som klassen og ingen returtype har. Den kører automatisk, når objektet laves med `new`. Det, der står i parentesen efter `new Kunde(…)`, er argumenterne til konstruktøren.",
         kode: R`Kunde k = new Kunde("Mette Jensen");
@@ -382,7 +384,7 @@ builder.Services.AddDbContextFactory<SkadeContext>(options =>
 // Program.cs lige efter var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
-    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.EnsureCreated();
 
     var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<SkadeContext>>();
     using var db = factory.CreateDbContext();
@@ -395,7 +397,7 @@ using (var scope = app.Services.CreateScope())
           ["using var db = …;", "`db` lukkes automatisk, når blokken er færdig."],
           ["GetConnectionString(\"SkadeDb\")", "Henter teksten med navnet `SkadeDb` fra `ConnectionStrings` i `appsettings.json`."],
           ["using (var scope …) og GetRequiredService", "Henter en service et øjeblik, mens appen starter, så databaserne kan laves, før den første side vises."],
-          ["Migrate()", "Laver brugernes database (`app.db`) ud fra skabelonens *migrations*, hvis den mangler. Så virker login også, når projektet køres første gang et nyt sted."],
+          ["…<ApplicationDbContext>().Database.EnsureCreated()", "Laver brugernes database (`app.db`) med tabellerne til login, hvis den mangler. Så virker login også, når projektet køres første gang et nyt sted, fx hos censor."],
           ["Data Source=Data/skader.db", "Databasen er filen `skader.db` i mappen `Data`, ved siden af brugernes `app.db`."],
           ["AddDbContextFactory", "Registrerer en **fabrik**, der kan lave en ny `SkadeContext`, når en service beder om det. Den bruges i næste lektion."],
           ["UseSqlite(…)", "Brug SQLite med den connection string, der hedder `SkadeDb`."],
@@ -476,7 +478,7 @@ public class SkadeContext : DbContext
           "`appsettings.json`: under `ConnectionStrings` står en ny linje `\"SkadeDb\": \"Data Source=Data/skader.db\"` efter `DefaultConnection` (husk kommaet mellem dem)",
           "`Program.cs` øverst: `using System.Globalization;` og de to linjer, der sætter `CultureInfo.DefaultThreadCurrentCulture` og `DefaultThreadCurrentUICulture` til `new CultureInfo(\"da-DK\")`",
           "`Program.cs` før `var app = builder.Build();`: `AddDbContextFactory<SkadeContext>` med `UseSqlite` og connection stringen `SkadeDb`",
-          "`Program.cs` lige efter `var app = builder.Build();`: en `using (var scope = …)`-blok, der kalder `Migrate()` på `ApplicationDbContext` og `EnsureCreated()` på en `SkadeContext` fra fabrikken",
+          "`Program.cs` lige efter `var app = builder.Build();`: en `using (var scope = …)`-blok, der kalder `EnsureCreated()` på både `ApplicationDbContext` og en `SkadeContext` fra fabrikken",
           "Appen starter, og filen `skader.db` ligger i mappen `Data` ({{højreklik på `Data` → **Open Folder in File Explorer**||se i Finder}})"
         ],
         tip: [
@@ -553,10 +555,10 @@ builder.Services.AddDbContextFactory<SkadeContext>(options =>
 
 var app = builder.Build();
 
-// Lav databaserne, hvis de ikke findes: brugerne (med skabelonens migrations) og kunder og skader (med startdata).
+// Lav databaserne, hvis de ikke findes: brugerne og kunder og skader (med startdata).
 using (var scope = app.Services.CreateScope())
 {
-    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.EnsureCreated();
 
     var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<SkadeContext>>();
     using var db = factory.CreateDbContext();

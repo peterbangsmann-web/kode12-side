@@ -26,7 +26,7 @@ window.KATEGORIER = {
     m12: "sql", m13: "html", m14: "js", m15: "js",
     m16: "aspnet", m17: "ef", m18: "aspnet", m19: "aspnet", m20: "aspnet",
     m21: "js", m22: "blazor", m23: "blazor", m24: "blazor",
-    m25: "ai", m26: "ai", m27: "js", m28: "eksamen", m29: "drift", m30: "skadeapp", m31: "skadeapp"
+    m25: "ai", m26: "ai", m27: "js", m28: "eksamen", m29: "drift", m30: "skadeapp"
   },
   lektion: {
     m00l3: "grund",   // Røde streger: fejl er helt normale
@@ -39,7 +39,7 @@ window.KATEGORIER = {
   },
   skadeappFag: {
     m30l1: "blazor", m30lc: "csharp", m30l2: "csharp", m30l3: "csharp", m30l4: "csharp", m30l5: "csharp",
-    m30l6: "ef", m30l7: "csharp", m30lh: "html", m30l8: "blazor", m30l9: "blazor", m30l10: "blazor",
+    m30l6: "ef", m30l6b: "aspnet", m30l7: "csharp", m30l7b: "csharp", m30lh: "html", m30l8: "blazor", m30l8b: "blazor", m30l9: "blazor", m30l10: "blazor", m30l10b: "blazor",
     m30l11: "blazor", m30l12: "aspnet", m30l13: "html", m30v: "blazor",
     m31l1: "grund", m31l2: "csharp", m31l3: "ef", m31l4: "csharp", m31l5: "aspnet", m31l6: "blazor", m31l7: "blazor",
     m31l8: "blazor", m31l9: "csharp", m31l10: "aspnet", m31l11: "eksamen", m31l12: "eksamen", m31l13: "eksamen", m31l14: "blazor", m31v: "blazor"

@@ -16,15 +16,26 @@ m.lektioner.push(
       ["ErrorMessage", "Den tekst, brugeren ser, når reglen ikke er overholdt."]
     ],
     trin: [
+      { t: "forudsig", h: "Husker du fra sidst?",
+        q: "Repetition: LINQ med en lambda. Svar, før du kigger tilbage. Hvad skriver programmet?",
+        kode: R`List<decimal> beloeb = new List<decimal> { 4500m, 18750m, 6200m };
+Console.WriteLine(beloeb.Count(b => b > 5000m));
+Console.WriteLine(beloeb.Where(b => b < 10000m).Sum());`,
+        output: "2\n10700",
+        fordi: "To beløb er over 5000: 18750 og 6200. Under 10000 er 4500 og 6200, og de giver tilsammen 10700. På en liste med tal kan `Sum()` stå uden lambda." },
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "I din `Kunde` står `public int AabneSkader => Skader.Count(s => s.ErAaben);`. Hvad gør `Count(s => s.ErAaben)`?",
+        svar: ["Den spørger hver skade, om den er åben, og tæller dem, hvor svaret er true", "Den tæller alle kundens skader", "Den åbner alle skaderne", "Den gemmer antallet i databasen"],
+        ret: 0, fordi: "Lambdaen `s => s.ErAaben` får én skade ad gangen og svarer `true` eller `false`. `Count` med en lambda tæller kun dem, der svarer `true`. Uden lambda tæller `Count()` alle." },
       { t: "laes", h: "Reglerne står på modellen",
         md: "En bruger kan skrive hvad som helst i en formular: intet navn, en e-mail uden @, et telefonnummer med bogstaver. Reglerne skrives som **attributter** over hver property i modellen. Så gælder de overalt, hvor modellen bruges, og formularerne viser selv fejlbeskederne.",
         kode: R`public class Kunde
 {
-    [Required(ErrorMessage = "Skriv kundens navn.")]
+    [Required(ErrorMessage = "Skriv kundens navn")]
     [StringLength(100, ErrorMessage = "Navnet må højst være 100 tegn.")]
     public string Navn { get; set; } = "";
 
-    [Required(ErrorMessage = "Skriv kundens e-mail.")]
+    [Required(ErrorMessage = "Skriv kundens e-mail")]
     [EmailAddress(ErrorMessage = "Det er ikke en gyldig e-mail.")]
     public string Email { get; set; } = "";
 }`,
@@ -42,7 +53,7 @@ m.lektioner.push(
         md: "Et dansk telefonnummer er præcis 8 cifre. Det kan man ikke sige med `[Required]`. Et **regulært udtryk** er et mønster, som teksten skal passe til. `Regex.IsMatch` svarer `True`, hvis teksten passer.",
         kode: R`using System.Text.RegularExpressions;
 
-Console.WriteLine(Regex.IsMatch("22334455", @"^\d{8}$"));
+Console.WriteLine(Regex.IsMatch("12345678", @"^\d{8}$"));
 Console.WriteLine(Regex.IsMatch("2233 4455", @"^\d{8}$"));
 Console.WriteLine(Regex.IsMatch("1234", @"^\d{8}$"));`,
         noter: [
@@ -54,7 +65,7 @@ Console.WriteLine(Regex.IsMatch("1234", @"^\d{8}$"));`,
           ["@\"…\"", "Med `@` foran betyder `\\` bare en skråstreg. Det gør mønstre nemmere at skrive."]
         ],
         output: "True\nFalse\nFalse",
-        md2: "\"2233 4455\" passer ikke, fordi mellemrummet ikke er et ciffer." },
+        md2: "\"2233 4455\" passer ikke, fordi mellemrummet ikke er et ciffer.\n\n**Ekstra:** underviseren gennemgik ikke regulære udtryk, men de står i studieordningen. Derfor er det godt, at du kan vise et i din egen kode." },
       { t: "forudsig",
         kode: R`using System.Text.RegularExpressions;
 
@@ -70,9 +81,26 @@ Console.WriteLine(Regex.IsMatch("8000 Aarhus", moenster));`,
       { t: "udfyld", q: "Udfyld, så mønsteret tjekker, at teksten er præcis 8 cifre.",
         kode: R`using System.Text.RegularExpressions;
 
-Console.WriteLine(Regex.IsMatch("40506070", @"^\d{[[8]]}[[$]]"));`,
+Console.WriteLine(Regex.IsMatch("40401919", @"^\d{[[8]]}[[$]]"));`,
         output: "True",
         fordi: "`{8}` gentager cifferet 8 gange, og `$` kræver, at teksten slutter der." },
+      { t: "fejl",
+        q: "Mønsteret skal kun godkende et telefonnummer på præcis 8 cifre. Programmet skriver `True` to gange, men nummeret med 9 cifre skulle give `False`. Klik på linjen med fejlen.",
+        kode: R`using System.Text.RegularExpressions;
+
+string moenster = @"\d{8}";
+Console.WriteLine(Regex.IsMatch("12345678", moenster));
+Console.WriteLine(Regex.IsMatch("123456789", moenster));`,
+        linje: 3,
+        logisk: true,
+        output: "True\nTrue",
+        rettetOutput: "True\nFalse",
+        fordi: "Uden `^` og `$` er det nok, at der står 8 cifre et sted i teksten, og det gør der i \"123456789\". Med `^\\d{8}$` skal hele teksten være præcis 8 cifre. (Attributten `[RegularExpression]` tjekker selv hele teksten, men `Regex.IsMatch` gør ikke. Skriv derfor altid `^` og `$`, så mønsteret betyder det samme overalt.)",
+        rettet: R`using System.Text.RegularExpressions;
+
+string moenster = @"^\d{8}$";
+Console.WriteLine(Regex.IsMatch("12345678", moenster));
+Console.WriteLine(Regex.IsMatch("123456789", moenster));` },
       { t: "laes", h: "Reglerne virker også uden en formular",
         md: "Her kører .NET's validering direkte på et objekt. Det er præcis det samme, der sker, når formularen i din app tjekker en ny kunde: hver attribut bliver prøvet, og beskeden fra `ErrorMessage` kommer frem for hver regel, der ikke er overholdt.",
         kode: R`using System.ComponentModel.DataAnnotations;
@@ -88,14 +116,14 @@ foreach (ValidationResult f in fejl)
 
 class Kunde
 {
-    [Required(ErrorMessage = "Skriv kundens navn.")]
+    [Required(ErrorMessage = "Skriv kundens navn")]
     public string Navn { get; set; } = "";
 
-    [Required(ErrorMessage = "Skriv kundens e-mail.")]
+    [Required(ErrorMessage = "Skriv kundens e-mail")]
     [EmailAddress(ErrorMessage = "Det er ikke en gyldig e-mail.")]
     public string Email { get; set; } = "";
 
-    [Required(ErrorMessage = "Skriv kundens telefonnummer.")]
+    [Required(ErrorMessage = "Skriv kundens telefonnummer")]
     [RegularExpression(@"^\d{8}$", ErrorMessage = "Telefonnummeret skal være 8 cifre.")]
     public string Telefon { get; set; } = "";
 }`,
@@ -104,12 +132,12 @@ class Kunde
           ["TryValidateObject", "Prøver alle reglerne og lægger fejlene i listen `fejl`."],
           ["ValidationResult og ValidationContext", "Det, `Validator` skal bruge: en liste til fejlene og oplysninger om objektet. Det skal du ikke kunne skrive selv; i din app gør formularen det for dig."]
         ],
-        output: "Skriv kundens navn.\nDet er ikke en gyldig e-mail.\nTelefonnummeret skal være 8 cifre." },
+        output: "Skriv kundens navn\nDet er ikke en gyldig e-mail.\nTelefonnummeret skal være 8 cifre." },
       { t: "forudsig",
-        q: "Samme `Kunde`-klasse og samme validering som i trin 7. Nu er kunden `new Kunde { Navn = \"Ali\", Email = \"ali@eksempel.dk\", Telefon = \"4050607\" }`. Hvad skriver programmet?",
+        q: "Samme `Kunde`-klasse og samme validering som i trin 10. Nu er kunden `new Kunde { Navn = \"Peter\", Email = \"Peter@eksempel.com\", Telefon = \"8888888\" }`. Hvad skriver programmet?",
         kode: R`using System.ComponentModel.DataAnnotations;
 
-Kunde k = new Kunde { Navn = "Ali", Email = "ali@eksempel.dk", Telefon = "4050607" };
+Kunde k = new Kunde { Navn = "Peter", Email = "Peter@eksempel.com", Telefon = "8888888" };
 List<ValidationResult> fejl = new List<ValidationResult>();
 Validator.TryValidateObject(k, new ValidationContext(k), fejl, true);
 Console.WriteLine(fejl.Count);
@@ -120,14 +148,14 @@ foreach (ValidationResult f in fejl)
 
 class Kunde
 {
-    [Required(ErrorMessage = "Skriv kundens navn.")]
+    [Required(ErrorMessage = "Skriv kundens navn")]
     public string Navn { get; set; } = "";
 
-    [Required(ErrorMessage = "Skriv kundens e-mail.")]
+    [Required(ErrorMessage = "Skriv kundens e-mail")]
     [EmailAddress(ErrorMessage = "Det er ikke en gyldig e-mail.")]
     public string Email { get; set; } = "";
 
-    [Required(ErrorMessage = "Skriv kundens telefonnummer.")]
+    [Required(ErrorMessage = "Skriv kundens telefonnummer")]
     [RegularExpression(@"^\d{8}$", ErrorMessage = "Telefonnummeret skal være 8 cifre.")]
     public string Telefon { get; set; } = "";
 }`,
@@ -136,17 +164,17 @@ class Kunde
       { t: "opgave", h: "Sæt reglerne på dine modeller", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
         md: "Nu får dine to modeller deres regler. Skriv attributterne selv over de rigtige properties. Fejlbeskederne skal være præcis dem i kravene, for senere lektioner tjekker, at de kommer frem.\n\nØverst i begge filer skal der stå `using System.ComponentModel.DataAnnotations;`, ellers kan compileren ikke finde attributterne.",
         krav: [
-          "`Kunde.Navn`: `[Required]` med beskeden `Skriv kundens navn.` og `[StringLength(100)]` med `Navnet må højst være 100 tegn.`",
-          "`Kunde.Email`: `[Required]` med `Skriv kundens e-mail.` og `[EmailAddress]` med `Det er ikke en gyldig e-mail.`",
-          "`Kunde.Telefon`: `[Required]` med `Skriv kundens telefonnummer.` og `[RegularExpression]` med mønsteret for præcis 8 cifre og beskeden `Telefonnummeret skal være 8 cifre.`",
-          "`Skade.Beskrivelse`: `[Required]` med `Beskriv skaden.` og `[StringLength(500)]` med `Beskrivelsen må højst være 500 tegn.`",
+          "`Kunde.Navn`: `[Required]` med beskeden `Skriv kundens navn` og `[StringLength(100)]` med `Navnet må højst være 100 tegn.`",
+          "`Kunde.Email`: `[Required]` med `Skriv kundens e-mail` og `[EmailAddress]` med `Det er ikke en gyldig e-mail.`",
+          "`Kunde.Telefon`: `[Required]` med `Skriv kundens telefonnummer` og `[RegularExpression]` med mønsteret for præcis 8 cifre og beskeden `Telefonnummeret skal være 8 cifre.`",
+          "`Skade.Beskrivelse`: `[Required]` med `Beskriv skaden` og `[StringLength(500)]` med `Beskrivelsen må højst være 500 tegn.`",
           "`Skade.Beloeb`: `[Range]` fra 1 til 10.000.000 med `Beløbet skal være mellem 1 og 10.000.000 kr.`",
           "Begge filer har `using System.ComponentModel.DataAnnotations;`, og projektet kan bygges uden fejl"
         ],
         tip: [
-          "En attribut står på linjen over propertyen, i firkantede parenteser. Beskeden gives sådan: `[Required(ErrorMessage = \"Skriv kundens navn.\")]`",
+          "En attribut står på linjen over propertyen, i firkantede parenteser. Beskeden gives sådan: `[Required(ErrorMessage = \"Skriv kundens navn\")]`",
           "Har en attribut et tal, står tallet først: `[StringLength(100, ErrorMessage = \"…\")]` og `[Range(1, 10_000_000, ErrorMessage = \"…\")]`",
-          "Mønsteret til telefonnummeret står i trin 7: `[RegularExpression(@\"^\\d{8}$\", ErrorMessage = \"Telefonnummeret skal være 8 cifre.\")]`"
+          "Mønsteret til telefonnummeret står i trin 10: `[RegularExpression(@\"^\\d{8}$\", ErrorMessage = \"Telefonnummeret skal være 8 cifre.\")]`"
         ],
         output: "Ingen ændring i appen endnu. Reglerne viser sig, når formularerne kommer i lektion 10.",
         loesning: R`// ===== Models/Kunde.cs =====
@@ -159,16 +187,16 @@ public class Kunde
 {
     public int Id { get; set; }
 
-    [Required(ErrorMessage = "Skriv kundens navn.")]
+    [Required(ErrorMessage = "Skriv kundens navn")]
     [StringLength(100, ErrorMessage = "Navnet må højst være 100 tegn.")]
     public string Navn { get; set; } = "";
 
-    [Required(ErrorMessage = "Skriv kundens e-mail.")]
+    [Required(ErrorMessage = "Skriv kundens e-mail")]
     [EmailAddress(ErrorMessage = "Det er ikke en gyldig e-mail.")]
     public string Email { get; set; } = "";
 
     // Regulært udtryk: præcis 8 cifre og intet andet (et dansk telefonnummer).
-    [Required(ErrorMessage = "Skriv kundens telefonnummer.")]
+    [Required(ErrorMessage = "Skriv kundens telefonnummer")]
     [RegularExpression(@"^\d{8}$", ErrorMessage = "Telefonnummeret skal være 8 cifre.")]
     public string Telefon { get; set; } = "";
 
@@ -195,7 +223,7 @@ public class Skade
 
     public SkadeType Type { get; set; } = SkadeType.Indbo;
 
-    [Required(ErrorMessage = "Beskriv skaden.")]
+    [Required(ErrorMessage = "Beskriv skaden")]
     [StringLength(500, ErrorMessage = "Beskrivelsen må højst være 500 tegn.")]
     public string Beskrivelse { get; set; } = "";
 
@@ -219,47 +247,48 @@ public enum SkadeType { Bil, Indbo, Rejse, Ulykke }
 
 public enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
         md2: "`10_000_000` er bare 10 millioner. Understregningerne gør tallet nemmere at læse; C# ser bort fra dem." },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvordan sikrer du, at et telefonnummer er gyldigt, før det bliver gemt?",
+      { t: "forklar", h: "Til eksamen", q: "Eksamensspørgsmål: Hvordan sikrer du, at et telefonnummer er gyldigt, før det bliver gemt? Sig svaret højt, og peg på `Telefon` i `Models/Kunde.cs`.",
         svar: "Over propertyen Telefon i Kunde står en RegularExpression-attribut med mønsteret ^\\d{8}$, som betyder præcis 8 cifre og intet andet, og en Required-attribut. Formularen bruger DataAnnotationsValidator, så den tjekker reglerne, før der bliver gemt, og viser min danske fejlbesked under feltet, hvis nummeret ikke passer.",
         noegle: ["RegularExpression", "^\\d{8}$", "attribut", "Required", "fejlbesked"] }
   ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l6", nr: 6, titel: "Databasen: EF Core og SQLite", min: 25,
+  { id: "m30l6", nr: 6, titel: "Databasen, del 1: EF Core og SkadeContext", min: 25,
     ord: [
       ["Database", "Et program, der gemmer data i tabeller, så de er der endnu, når appen starter igen."],
       ["EF Core", "Entity Framework Core: et bibliotek, der oversætter mellem dine C#-klasser og databasens tabeller. Du skriver C#, og EF Core skriver SQL'en."],
-      ["SQLite", "En database, der ligger i én fil (`Data/skader.db`). Kræver ingen databaseserver."],
+      ["SQLite", "En database, der ligger i én fil (`Data/skade.db`). Kræver ingen databaseserver."],
       ["NuGet-pakke", "Et færdigt bibliotek, som projektet bruger, fx `Microsoft.EntityFrameworkCore.Sqlite`. Står i `SkadeApp.csproj`."],
       ["Arv", "`class Kunde : Person`: Kunde får alt det, Person har, og kan lægge mere til."],
       ["Konstruktør", "En metode med klassens navn og ingen returtype. Den kører, når objektet laves med `new`."],
-      ["JSON", "Et tekstformat til indstillinger: `\"navn\": \"værdi\"`, komma imellem. Bruges i `appsettings.json`."],
       ["DbContext", "Klassen, der er forbindelsen til databasen. Hvert `DbSet` i den bliver til en tabel."],
       ["DbSet", "En tabel set fra C#: `DbSet<Kunde> Kunder` er tabellen med kunder."],
-      ["Connection string", "Teksten, der fortæller, hvor databasen er: `Data Source=Data/skader.db`."],
-      ["Seed data", "Startdata, som databasen fyldes med, når den laves første gang."],
-      ["EnsureCreated", "Laver databasen med alle tabeller, hvis den ikke findes. Findes den, gør den ingenting."]
+      ["Seed data", "Startdata, som databasen fyldes med, når den laves første gang."]
     ],
     trin: [
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "I din `Kunde` står `[RegularExpression(@\"^\\d{8}$\", ErrorMessage = \"Telefonnummeret skal være 8 cifre.\")]`. Hvilket telefonnummer bliver godkendt?",
+        svar: ["88888888", "8888 8888", "888888888", "+4588888888"],
+        ret: 0, fordi: "`^\\d{8}$` betyder præcis 8 cifre og intet andet. Et mellemrum, et niende ciffer eller et plus er ikke tilladt." },
       { t: "laes", h: "Fra klasser til tabeller",
-        md: "Når appen lukkes, forsvinder alt, der kun ligger i variabler. Derfor gemmes kunder og skader i en **database**.\n\nDu skriver ikke selv SQL. **EF Core** oversætter: hver klasse bliver til en tabel, hver property til en kolonne, og hvert objekt til en række. Beder du om alle kunder i C#, skriver EF Core den SQL, der henter dem.\n\nDatabasen er **SQLite**: hele databasen ligger i én fil, `skader.db`, i mappen `Data`. Der er ingen databaseserver at installere, og censor kan køre din zip-fil uden opsætning.\n\nSkabelonen har allerede lavet en SQLite-database til brugerne, `app.db`, med sin egen `ApplicationDbContext`. Kunder og skader får deres egen database ved siden af. Så er login og forretningsdata adskilt.",
+        md: "Når appen lukkes, forsvinder alt, der kun ligger i variabler. Derfor gemmes kunder og skader i en **database**.\n\nDu skriver ikke selv SQL. **EF Core** oversætter: hver klasse bliver til en tabel, hver property til en kolonne, og hvert objekt til en række. Beder du om alle kunder i C#, skriver EF Core den SQL, der henter dem.\n\nDatabasen er **SQLite**: hele databasen ligger i én fil, `skade.db`, i mappen `Data`. Der er ingen databaseserver at installere, og censor kan køre din zip-fil uden opsætning.\n\nSkabelonen har allerede lavet en SQLite-database til brugerne, `app.db`, med sin egen `ApplicationDbContext`. Kunder og skader får deres egen database ved siden af. Så er login og forretningsdata adskilt.",
         kode: R`C#                              Database
-class Kunde                 →   tabellen Kunder
-public string Navn          →   kolonnen Navn
-new Kunde { Navn = "Ali" }  →   en række i Kunder`,
+class Kunde                   →   tabellen Kunder
+public string Navn            →   kolonnen Navn
+new Kunde { Navn = "Peter" }  →   en række i Kunder`,
         sprog: "text" },
       { t: "valg", q: "Hvad gør EF Core i dit projekt?",
         svar: ["Oversætter mellem dine C#-klasser og databasens tabeller og skriver SQL'en for dig", "Tegner siderne i browseren", "Tjekker, at e-mails er gyldige", "Er selve databasefilen"],
-        ret: 0, fordi: "EF Core er bindeleddet: du arbejder med objekter i C#, og EF Core gemmer og henter dem i tabellerne. Databasefilen er `skader.db`, og SQLite er databasen." },
+        ret: 0, fordi: "EF Core er bindeleddet: du arbejder med objekter i C#, og EF Core gemmer og henter dem i tabellerne. Databasefilen er `skade.db`, og SQLite er databasen." },
       { t: "ide", h: "Login skal også bruge SQLite",
         md: "EF Core er et færdigt bibliotek, en **NuGet-pakke**. Fordi du lavede projektet med login, har skabelonen allerede hentet EF Core: login-siderne gemmer brugerne i en database.\n\nMen **Visual Studio** sætter login op med **SQL Server LocalDB**. Den database findes kun på Windows. På en Mac, og måske hos censor, kan man så ikke oprette en bruger. Derfor skifter du login over til SQLite, ligesom resten af appen. Det er fire små rettelser. Lavede du projektet med `dotnet new` i terminalen, bruger det allerede SQLite, og så er du færdig, når du har set det i `SkadeApp.csproj`.",
-        win: ["Dobbeltklik på projektet **SkadeApp** i Solution Explorer. Filen `SkadeApp.csproj` åbner. Står der `Microsoft.EntityFrameworkCore.Sqlite`, er du færdig. Står der `Microsoft.EntityFrameworkCore.SqlServer`, så ret `SqlServer` til `Sqlite` i den linje, og gem.", "Åbn `appsettings.json`. Ret hele linjen med `DefaultConnection` til `\"DefaultConnection\": \"DataSource=Data/app.db;Cache=Shared\"`.", "Åbn `Program.cs`. Find `options.UseSqlServer(connectionString)`, og ret `UseSqlServer` til `UseSqlite`.", "Højreklik på mappen `Data/Migrations` → **Delete**. Filerne i den var skrevet til SQL Server. I lektionens næste opgave laves brugertabellerne med `EnsureCreated()` i stedet.", "Byg projektet. Der må ikke være røde fejl."],
-        mac: ["Højreklik på projektet **SkadeApp** i Rider → **Edit → Edit 'SkadeApp.csproj'**. Står der `Microsoft.EntityFrameworkCore.Sqlite`, er du færdig. Står der `Microsoft.EntityFrameworkCore.SqlServer`, så ret `SqlServer` til `Sqlite` i den linje, og gem. Viser Rider en knap om at gendanne pakker (**Restore**), så klik på den.", "Åbn `appsettings.json`. Ret hele linjen med `DefaultConnection` til `\"DefaultConnection\": \"DataSource=Data/app.db;Cache=Shared\"`.", "Åbn `Program.cs`. Find `options.UseSqlServer(connectionString)`, og ret `UseSqlServer` til `UseSqlite`.", "Højreklik på mappen `Data/Migrations` → **Delete**. Filerne i den var skrevet til SQL Server. I lektionens næste opgave laves brugertabellerne med `EnsureCreated()` i stedet.", "Byg projektet. Der må ikke være røde fejl."],
-        md2: "Nu bruger både login og dine egne data SQLite. Brugerne kommer i `Data/app.db`, og kunder og skader kommer i `Data/skader.db`, som du laver om lidt." },
+        win: ["Dobbeltklik på projektet **SkadeApp** i Solution Explorer. Filen `SkadeApp.csproj` åbner. Står der `Microsoft.EntityFrameworkCore.Sqlite`, er du færdig. Står der `Microsoft.EntityFrameworkCore.SqlServer`, så ret `SqlServer` til `Sqlite` i den linje, og gem.", "Åbn `appsettings.json`. Ret hele linjen med `DefaultConnection` til `\"DefaultConnection\": \"DataSource=Data/app.db;Cache=Shared\"`.", "Åbn `Program.cs`. Find `options.UseSqlServer(connectionString)`, og ret `UseSqlServer` til `UseSqlite`.", "Højreklik på mappen `Data/Migrations` → **Delete**. Filerne i den var skrevet til SQL Server. I lektion 6b laves brugertabellerne med `EnsureCreated()` i stedet.", "Byg projektet. Der må ikke være røde fejl."],
+        mac: ["Højreklik på projektet **SkadeApp** i Rider → **Edit → Edit 'SkadeApp.csproj'**. Står der `Microsoft.EntityFrameworkCore.Sqlite`, er du færdig. Står der `Microsoft.EntityFrameworkCore.SqlServer`, så ret `SqlServer` til `Sqlite` i den linje, og gem. Viser Rider en knap om at gendanne pakker (**Restore**), så klik på den.", "Åbn `appsettings.json`. Ret hele linjen med `DefaultConnection` til `\"DefaultConnection\": \"DataSource=Data/app.db;Cache=Shared\"`.", "Åbn `Program.cs`. Find `options.UseSqlServer(connectionString)`, og ret `UseSqlServer` til `UseSqlite`.", "Højreklik på mappen `Data/Migrations` → **Delete**. Filerne i den var skrevet til SQL Server. I lektion 6b laves brugertabellerne med `EnsureCreated()` i stedet.", "Byg projektet. Der må ikke være røde fejl."],
+        md2: "Nu bruger både login og dine egne data SQLite. Brugerne kommer i `Data/app.db`, og kunder og skader kommer i `Data/skade.db`, som du laver om lidt." },
       { t: "laes", h: "Arv og konstruktør: to ting, DbContext bruger",
         md: "Klassen til databasen bruger to ting, du ikke har set endnu. Her er de i et lille program.\n\n**Arv**: `class Kunde : Person` betyder, at `Kunde` **arver** fra `Person`. Så har `Kunde` alt det, `Person` har (her `Navn`), plus det, `Kunde` selv lægger til (her `Telefon`).\n\n**Konstruktør**: en metode inde i klassen, der hedder det samme som klassen og ingen returtype har. Den kører automatisk, når objektet laves med `new`. Det, der står i parentesen efter `new Kunde(…)`, er argumenterne til konstruktøren.",
         kode: R`Kunde k = new Kunde("Mette Jensen");
-k.Telefon = "22334455";
+k.Telefon = "12345678";
 Console.WriteLine(k.Navn + " " + k.Telefon);
 
 class Person
@@ -282,13 +311,48 @@ class Kunde : Person
           ["Navn = navn;", "Konstruktøren lægger argumentet i propertyen `Navn`. Stort N er propertyen, lille n er parameteren."],
           ["new Kunde(\"Mette Jensen\")", "Laver objektet og kalder konstruktøren med teksten som argument."]
         ],
-        output: "Mette Jensen 22334455",
+        output: "Mette Jensen 12345678",
         md2: "To ord mere, du møder i `SkadeContext`:\n\n- `: base(options)` efter konstruktøren betyder: giv `options` videre til konstruktøren i den klasse, der arves fra. `DbContext` skal bruge dem.\n- `override` foran en metode betyder: klassen, der arves fra, har en metode med det navn, og her er min egen udgave af den." },
       { t: "valg", q: "Hvornår kører en konstruktør?",
         svar: ["Når objektet laves med new", "Hver gang man læser en property", "Når programmet slutter", "Kun hvis man kalder den med navn"],
         ret: 0, fordi: "Konstruktøren kører automatisk ved `new`. Argumenterne i parentesen efter `new Kunde(…)` bliver givet til den." },
+      { t: "fejl",
+        q: "Programmet kan ikke bygges. Compileren melder fejl på linje 1 og på linje 11. Linje 1 er rigtig og skal blive stående. Klik på den linje, der skal rettes.",
+        kode: R`Kunde k = new Kunde("Mette Jensen");
+Console.WriteLine(k.Navn);
+
+class Person
+{
+    public string Navn { get; set; } = "";
+}
+
+class Kunde : Person
+{
+    public void Kunde(string navn)
+    {
+        Navn = navn;
+    }
+}`,
+        linje: 11,
+        output: "Mette Jensen",
+        fordi: "En konstruktør har ingen returtype, heller ikke `void`. Med `void` er det en almindelig metode, og en metode må ikke hedde det samme som klassen. Derfor har `Kunde` ingen konstruktør, der tager en tekst, og linje 1 fejler også.",
+        rettet: R`Kunde k = new Kunde("Mette Jensen");
+Console.WriteLine(k.Navn);
+
+class Person
+{
+    public string Navn { get; set; } = "";
+}
+
+class Kunde : Person
+{
+    public Kunde(string navn)
+    {
+        Navn = navn;
+    }
+}` },
       { t: "laes", h: "DbContext: forbindelsen til databasen",
-        md: "EF Core skal vide, hvilke tabeller databasen har. Det står i en klasse, der arver fra `DbContext`, ligesom `Kunde` arvede fra `Person` i trin 4. Din klasse får alt det, `DbContext` kan (tale med databasen), og lægger selv de to tabeller til.",
+        md: "EF Core skal vide, hvilke tabeller databasen har. Det står i en klasse, der arver fra `DbContext`, ligesom `Kunde` arvede fra `Person` i trin 5. Din klasse får alt det, `DbContext` kan (tale med databasen), og lægger selv de to tabeller til.",
         kode: R`using Microsoft.EntityFrameworkCore;
 using SkadeApp.Models;
 
@@ -306,21 +370,20 @@ public class SkadeContext : DbContext
         frag: true,
         noter: [
           [": DbContext", "Klassen arver fra `DbContext`, som kan tale med databasen."],
-          ["konstruktøren", "Som i trin 4: samme navn som klassen. `options` indeholder bl.a. hvilken database der bruges. `: base(options)` giver dem videre til `DbContext`. Kroppen `{ }` er tom, fordi der ikke skal ske mere."],
+          ["konstruktøren", "Som i trin 5: samme navn som klassen. `options` indeholder bl.a. hvilken database der bruges. `: base(options)` giver dem videre til `DbContext`. Kroppen `{ }` er tom, fordi der ikke skal ske mere."],
           ["DbContextOptions<SkadeContext>", "Typen på parameteren. Vinkelparenteserne har du set i `List<Skade>` i lektion 3: de siger, hvad den hører til."],
           ["DbSet<Kunde> Kunder", "Tabellen `Kunder`. EF Core ser selv, at `Skade.KundeId` er en fremmednøgle til den."]
         ] },
       { t: "valg", q: "`SkadeContext` har linjen `public DbSet<Skade> Skader { get; set; }`. Hvad bliver det til i databasen?",
         svar: ["En tabel, der hedder Skader, med en kolonne for hver property i Skade", "En kolonne i tabellen Kunder", "En fil, der hedder Skader.cs", "Ingenting, før man skriver SQL"],
         ret: 0, fordi: "Hvert `DbSet` bliver til en tabel. Properties med `get` og `set` bliver til kolonner. Beregnede properties som `ErAaben` har ingen `set` og bliver ikke til kolonner." },
-      { t: "laes", h: "Tekst i tabellen og startdata",
-        md: "To ting mere i `SkadeContext`. De står i metoden `OnModelCreating`, som EF Core kalder, når den finder ud af, hvordan tabellerne skal se ud.\n\n- `HasConversion<string>()`: en enum gemmes som tekst (`Godkendt`) i stedet for et tal (`2`). Så kan man læse tabellen.\n- `HasData(…)`: **startdata**. Når databasen laves, kommer disse kunder og skader med, så appen ikke er tom første gang.",
+      { t: "laes", h: "Startdata med HasData",
+        md: "`SkadeContext` har også metoden `OnModelCreating`. EF Core kalder den, når den finder ud af, hvordan tabellerne skal se ud. Din app bruger den til **startdata** med `HasData(…)`: når databasen laves, kommer disse kunder og skader med, så appen ikke er tom første gang.\n\nEn enum som `Status` gemmes som et tal i tabellen: `Anmeldt` er 0, `Behandles` 1, `Godkendt` 2 og `Afvist` 3. Det er rækkefølgen i enum'en. Når EF Core henter en skade, laver den tallet om til en `SkadeStatus` igen, så i C# og på siderne står der stadig `Godkendt`.",
         kode: R`protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
-    modelBuilder.Entity<Skade>().Property(s => s.Status).HasConversion<string>();
-
+    // startdata så der er noget at se første gang
     modelBuilder.Entity<Kunde>().HasData(
-        new Kunde { Id = 1, Navn = "Mette Jensen", Email = "mette@eksempel.dk", Telefon = "22334455" });
+        new Kunde { Id = 1, Navn = "Mette Jensen", Email = "Mette@eksempel.com", Telefon = "12345678" });
 
     modelBuilder.Entity<Skade>().HasData(
         new Skade { Id = 1, KundeId = 1, Dato = new DateTime(2026, 8, 14), Type = SkadeType.Bil,
@@ -328,14 +391,119 @@ public class SkadeContext : DbContext
 }`,
         frag: true,
         noter: [
-          ["modelBuilder.Entity<Skade>()", "Vælger tabellen for `Skade`, så du kan give regler for den, fx hvordan en kolonne gemmes."],
+          ["modelBuilder.Entity<Kunde>()", "Vælger tabellen for `Kunde`, så du kan give den startdata."],
           ["protected override", "Metoden findes i `DbContext`. `override` betyder: brug min udgave i stedet. `protected` betyder: kun klassen selv og klasser, der arver fra den, må kalde metoden."],
           ["Id = 1", "Startdata skal have faste id'er, så skaden kan pege på kunden med `KundeId = 1`."],
           ["new DateTime(2026, 8, 14)", "En fast dato: 14. august 2026."]
-        ] },
+        ],
+        md2: "**Ekstra, som din app ikke har:** med linjen `modelBuilder.Entity<Skade>().Property(s => s.Status).HasConversion<string>();` ville statussen blive gemt som tekst (`Godkendt`) i stedet for et tal. Så kan man læse tabellen direkte i databasen. Din app gemmer tal, og det virker lige så godt. Spørger censor, kan du nævne det som en mulig forbedring." },
       { t: "valg", q: "Hvorfor har startdataene i `HasData` faste id'er, fx `Id = 1`?",
         svar: ["Så skaderne kan pege på den rigtige kunde med KundeId, og EF Core ved, hvilken række er hvilken", "Fordi id'er altid skal skrives i hånden", "For at gøre databasen hurtigere", "Fordi SQLite ikke kan tælle"],
         ret: 0, fordi: "En skade i startdataene skal vide, hvilken kunde den hører til (`KundeId = 1`). Det kræver, at kunden har et kendt id. Nye kunder, som brugeren opretter, får automatisk det næste id." },
+      { t: "valg", q: "Hvordan står statussen `Godkendt` i tabellen `Skader` i din database?",
+        svar: ["Som tallet 2, fordi en enum gemmes som et tal i den rækkefølge, værdierne står i: Anmeldt 0, Behandles 1, Godkendt 2, Afvist 3", "Som teksten Godkendt", "Som en farvekode", "Den gemmes ikke"],
+        ret: 0, fordi: "Din app har ikke `HasConversion<string>()`, så EF Core gemmer enum-værdien som et tal. Når skaden hentes, bliver tallet til `SkadeStatus.Godkendt` igen, så siderne viser stadig teksten." },
+      { t: "opgave", h: "Lav SkadeContext", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
+        md: "Nu laver du forbindelsen til databasen. Mappen `Data` findes allerede: skabelonen har lagt brugernes database der. {{Højreklik på `Data` → **Add → Class…** → `SkadeContext.cs`.||Højreklik på `Data` → **Add → Class/Interface** → `SkadeContext`.}} Skriv klassen selv ud fra kravene og trin 8 og 10.\n\nStartdataene (de fire kunder og syv skader) er ikke kode, du skal lære, kun data. Dem må du kopiere nedenfor og sætte ind i `OnModelCreating`. Det er de samme kunder og skader, som står i din afleverede app.",
+        krav: [
+          "Filen har `using Microsoft.EntityFrameworkCore;`, `using SkadeApp.Models;` og `namespace SkadeApp.Data;`",
+          "`public class SkadeContext : DbContext` med en konstruktør, der tager `DbContextOptions<SkadeContext> options` og giver dem videre med `: base(options)`",
+          "To tabeller: `public DbSet<Kunde> Kunder { get; set; }` og `public DbSet<Skade> Skader { get; set; }`",
+          "`protected override void OnModelCreating(ModelBuilder modelBuilder)` med startdataene fra kopi-feltet inde i sine `{ }`",
+          "Projektet kan bygges uden fejl"
+        ],
+        tip: [
+          "Konstruktøren står i trin 8: den har samme navn som klassen og en tom krop `{ }`.",
+          "`OnModelCreating` står i trin 10: `protected override void OnModelCreating(ModelBuilder modelBuilder) { … }`. Startdataene sættes ind mellem dens `{ }`.",
+          "Rækkefølgen i klassen: konstruktøren, de to `DbSet`, og til sidst `OnModelCreating` med startdataene."
+        ],
+        start: R`// startdata så der er noget at se første gang
+modelBuilder.Entity<Kunde>().HasData(
+    new Kunde { Id = 1, Navn = "Mette Jensen", Email = "Mette@eksempel.com", Telefon = "12345678" },
+    new Kunde { Id = 2, Navn = "Peter Bangsmann", Email = "Peter@eksempel.com", Telefon = "88888888" },
+    new Kunde { Id = 3, Navn = "Søren Nielsen", Email = "Søren@eksempel.com", Telefon = "87654321" },
+    new Kunde { Id = 4, Navn = "Peter Parker", Email = "Peter@spiderman.com", Telefon = "40401919" });
+
+modelBuilder.Entity<Skade>().HasData(
+    new Skade { Id = 1, KundeId = 1, Dato = new DateTime(2026, 8, 14), Type = SkadeType.Bil, Beskrivelse = "Ridse i døren efter parkering", Beloeb = 4500m, Status = SkadeStatus.Godkendt },
+    new Skade { Id = 2, KundeId = 1, Dato = new DateTime(2026, 10, 2), Type = SkadeType.Indbo, Beskrivelse = "Vandskade under opvaskemaskinen", Beloeb = 18750m, Status = SkadeStatus.Behandles },
+    new Skade { Id = 3, KundeId = 2, Dato = new DateTime(2026, 7, 21), Type = SkadeType.Rejse, Beskrivelse = "Kuffert forsvundet i lufthavnen", Beloeb = 6200m, Status = SkadeStatus.Godkendt },
+    new Skade { Id = 4, KundeId = 2, Dato = new DateTime(2026, 9, 30), Type = SkadeType.Indbo, Beskrivelse = "Cykel stjålet fra kælderen", Beloeb = 7999m, Status = SkadeStatus.Afvist },
+    new Skade { Id = 5, KundeId = 3, Dato = new DateTime(2026, 10, 12), Type = SkadeType.Ulykke, Beskrivelse = "Brækket håndled efter fald på cykel", Beloeb = 25000m, Status = SkadeStatus.Anmeldt },
+    new Skade { Id = 6, KundeId = 4, Dato = new DateTime(2026, 9, 5), Type = SkadeType.Bil, Beskrivelse = "Stenslag i forruden", Beloeb = 3200m, Status = SkadeStatus.Godkendt },
+    new Skade { Id = 7, KundeId = 4, Dato = new DateTime(2026, 10, 20), Type = SkadeType.Indbo, Beskrivelse = "Tabt mobiltelefon med knust skærm", Beloeb = 2400m, Status = SkadeStatus.Anmeldt });`,
+        output: "Ingen ændring i appen endnu. Databasen bliver lavet i næste opgave.",
+        loesning: R`using Microsoft.EntityFrameworkCore;
+using SkadeApp.Models;
+
+namespace SkadeApp.Data;
+
+// Forbindelsen til databasen. Hvert DbSet bliver til en tabel.
+public class SkadeContext : DbContext
+{
+    public SkadeContext(DbContextOptions<SkadeContext> options) : base(options)
+    {
+    }
+
+    public DbSet<Kunde> Kunder { get; set; }
+    public DbSet<Skade> Skader { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // startdata så der er noget at se første gang
+        modelBuilder.Entity<Kunde>().HasData(
+            new Kunde { Id = 1, Navn = "Mette Jensen", Email = "Mette@eksempel.com", Telefon = "12345678" },
+            new Kunde { Id = 2, Navn = "Peter Bangsmann", Email = "Peter@eksempel.com", Telefon = "88888888" },
+            new Kunde { Id = 3, Navn = "Søren Nielsen", Email = "Søren@eksempel.com", Telefon = "87654321" },
+            new Kunde { Id = 4, Navn = "Peter Parker", Email = "Peter@spiderman.com", Telefon = "40401919" });
+
+        modelBuilder.Entity<Skade>().HasData(
+            new Skade { Id = 1, KundeId = 1, Dato = new DateTime(2026, 8, 14), Type = SkadeType.Bil, Beskrivelse = "Ridse i døren efter parkering", Beloeb = 4500m, Status = SkadeStatus.Godkendt },
+            new Skade { Id = 2, KundeId = 1, Dato = new DateTime(2026, 10, 2), Type = SkadeType.Indbo, Beskrivelse = "Vandskade under opvaskemaskinen", Beloeb = 18750m, Status = SkadeStatus.Behandles },
+            new Skade { Id = 3, KundeId = 2, Dato = new DateTime(2026, 7, 21), Type = SkadeType.Rejse, Beskrivelse = "Kuffert forsvundet i lufthavnen", Beloeb = 6200m, Status = SkadeStatus.Godkendt },
+            new Skade { Id = 4, KundeId = 2, Dato = new DateTime(2026, 9, 30), Type = SkadeType.Indbo, Beskrivelse = "Cykel stjålet fra kælderen", Beloeb = 7999m, Status = SkadeStatus.Afvist },
+            new Skade { Id = 5, KundeId = 3, Dato = new DateTime(2026, 10, 12), Type = SkadeType.Ulykke, Beskrivelse = "Brækket håndled efter fald på cykel", Beloeb = 25000m, Status = SkadeStatus.Anmeldt },
+            new Skade { Id = 6, KundeId = 4, Dato = new DateTime(2026, 9, 5), Type = SkadeType.Bil, Beskrivelse = "Stenslag i forruden", Beloeb = 3200m, Status = SkadeStatus.Godkendt },
+            new Skade { Id = 7, KundeId = 4, Dato = new DateTime(2026, 10, 20), Type = SkadeType.Indbo, Beskrivelse = "Tabt mobiltelefon med knust skærm", Beloeb = 2400m, Status = SkadeStatus.Anmeldt });
+    }
+}` },
+      { t: "forklar", h: "Til eksamen", q: "Censor: \"Hvor bruger du arv i dit projekt?\" Sig svaret højt, og peg på linjen `public class SkadeContext : DbContext` i `Data/SkadeContext.cs`.",
+        svar: "Arv betyder, at en klasse får alt det, en anden klasse har, og kan lægge mere til. Min SkadeContext arver fra DbContext med : DbContext. Derfor kan den tale med databasen, selvom jeg kun har skrevet de to DbSet og startdataene. Den har også sin egen udgave af metoden OnModelCreating med override. Skabelonens ApplicationUser arver på samme måde fra IdentityUser. Arv er en del af objektorienteret programmering, som er et af læringsmålene.",
+        noegle: ["arver", ": DbContext", "override", "OnModelCreating", "objektorienteret"] }
+  ] },
+
+  // ------------------------------------------------------------------
+  { id: "m30l6b", nr: "6b", titel: "Databasen, del 2: Program.cs og forbindelsen", min: 20,
+    ord: [
+      ["JSON", "Et tekstformat til indstillinger: `\"navn\": \"værdi\"`, komma imellem. Bruges i `appsettings.json`."],
+      ["Connection string", "Teksten, der fortæller, hvor databasen er: `Data Source=Data/skade.db`."],
+      ["EnsureCreated", "Laver databasen med alle tabeller, hvis den ikke findes. Findes den, gør den ingenting."]
+    ],
+    trin: [
+      { t: "forudsig", h: "Husker du fra sidst?",
+        q: "Repetition: arv og en konstruktør. Svar, før du kigger tilbage. Hvad skriver programmet?",
+        kode: R`Kunde k = new Kunde("Peter Parker");
+Console.WriteLine("Kunde: " + k.Navn);
+
+class Person
+{
+    public string Navn { get; set; } = "";
+}
+
+class Kunde : Person
+{
+    public Kunde(string navn)
+    {
+        Console.WriteLine("Konstruktøren kører");
+        Navn = navn;
+    }
+}`,
+        output: "Konstruktøren kører\nKunde: Peter Parker",
+        fordi: "Konstruktøren kører i det øjeblik, objektet laves med `new`, altså før linje 2. `Navn` har `Kunde` arvet fra `Person`." },
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "`SkadeContext` har linjen `public DbSet<Kunde> Kunder { get; set; }`. Hvad bliver propertyen `Udbetalt` i `Kunde` til i databasen?",
+        svar: ["Ingenting. Den har ingen set, så EF Core laver ingen kolonne til den", "En kolonne med det udbetalte beløb", "En tabel, der hedder Udbetalt", "En fremmednøgle"],
+        ret: 0, fordi: "Properties med både `get` og `set` bliver til kolonner. `Udbetalt` er en beregnet property med `=>`, så den regnes ud i C#, hver gang den læses." },
       { t: "laes", h: "Program.cs: sådan starter appen",
         md: "Før du retter i `Program.cs`, skal du vide, hvad der står i den. Den kører først, når appen starter, og den har fem dele i fast rækkefølge:",
         kode: R`var builder = WebApplication.CreateBuilder(args);      // 1. lav en "bygger" til appen
@@ -367,7 +535,7 @@ app.Run();                                               // 5. start webserveren
         kode: R`// appsettings.json: ConnectionStrings har nu to linjer
 "ConnectionStrings": {
   "DefaultConnection": "DataSource=Data/app.db;Cache=Shared",
-  "SkadeDb": "Data Source=Data/skader.db"
+  "SkadeDb": "Data Source=Data/skade.db"
 }
 
 // Program.cs øverst
@@ -396,100 +564,52 @@ using (var scope = app.Services.CreateScope())
           ["GetConnectionString(\"SkadeDb\")", "Henter teksten med navnet `SkadeDb` fra `ConnectionStrings` i `appsettings.json`."],
           ["using (var scope …) og GetRequiredService", "Henter en service et øjeblik, mens appen starter, så databaserne kan laves, før den første side vises."],
           ["…<ApplicationDbContext>().Database.EnsureCreated()", "Laver brugernes database (`app.db`) med tabellerne til login, hvis den mangler. Så virker login også, når projektet køres første gang et nyt sted, fx hos censor."],
-          ["Data Source=Data/skader.db", "Databasen er filen `skader.db` i mappen `Data`, ved siden af brugernes `app.db`."],
+          ["Data Source=Data/skade.db", "Databasen er filen `skade.db` i mappen `Data`, ved siden af brugernes `app.db`."],
           ["AddDbContextFactory", "Registrerer en **fabrik**, der kan lave en ny `SkadeContext`, når en service beder om det. Den bruges i næste lektion."],
           ["UseSqlite(…)", "Brug SQLite med den connection string, der hedder `SkadeDb`."],
           ["EnsureCreated()", "Laver databasen, hvis filen ikke findes. Findes den, sker der ingenting."]
-        ] },
-      { t: "opgave", h: "Lav SkadeContext", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
-        md: "Nu laver du forbindelsen til databasen. Mappen `Data` findes allerede: skabelonen har lagt brugernes database der. {{Højreklik på `Data` → **Add → Class…** → `SkadeContext.cs`.||Højreklik på `Data` → **Add → Class/Interface** → `SkadeContext`.}} Skriv klassen selv ud fra kravene og trin 6 og 8.\n\nStartdataene (de fire kunder og syv skader) er ikke kode, du skal lære, kun data. Dem må du kopiere nedenfor og sætte ind nederst i `OnModelCreating`.",
-        krav: [
-          "Filen har `using Microsoft.EntityFrameworkCore;`, `using SkadeApp.Models;` og `namespace SkadeApp.Data;`",
-          "`public class SkadeContext : DbContext` med en konstruktør, der tager `DbContextOptions<SkadeContext> options` og giver dem videre med `: base(options)`",
-          "To tabeller: `public DbSet<Kunde> Kunder { get; set; }` og `public DbSet<Skade> Skader { get; set; }`",
-          "`protected override void OnModelCreating(ModelBuilder modelBuilder)`, der gemmer både `Status` og `Type` på `Skade` som tekst med `HasConversion<string>()`",
-          "Startdataene fra kopi-feltet står nederst i `OnModelCreating`",
-          "Projektet kan bygges uden fejl"
         ],
-        tip: [
-          "Konstruktøren står i trin 6: den har samme navn som klassen og en tom krop `{ }`.",
-          "`HasConversion` står i trin 8. Du skal bruge den to gange: én gang med `s => s.Status` og én gang med `s => s.Type`.",
-          "Rækkefølgen i klassen: konstruktøren, de to `DbSet`, og til sidst `OnModelCreating` med de to `HasConversion`-linjer og startdataene."
-        ],
-        start: R`// Startdata, så appen ikke er tom første gang, den kører.
-modelBuilder.Entity<Kunde>().HasData(
-    new Kunde { Id = 1, Navn = "Mette Jensen", Email = "mette@eksempel.dk", Telefon = "22334455" },
-    new Kunde { Id = 2, Navn = "Ali Hassan", Email = "ali@eksempel.dk", Telefon = "40506070" },
-    new Kunde { Id = 3, Navn = "Søren Nielsen", Email = "soeren@eksempel.dk", Telefon = "31415926" },
-    new Kunde { Id = 4, Navn = "Camilla Holm", Email = "camilla@eksempel.dk", Telefon = "60708090" });
-
-modelBuilder.Entity<Skade>().HasData(
-    new Skade { Id = 1, KundeId = 1, Dato = new DateTime(2026, 8, 14), Type = SkadeType.Bil, Beskrivelse = "Ridse i døren efter parkering", Beloeb = 4500m, Status = SkadeStatus.Godkendt },
-    new Skade { Id = 2, KundeId = 1, Dato = new DateTime(2026, 10, 2), Type = SkadeType.Indbo, Beskrivelse = "Vandskade under opvaskemaskinen", Beloeb = 18750m, Status = SkadeStatus.Behandles },
-    new Skade { Id = 3, KundeId = 2, Dato = new DateTime(2026, 7, 21), Type = SkadeType.Rejse, Beskrivelse = "Kuffert forsvundet i lufthavnen", Beloeb = 6200m, Status = SkadeStatus.Godkendt },
-    new Skade { Id = 4, KundeId = 2, Dato = new DateTime(2026, 9, 30), Type = SkadeType.Indbo, Beskrivelse = "Cykel stjålet fra kælderen", Beloeb = 7999m, Status = SkadeStatus.Afvist },
-    new Skade { Id = 5, KundeId = 3, Dato = new DateTime(2026, 10, 12), Type = SkadeType.Ulykke, Beskrivelse = "Brækket håndled efter fald på cykel", Beloeb = 25000m, Status = SkadeStatus.Anmeldt },
-    new Skade { Id = 6, KundeId = 4, Dato = new DateTime(2026, 9, 5), Type = SkadeType.Bil, Beskrivelse = "Stenslag i forruden", Beloeb = 3200m, Status = SkadeStatus.Godkendt },
-    new Skade { Id = 7, KundeId = 4, Dato = new DateTime(2026, 10, 20), Type = SkadeType.Indbo, Beskrivelse = "Tabt mobiltelefon med knust skærm", Beloeb = 2400m, Status = SkadeStatus.Anmeldt });`,
-        output: "Ingen ændring i appen endnu. Databasen bliver lavet i næste opgave.",
-        loesning: R`using Microsoft.EntityFrameworkCore;
-using SkadeApp.Models;
-
-namespace SkadeApp.Data;
-
-// Forbindelsen til databasen. Hvert DbSet bliver til en tabel.
-public class SkadeContext : DbContext
-{
-    public SkadeContext(DbContextOptions<SkadeContext> options) : base(options)
-    {
-    }
-
-    public DbSet<Kunde> Kunder { get; set; }
-    public DbSet<Skade> Skader { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        // Enums gemmes som tekst ("Godkendt") i stedet for tal (2), så tabellen kan læses.
-        modelBuilder.Entity<Skade>().Property(s => s.Status).HasConversion<string>();
-        modelBuilder.Entity<Skade>().Property(s => s.Type).HasConversion<string>();
-
-        // Startdata, så appen ikke er tom første gang, den kører.
-        modelBuilder.Entity<Kunde>().HasData(
-            new Kunde { Id = 1, Navn = "Mette Jensen", Email = "mette@eksempel.dk", Telefon = "22334455" },
-            new Kunde { Id = 2, Navn = "Ali Hassan", Email = "ali@eksempel.dk", Telefon = "40506070" },
-            new Kunde { Id = 3, Navn = "Søren Nielsen", Email = "soeren@eksempel.dk", Telefon = "31415926" },
-            new Kunde { Id = 4, Navn = "Camilla Holm", Email = "camilla@eksempel.dk", Telefon = "60708090" });
-
-        modelBuilder.Entity<Skade>().HasData(
-            new Skade { Id = 1, KundeId = 1, Dato = new DateTime(2026, 8, 14), Type = SkadeType.Bil, Beskrivelse = "Ridse i døren efter parkering", Beloeb = 4500m, Status = SkadeStatus.Godkendt },
-            new Skade { Id = 2, KundeId = 1, Dato = new DateTime(2026, 10, 2), Type = SkadeType.Indbo, Beskrivelse = "Vandskade under opvaskemaskinen", Beloeb = 18750m, Status = SkadeStatus.Behandles },
-            new Skade { Id = 3, KundeId = 2, Dato = new DateTime(2026, 7, 21), Type = SkadeType.Rejse, Beskrivelse = "Kuffert forsvundet i lufthavnen", Beloeb = 6200m, Status = SkadeStatus.Godkendt },
-            new Skade { Id = 4, KundeId = 2, Dato = new DateTime(2026, 9, 30), Type = SkadeType.Indbo, Beskrivelse = "Cykel stjålet fra kælderen", Beloeb = 7999m, Status = SkadeStatus.Afvist },
-            new Skade { Id = 5, KundeId = 3, Dato = new DateTime(2026, 10, 12), Type = SkadeType.Ulykke, Beskrivelse = "Brækket håndled efter fald på cykel", Beloeb = 25000m, Status = SkadeStatus.Anmeldt },
-            new Skade { Id = 6, KundeId = 4, Dato = new DateTime(2026, 9, 5), Type = SkadeType.Bil, Beskrivelse = "Stenslag i forruden", Beloeb = 3200m, Status = SkadeStatus.Godkendt },
-            new Skade { Id = 7, KundeId = 4, Dato = new DateTime(2026, 10, 20), Type = SkadeType.Indbo, Beskrivelse = "Tabt mobiltelefon med knust skærm", Beloeb = 2400m, Status = SkadeStatus.Anmeldt });
-    }
-}` },
+        md2: "**Ekstra:** underviseren brugte *migrations* (`Add-Migration` og `Update-Database`). `EnsureCreated()` er enklere: databasen laves med det samme, når appen starter, også hos censor. Prisen er, at den ikke kan ændre en database, der allerede findes. `CultureInfo`-linjerne viste underviseren heller ikke. De er med, så beløb står i danske kroner, uanset hvilket sprog computeren har." },
+      { t: "fejl",
+        q: "Appen kan bygges, men den går ned, så snart den starter. Fejlbeskeden siger, at listen med services ikke kan ændres, fordi den er låst. Én linje står det forkerte sted. De andre linjer står rigtigt. Klik på den linje, der står forkert.",
+        kode: R`var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+var app = builder.Build();
+builder.Services.AddDbContextFactory<SkadeContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("SkadeDb")));
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+app.Run();`,
+        frag: true, linje: 5,
+        fordi: "Alt, appen skal kunne, registreres på `builder.Services`, før appen bygges. `builder.Build()` låser listen med services, så en `Add…`-linje efter den giver en fejl, når appen starter. Flyt linjen op over `var app = builder.Build();`.",
+        rettet: R`var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+builder.Services.AddDbContextFactory<SkadeContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("SkadeDb")));
+var app = builder.Build();
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+app.Run();` },
       { t: "opgave", h: "Forbind databasen: appsettings.json og Program.cs", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
-        md: "Nu skal appen vide, hvor databasen ligger, og den skal laves, første gang appen starter. Trin 12 viser de nye linjer, og trin 10 viser, hvor i filen de hører til. Det meste af `Program.cs` står der allerede: skabelonens linjer til login. Du tilføjer kun det, kravene nævner.",
+        md: "Nu skal appen vide, hvor databasen ligger, og den skal laves, første gang appen starter. Trin 5 viser de nye linjer, og trin 3 viser, hvor i filen de hører til. Det meste af `Program.cs` står der allerede: skabelonens linjer til login. Du tilføjer kun det, kravene nævner.",
         krav: [
-          "`appsettings.json`: under `ConnectionStrings` står en ny linje `\"SkadeDb\": \"Data Source=Data/skader.db\"` efter `DefaultConnection` (husk kommaet mellem dem)",
+          "`appsettings.json`: under `ConnectionStrings` står en ny linje `\"SkadeDb\": \"Data Source=Data/skade.db\"` efter `DefaultConnection` (husk kommaet mellem dem)",
           "`Program.cs` øverst: `using System.Globalization;` og de to linjer, der sætter `CultureInfo.DefaultThreadCurrentCulture` og `DefaultThreadCurrentUICulture` til `new CultureInfo(\"da-DK\")`",
           "`Program.cs` før `var app = builder.Build();`: `AddDbContextFactory<SkadeContext>` med `UseSqlite` og connection stringen `SkadeDb`",
           "`Program.cs` lige efter `var app = builder.Build();`: en `using (var scope = …)`-blok, der kalder `EnsureCreated()` på både `ApplicationDbContext` og en `SkadeContext` fra fabrikken",
-          "Appen starter, og filen `skader.db` ligger i mappen `Data` ({{højreklik på `Data` → **Open Folder in File Explorer**||se i Finder}})"
+          "Appen starter, og filen `skade.db` ligger i mappen `Data` ({{højreklik på `Data` → **Open Folder in File Explorer**||se i Finder}})"
         ],
         tip: [
           "I JSON står der komma mellem to linjer i samme `{ }`, men ikke efter den sidste.",
-          "Alle tre stykker kode i `Program.cs` står i trin 12. `using System.Globalization;` skal stå øverst sammen med de andre `using`-linjer.",
+          "Alle tre stykker kode i `Program.cs` står i trin 5. `using System.Globalization;` skal stå øverst sammen med de andre `using`-linjer.",
           "Får du fejlen, at `SkadeContext` ikke findes, mangler `using SkadeApp.Data;` øverst. Den har skabelonen sat ind, fordi `ApplicationDbContext` også ligger i `Data`."
         ],
-        output: "Appen starter som før. I mappen Data ligger nu skader.db ved siden af app.db. Vinduet med serverens log viser CREATE TABLE \"Kunder\" og CREATE TABLE \"Skader\" første gang.",
+        output: "Appen starter som før. I mappen Data ligger nu skade.db ved siden af app.db. Vinduet med serverens log viser CREATE TABLE \"Kunder\" og CREATE TABLE \"Skader\" første gang.",
         loesning: R`// ===== appsettings.json =====
 {
   "ConnectionStrings": {
     "DefaultConnection": "DataSource=Data/app.db;Cache=Shared",
-    "SkadeDb": "Data Source=Data/skader.db"
+    "SkadeDb": "Data Source=Data/skade.db"
   },
   "Logging": {
     "LogLevel": {
@@ -509,7 +629,7 @@ using SkadeApp.Components;
 using SkadeApp.Components.Account;
 using SkadeApp.Data;
 
-// Dansk format på tal og beløb (fx 4.500,00 kr.).
+// dansk format på beløb (kr.)
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("da-DK");
 CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("da-DK");
 
@@ -546,14 +666,13 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
-// ---- SkadeApp: kunder og skader ----
-// Databasen: SQLite-filen fra appsettings.json. En fabrik laver en ny DbContext, hver gang en service beder om det.
+// min database med kunder og skader
 builder.Services.AddDbContextFactory<SkadeContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("SkadeDb")));
 
 var app = builder.Build();
 
-// Lav databaserne, hvis de ikke findes: brugerne og kunder og skader (med startdata).
+// laver databaserne hvis de ikke findes
 using (var scope = app.Services.CreateScope())
 {
     scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.EnsureCreated();
@@ -583,31 +702,50 @@ app.MapAdditionalIdentityEndpoints();
 
 app.Run();`,
         md2: "De to linjer med `CultureInfo` gør, at beløb vises på dansk, fx `4.500,00 kr.`, uanset hvordan computeren er sat op." },
-      { t: "valg", q: "Du tilføjer en ny property i `Kunde`, starter appen, og den går ned med en fejl om en kolonne, der ikke findes. `Data/skader.db` lå der i forvejen. Hvad er årsagen?",
-        svar: ["EnsureCreated laver kun databasen, når filen ikke findes. Den gamle fil har ikke den nye kolonne. Stop appen, slet Data/skader.db, og kør igen", "Propertyen skal også skrives i appsettings.json", "SQLite kan ikke have mere end fire kolonner", "NuGet-pakken er forkert"],
+      { t: "valg", q: "Du tilføjer en ny property i `Kunde`, starter appen, og den går ned med en fejl om en kolonne, der ikke findes. `Data/skade.db` lå der i forvejen. Hvad er årsagen?",
+        svar: ["EnsureCreated laver kun databasen, når filen ikke findes. Den gamle fil har ikke den nye kolonne. Stop appen, slet Data/skade.db, og kør igen", "Propertyen skal også skrives i appsettings.json", "SQLite kan ikke have mere end fire kolonner", "NuGet-pakken er forkert"],
         ret: 0, fordi: "`EnsureCreated()` ændrer ikke en database, der allerede findes. Slet filen, så laves den forfra med den nye kolonne og startdataene. (Store projekter bruger i stedet *migrations*, som kan ændre en database uden at slette data.)" },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvad er EF Core, og hvorfor har du valgt SQLite?",
+      { t: "forklar", h: "Til eksamen", q: "Eksamensspørgsmål: Hvad er EF Core, og hvorfor har du valgt SQLite? Sig svaret højt, og peg på `appsettings.json` og `Data/SkadeContext.cs`.",
         svar: "EF Core er en ORM: den oversætter mellem mine C#-klasser og databasens tabeller, så jeg arbejder med objekter, og EF Core skriver SQL'en. SkadeContext har et DbSet for hver tabel. Jeg har valgt SQLite, fordi hele databasen ligger i én fil, så projektet kan køres uden en databaseserver, fx af censor. EnsureCreated laver databasen med startdata første gang.",
         noegle: ["ORM", "tabeller", "DbContext", "DbSet", "én fil", "EnsureCreated"] }
   ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l7", nr: 7, titel: "Services: interface, async og dependency injection", min: 25,
+  { id: "m30l7", nr: 7, titel: "Services, del 1: interface og dependency injection", min: 20,
     ord: [
       ["Metode uden static", "En metode, der hører til et objekt og kaldes med objektet: `kunde.Hilsen()`. Den kan bruge objektets properties."],
       ["Interface", "En kontrakt: en liste af metoder uden indhold. En klasse, der skriver `: IKundeService`, lover at have dem alle."],
       ["Dependency injection", "Programmet laver selv de objekter, en klasse har brug for, og giver dem til den. Klassen beder om dem i sin konstruktør eller med `@inject`."],
-      ["AddScoped", "Registrerer en service i `Program.cs`: når nogen beder om interfacet, får de et objekt af klassen."],
-      ["async / await", "`await` venter på et svar, der tager tid (fx fra databasen), uden at låse programmet. Metoden skal være `async`."],
-      ["Task", "Det, en `async`-metode giver tilbage. `Task<List<Kunde>>` er et løfte om en liste af kunder, når arbejdet er færdigt."],
-      ["Include", "Beder EF Core om at hente de relaterede data med, fx kundens skader."],
-      ["SaveChangesAsync", "Gemmer alle ændringer i databasen. Uden den bliver intet gemt."]
+      ["AddScoped", "Registrerer en service i `Program.cs`: når nogen beder om interfacet, får de et objekt af klassen."]
     ],
     trin: [
+      { t: "forudsig", h: "Husker du fra sidst?",
+        q: "Repetition: en beregnet property og LINQ. Svar, før du kigger tilbage. Hvad skriver programmet?",
+        kode: R`List<Skade> skader = new List<Skade>
+{
+    new Skade { Status = SkadeStatus.Anmeldt },
+    new Skade { Status = SkadeStatus.Godkendt },
+    new Skade { Status = SkadeStatus.Behandles }
+};
+Console.WriteLine(skader.Count(s => s.ErAaben));
+
+class Skade
+{
+    public SkadeStatus Status { get; set; }
+    public bool ErAaben => Status == SkadeStatus.Anmeldt || Status == SkadeStatus.Behandles;
+}
+
+enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
+        output: "2",
+        fordi: "`ErAaben` er sand for Anmeldt og Behandles, men ikke for Godkendt. `Count` med en lambda tæller de to, der er åbne." },
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "I din `appsettings.json` står `\"SkadeDb\": \"Data Source=Data/skade.db\"`. Hvad er det?",
+        svar: ["En connection string: den fortæller, at databasen med kunder og skader er filen `skade.db` i mappen `Data`", "Navnet på en tabel", "En kunde i startdataene", "En NuGet-pakke"],
+        ret: 0, fordi: "`Program.cs` henter teksten med `GetConnectionString(\"SkadeDb\")` og giver den til `UseSqlite`. Så ved EF Core, hvilken fil databasen ligger i." },
       { t: "laes", h: "Metoder, der hører til et objekt",
         md: "Metoderne i lektion 1b har `static` og kaldes med deres navn: `Hils(\"Mette\");`. En klasse kan også have metoder **uden** `static`. Sådan en metode hører til hvert enkelt objekt. Den kaldes med objektet, et punktum og metodens navn, og den kan bruge objektets egne properties.\n\nDine services er bygget sådan: `KundeService.HentAlleAsync()` er en metode på service-objektet.",
         kode: R`Kunde a = new Kunde { Navn = "Mette" };
-Kunde b = new Kunde { Navn = "Ali" };
+Kunde b = new Kunde { Navn = "Peter" };
 Console.WriteLine(a.Hilsen());
 Console.WriteLine(b.Hilsen());
 
@@ -625,9 +763,9 @@ class Kunde
           ["return \"Kære \" + Navn;", "`Navn` er navnet på netop det objekt, metoden blev kaldt på."],
           ["a.Hilsen()", "Kalder metoden på `a`. Inde i metoden er `Navn` derfor \"Mette\"."]
         ],
-        output: "Kære Mette\nKære Ali" },
-      { t: "valg", q: "Hvorfor skriver `b.Hilsen()` \"Kære Ali\" og ikke \"Kære Mette\"?",
-        svar: ["Fordi metoden kaldes på b, så Navn inde i metoden er b's navn", "Fordi Ali står sidst i koden", "Fordi metoden er static", "Fordi Hilsen laver en ny kunde"],
+        output: "Kære Mette\nKære Peter" },
+      { t: "valg", q: "Hvorfor skriver `b.Hilsen()` \"Kære Peter\" og ikke \"Kære Mette\"?",
+        svar: ["Fordi metoden kaldes på b, så Navn inde i metoden er b's navn", "Fordi Peter står sidst i koden", "Fordi metoden er static", "Fordi Hilsen laver en ny kunde"],
         ret: 0, fordi: "En metode uden `static` arbejder på det objekt, den kaldes på. `b.Hilsen()` bruger `b.Navn`." },
       { t: "laes", h: "Interface: en kontrakt",
         md: "Et **interface** er en liste af metoder uden indhold: det siger **hvad** der kan gøres, ikke **hvordan**. En klasse, der skriver `: IHilsen` efter sit navn, lover at have alle metoderne. Navnet på et interface starter med stort I.",
@@ -655,9 +793,9 @@ class DanskHilsen : IHilsen
       { t: "forudsig",
         q: "To klasser opfylder samme interface. Hvad skriver programmet?",
         kode: R`IHilsen h = new DanskHilsen();
-Console.WriteLine(h.Hils("Ali"));
+Console.WriteLine(h.Hils("Peter"));
 h = new EngelskHilsen();
-Console.WriteLine(h.Hils("Ali"));
+Console.WriteLine(h.Hils("Peter"));
 
 interface IHilsen
 {
@@ -673,8 +811,43 @@ class EngelskHilsen : IHilsen
 {
     public string Hils(string navn) { return "Hello " + navn; }
 }`,
-        output: "Hej Ali\nHello Ali",
-        fordi: "Linjen `h.Hils(\"Ali\")` er den samme begge gange. Det er objektet i `h`, der bestemmer, hvad der sker. Sådan kan man skifte en klasse ud uden at ændre den kode, der bruger den." },
+        output: "Hej Peter\nHello Peter",
+        fordi: "Linjen `h.Hils(\"Peter\")` er den samme begge gange. Det er objektet i `h`, der bestemmer, hvad der sker. Sådan kan man skifte en klasse ud uden at ændre den kode, der bruger den." },
+      { t: "fejl",
+        q: "Programmet kan ikke bygges. Compileren siger, at `DanskHilsen` ikke opfylder interfacet `IHilsen`, og peger på linje 9. Linje 9 er rigtig og skal blive stående. Klik på den linje, der skal rettes.",
+        kode: R`IHilsen h = new DanskHilsen();
+Console.WriteLine(h.Hils("Mette"));
+
+interface IHilsen
+{
+    string Hils(string navn);
+}
+
+class DanskHilsen : IHilsen
+{
+    public string Hils(int navn)
+    {
+        return "Hej " + navn;
+    }
+}`,
+        linje: 11,
+        output: "Hej Mette",
+        fordi: "Interfacet kræver en metode `Hils`, der tager en `string`. Metoden i `DanskHilsen` tager en `int`, så den passer ikke til kontrakten, og compileren nægter at bygge. Det er netop meningen med et interface: compileren tjekker, at løftet bliver holdt.",
+        rettet: R`IHilsen h = new DanskHilsen();
+Console.WriteLine(h.Hils("Mette"));
+
+interface IHilsen
+{
+    string Hils(string navn);
+}
+
+class DanskHilsen : IHilsen
+{
+    public string Hils(string navn)
+    {
+        return "Hej " + navn;
+    }
+}` },
       { t: "laes", h: "Hvorfor dine sider bruger et interface",
         md: "Dine sider skal hente og gemme kunder. De får en `IKundeService` og kender kun dens metoder. Den rigtige klasse, `KundeService`, taler med databasen.\n\nHvem laver `KundeService`-objektet? Det gør Blazor selv. Det hedder **dependency injection**: i `Program.cs` står, at den, der beder om en `IKundeService`, skal have en `KundeService`. En side beder om den med `@inject`.",
         kode: R`// Program.cs: når nogen beder om IKundeService, så giv dem en KundeService.
@@ -691,6 +864,24 @@ builder.Services.AddScoped<IKundeService, KundeService>();
       { t: "valg", q: "En side har linjen `@inject IKundeService KundeService`. Hvor kommer objektet fra?",
         svar: ["Blazor laver en KundeService, fordi Program.cs har registreret den med AddScoped<IKundeService, KundeService>()", "Siden laver det selv med new", "Det kommer fra databasen", "Fra NuGet-pakken"],
         ret: 0, fordi: "Det er dependency injection: registreringen i `Program.cs` siger, hvilken klasse der passer til interfacet, og Blazor laver objektet og giver det til siden." },
+      { t: "forklar", h: "Til eksamen", q: "Censor: \"Hvad er et interface, og hvorfor har du lavet IKundeService?\" Sig svaret højt. Til eksamen peger du på `Services/IKundeService.cs`, som du laver i lektion 7b.",
+        svar: "Et interface er en kontrakt: en liste af metoder uden indhold. IKundeService siger, at der skal være HentAlleAsync, HentAsync, OpretAsync, OpdaterAsync og SletAsync. KundeService skriver : IKundeService og lover dermed at have dem alle, og compileren tjekker, at løftet holdes. Mine sider kender kun interfacet. De ved, hvad servicen kan, men ikke hvordan den gør det. Det er abstraktion, og det betyder, at jeg kan skifte KundeService ud uden at ændre siderne.",
+        noegle: ["kontrakt", "uden indhold", ": IKundeService", "compileren", "abstraktion", "skifte ud"] }
+  ] },
+
+  // ------------------------------------------------------------------
+  { id: "m30l7b", nr: "7b", titel: "Services, del 2: async, KundeService og SkadeService", min: 25,
+    ord: [
+      ["async / await", "`await` venter på et svar, der tager tid (fx fra databasen), uden at låse programmet. Metoden skal være `async`."],
+      ["Task", "Det, en `async`-metode giver tilbage. `Task<List<Kunde>>` er et løfte om en liste af kunder, når arbejdet er færdigt."],
+      ["Include", "Beder EF Core om at hente de relaterede data med, fx kundens skader."],
+      ["SaveChangesAsync", "Gemmer alle ændringer i databasen. Uden den bliver intet gemt."]
+    ],
+    trin: [
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "Hvad betyder `: IKundeService` i linjen `public class KundeService : IKundeService`?",
+        svar: ["At KundeService lover at have alle de metoder, der står i interfacet IKundeService", "At KundeService arver data fra databasen", "At KundeService er en side", "At IKundeService laver en KundeService"],
+        ret: 0, fordi: "Et interface er en kontrakt. Kolonet efter klassenavnet betyder, at klassen opfylder den. Mangler en af metoderne, kan projektet ikke bygges." },
       { t: "laes", h: "async og await: vent uden at låse",
         md: "Det tager tid at hente fra en database. Med `await` venter metoden på svaret, uden at resten af programmet står stille imens. En metode, der bruger `await`, skal være markeret `async` og give en `Task` tilbage. Navnet slutter med `Async`, så man kan se det.",
         kode: R`Console.WriteLine("Henter …");
@@ -721,8 +912,30 @@ async Task<int> TaelKunderAsync()
 }`,
         output: "Start\nDatabasen svarer\nKunder: 4",
         fordi: "`await` venter, til metoden er færdig. Først skrives \"Start\", så kører metoden og skriver \"Databasen svarer\", og bagefter skrives antallet." },
+      { t: "fejl",
+        kode: R`Console.WriteLine("Start");
+int antal = TaelKunderAsync();
+Console.WriteLine("Kunder: " + antal);
+
+async Task<int> TaelKunderAsync()
+{
+    await Task.Delay(50);
+    return 4;
+}`,
+        linje: 2,
+        output: "Start\nKunder: 4",
+        fordi: "En `async`-metode giver en `Task<int>` tilbage: et løfte om et tal, ikke selve tallet. Først `await` venter på løftet og giver tallet. Compileren siger, at den ikke kan lave en `Task<int>` om til en `int`. Rettelsen er `int antal = await TaelKunderAsync();`.",
+        rettet: R`Console.WriteLine("Start");
+int antal = await TaelKunderAsync();
+Console.WriteLine("Kunder: " + antal);
+
+async Task<int> TaelKunderAsync()
+{
+    await Task.Delay(50);
+    return 4;
+}` },
       { t: "laes", h: "KundeService: servicen, der taler med databasen",
-        md: "Her er den rigtige service. Hver metode laver sin egen korte forbindelse med fabrikken fra lektion 6, gør sit arbejde og lukker forbindelsen igen.",
+        md: "Her er den rigtige service. Hver metode laver sin egen korte forbindelse med fabrikken fra lektion 6b, gør sit arbejde og lukker forbindelsen igen.",
         kode: R`public class KundeService : IKundeService
 {
     private readonly IDbContextFactory<SkadeContext> _factory;
@@ -794,7 +1007,7 @@ public interface IKundeService
     Task SletAsync(int id);
 }` },
       { t: "opgave", h: "Lav KundeService", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
-        md: "Nu den rigtige service. Lav klassen `KundeService` i `Services`. Konstruktøren og `HentAlleAsync` er skrevet for dig i kopi-feltet: de er dit mønster. De fire andre metoder skriver du selv ud fra trin 9 og kravene.",
+        md: "Nu den rigtige service. Lav klassen `KundeService` i `Services`. Konstruktøren og `HentAlleAsync` er skrevet for dig i kopi-feltet: de er dit mønster. De fire andre metoder skriver du selv ud fra trin 5 og kravene.",
         krav: [
           "Klassen hedder `KundeService` og skriver `: IKundeService` (startkoden har det)",
           "`HentAsync(int id)` henter én kunde med sine skader: `Include(k => k.Skader)` og så `FirstOrDefaultAsync(k => k.Id == id)`",
@@ -897,7 +1110,7 @@ public class KundeService : IKundeService
 }`,
         md2: "`FindAsync` finder en række ud fra dens id. `Remove` markerer rækken til sletning, og først `SaveChangesAsync` sletter den. Kundens skader slettes automatisk med (cascade delete)." },
       { t: "opgave", h: "Lav SkadeService, og registrér begge services", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
-        md: "Servicen til skader er bygget på samme måde som `KundeService`. Skriv både interfacet og klassen selv, og registrér så begge services i `Program.cs` (trin 5).",
+        md: "Servicen til skader er bygget på samme måde som `KundeService`. Skriv både interfacet og klassen selv, og registrér så begge services i `Program.cs`, som du så det i lektion 7.",
         krav: [
           "`ISkadeService` har `HentAlleAsync()` (giver `Task<List<Skade>>`), `OpretAsync(Skade skade)`, `SkiftStatusAsync(int id, SkadeStatus status)` og `SletAsync(int id)`",
           "`SkadeService : ISkadeService` får fabrikken i konstruktøren, ligesom `KundeService`",
@@ -909,7 +1122,7 @@ public class KundeService : IKundeService
         tip: [
           "Kopiér `KundeService`, og ret navnene. `OpretAsync` og `SletAsync` er de samme, bare med `Skade` og `db.Skader`.",
           "`SkiftStatusAsync` ligner `OpdaterAsync`, men sætter kun én property: `skade.Status = status;`",
-          "Registreringen står i trin 5: `builder.Services.AddScoped<IKundeService, KundeService>();` og det samme for skader."
+          "Registreringen så du i lektion 7: `builder.Services.AddScoped<IKundeService, KundeService>();` og det samme for skader."
         ],
         output: "Appen ser ud som før, men nu kan siderne bede om IKundeService og ISkadeService.",
         loesning: R`// ===== Services/ISkadeService.cs =====
@@ -976,7 +1189,7 @@ public class SkadeService : ISkadeService
 }
 
 // ===== I Program.cs, lige under AddDbContextFactory =====
-// Dependency injection: når en side beder om IKundeService, får den en KundeService.
+// mine services (dependency injection)
 builder.Services.AddScoped<IKundeService, KundeService>();
 builder.Services.AddScoped<ISkadeService, SkadeService>();`,
         md2: "`AddScoped` betyder, at hver browserfane får sit eget service-objekt, som lever, så længe fanen er åben." },
@@ -991,7 +1204,7 @@ Database       SkadeContext + SQLite      tabeller med data`,
       { t: "forklar", q: "Eksamensspørgsmål: Hvad er lagdelt arkitektur, og hvordan ser man den i dit projekt?",
         svar: "Lagdelt arkitektur betyder, at programmet er delt i lag, der hver har ét ansvar. I SkadeApp viser siderne i Components/Pages data, services i mappen Services henter og gemmer data, og modellerne og databasen i Models og Data beskriver og gemmer kunder og skader. Siderne taler kun med services, aldrig direkte med databasen, så jeg kan skifte databasen ud uden at røre siderne.",
         noegle: ["ansvar", "sider", "services", "database", "skifte ud"] },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvad er dependency injection, og hvorfor bruger du interfaces til dine services?",
+      { t: "forklar", h: "Til eksamen", q: "Eksamensspørgsmål: Hvad er dependency injection, og hvorfor bruger du interfaces til dine services? Sig svaret højt, og peg på de to `AddScoped`-linjer i `Program.cs`.",
         svar: "Dependency injection betyder, at programmet selv laver de objekter, en klasse har brug for, og giver dem til den. I Program.cs registrerer jeg AddScoped<IKundeService, KundeService>(), og siderne beder om IKundeService med @inject. KundeService får på samme måde sin DbContext-fabrik i konstruktøren. Siderne kender kun interfacet, så de er løst koblet: jeg kan skifte KundeService ud med en anden klasse uden at ændre siderne.",
         noegle: ["Program.cs", "AddScoped", "@inject", "interface", "løs kobling", "konstruktør"] }
   ] },
@@ -1007,6 +1220,23 @@ Database       SkadeContext + SQLite      tabeller med data`,
       ["Komponent (i HTML)", "Et tag med stort forbogstav, fx `<NavLink>` eller `<EditForm>`, er ikke HTML, men en Blazor-komponent. Den laver selv HTML, når siden vises."]
     ],
     trin: [
+      { t: "forudsig", h: "Husker du fra sidst?",
+        q: "Repetition: `async` og `await`. Svar, før du kigger tilbage. Hvad skriver programmet?",
+        kode: R`Console.WriteLine("1");
+await GemAsync();
+Console.WriteLine("3");
+
+async Task GemAsync()
+{
+    await Task.Delay(20);
+    Console.WriteLine("2");
+}`,
+        output: "1\n2\n3",
+        fordi: "`await GemAsync()` venter, til metoden er helt færdig. Derfor kommer \"2\" før \"3\", selvom metoden selv venter lidt først." },
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "Hvilket lag i din app er det eneste, der bruger `SkadeContext` og taler med databasen?",
+        svar: ["Services: `KundeService` og `SkadeService`", "Siderne i `Components/Pages`", "Modellerne `Kunde` og `Skade`", "`NavMenu.razor`"],
+        ret: 0, fordi: "Det er lagdelt arkitektur: siderne beder en service om data, og kun servicen bruger `SkadeContext`. Modellerne beskriver bare, hvad en kunde og en skade er." },
       { t: "laes", h: "Tags: browseren får at vide, hvad noget er",
         md: "HTML er tekst med **tags** omkring. Et tag står i vinkelparenteser og fortæller browseren, hvad teksten er. De fleste tags kommer i par: et start-tag og et slut-tag med en skråstreg. Alt imellem dem hører til.",
         kode: R`<h1>Kunder</h1>
@@ -1053,8 +1283,8 @@ Database       SkadeContext + SQLite      tabeller med data`,
         <tr><th>Navn</th><th>Telefon</th></tr>
     </thead>
     <tbody>
-        <tr><td>Mette Jensen</td><td>22334455</td></tr>
-        <tr><td>Ali Hassan</td><td>40506070</td></tr>
+        <tr><td>Mette Jensen</td><td>12345678</td></tr>
+        <tr><td>Peter Bangsmann</td><td>88888888</td></tr>
     </tbody>
 </table>`,
         sprog: "html",
@@ -1108,7 +1338,7 @@ Database       SkadeContext + SQLite      tabeller med data`,
         svar: ["Den starter med stort bogstav", "Den står altid øverst i filen", "Den har en class", "Det kan man ikke se"],
         ret: 0, fordi: "HTML-tags skrives med små bogstaver. Tags med stort forbogstav er komponenter, og Blazor laver dem om til almindelig HTML, når siden vises." },
       { t: "opgave", h: "Lav menuen", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
-        md: "Nu ved du, hvad menuen er lavet af. Åbn `Components/Layout/NavMenu.razor` i dit projekt. Øverst står fire links fra skabelonen: **Home**, **Counter**, **Weather** og **Auth Required**. Dem skal du erstatte med dine tre sider. Linkene, der står der, er dit mønster (trin 9 viser opbygningen).",
+        md: "Nu ved du, hvad menuen er lavet af. Åbn `Components/Layout/NavMenu.razor` i dit projekt. Øverst står fire links fra skabelonen: **Home**, **Counter**, **Weather** og **Auth Required**. Dem skal du erstatte med dine tre sider. Linkene, der står der, er dit mønster (trin 11 viser opbygningen).",
         krav: [
                     "I `NavMenu.razor` er de fire første links (**Home**, **Counter**, **Weather** og **Auth Required**) erstattet af tre: **Overblik** til forsiden, **Kunder** til adressen `kunder` og **Skader** til adressen `skader`",
           "Resten af `NavMenu.razor`, delen med `AuthorizeView`, er uændret",
@@ -1138,13 +1368,13 @@ Database       SkadeContext + SQLite      tabeller med data`,
     </NavLink>
 </div>`,
         md2: "`NavLink` er et link, som Blazor selv markerer med en farve, når du står på den side. `<span class=\"bi …\">` er det lille ikon foran teksten." },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvad er forskellen på HTML, CSS og en Blazor-komponent i din app?",
+      { t: "forklar", h: "Til eksamen", q: "Eksamensspørgsmål: Hvad er forskellen på HTML, CSS og en Blazor-komponent i din app? Sig svaret højt, og peg på et `<NavLink>` i `Components/Layout/NavMenu.razor`.",
         svar: "HTML bestemmer indholdet, fx overskrifter, tabeller, felter og knapper. CSS bestemmer udseendet; i min app kommer det meste fra Bootstrap gennem class-attributter som btn og table. En Blazor-komponent er et tag med stort forbogstav, fx NavLink eller EditForm, eller mine egne som StatusMaerke. Den indeholder HTML og C# og laver selv HTML, når siden vises.",
         noegle: ["indhold", "udseende", "Bootstrap", "class", "komponent", "stort forbogstav"] }
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l8", nr: 9, titel: "Den første side: Overblik", min: 25,
+  { id: "m30l8", nr: 9, titel: "Den første side, del 1: Razor og StatusMaerke", min: 20,
     ord: [
       ["Razor", "Måden, man skriver HTML og C# sammen på i en `.razor`-fil. `@` skifter fra HTML til C#."],
       ["@page", "Giver siden en adresse, fx `@page \"/\"` for forsiden."],
@@ -1156,6 +1386,10 @@ Database       SkadeContext + SQLite      tabeller med data`,
       ["switch-udtryk", "Vælger en værdi ud fra flere muligheder: `status switch { … => \"grøn\", _ => \"rød\" }`. `_` betyder alle andre."]
     ],
     trin: [
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "Hvad er forskellen på `<th>` og `<td>` i en HTML-tabel?",
+        svar: ["`<th>` er en overskriftscelle, og `<td>` er en almindelig celle med data", "`<th>` er en række, og `<td>` er en tabel", "`<td>` er fed skrift", "Der er ingen forskel"],
+        ret: 0, fordi: "En række er `<tr>`. Indeni står cellerne: `<th>` i overskriftsrækken og `<td>` i datarækkerne." },
       { t: "laes", h: "En .razor-fil: HTML og C# sammen",
         md: "En side i Blazor er HTML med C# indimellem. Tegnet `@` skifter til C#. Her er en lille side:",
         kode: R`@page "/hej"
@@ -1234,7 +1468,7 @@ HttpContext.AcceptsInteractiveRouting() ? new InteractiveServerRenderMode(preren
         sprog: "razor", frag: true,
         md2: "`@using` i en `.razor`-fil er det samme som `using` i en `.cs`-fil. Linjerne i `_Imports.razor` gælder for alle `.razor`-filer i projektet.\n\nSkriv også `<html lang=\"da\">` i stedet for `<html lang=\"en\">` øverst i `App.razor`. Det fortæller browseren, at siden er på dansk." },
       { t: "laes", h: "En lille genbrugelig komponent",
-        md: "Status skal vises på tre sider som et farvet mærke: grå, gul, grøn eller rød. I stedet for at skrive det tre gange laver man én **komponent**, som får en værdi udefra som **parameter**. Farven vælges med et **switch-udtryk**.\n\nHer er en anden komponent bygget på samme måde, `TypeMaerke`, der viser en skades **type** som et mærke. Din `StatusMaerke` skal du selv skrive i trin 9 ud fra dette mønster.",
+        md: "Status skal vises på tre sider som et farvet mærke: grå, gul, grøn eller rød. I stedet for at skrive det tre gange laver man én **komponent**, som får en værdi udefra som **parameter**. Farven vælges med et **switch-udtryk**.\n\nHer er en anden komponent bygget på samme måde, `TypeMaerke`, der viser en skades **type** som et mærke. Din `StatusMaerke` skal du selv skrive i trin 11 ud fra dette mønster.",
         kode: R`@* Viser en skadetype som et farvet mærke. *@
 <span class="badge @Farve">@Type</span>
 
@@ -1273,8 +1507,37 @@ string Farve(SkadeStatus status) => status switch
 enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
         output: "grøn\nrød\ngrå",
         fordi: "`Godkendt` passer til linjen med \"grøn\", og `Anmeldt` til \"grå\". `Afvist` står ikke på nogen linje, så den rammer `_` og giver \"rød\"." },
+      { t: "fejl",
+        q: "Status **Behandles** skal være gul, men programmet skriver `grøn`. Klik på linjen med fejlen.",
+        kode: R`Console.WriteLine(Farve(SkadeStatus.Behandles));
+
+string Farve(SkadeStatus status) => status switch
+{
+    SkadeStatus.Anmeldt => "grå",
+    SkadeStatus.Behandles => "grøn",
+    SkadeStatus.Godkendt => "grøn",
+    _ => "rød"
+};
+
+enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
+        linje: 6,
+        logisk: true,
+        output: "grøn",
+        rettetOutput: "gul",
+        fordi: "Switch-udtrykket finder den linje, der passer til statussen. For `Behandles` står der \"grøn\", så det er den linje, der er forkert. I din `StatusMaerke` er det `text-bg-warning`, som er gul.",
+        rettet: R`Console.WriteLine(Farve(SkadeStatus.Behandles));
+
+string Farve(SkadeStatus status) => status switch
+{
+    SkadeStatus.Anmeldt => "grå",
+    SkadeStatus.Behandles => "gul",
+    SkadeStatus.Godkendt => "grøn",
+    _ => "rød"
+};
+
+enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }` },
       { t: "opgave", h: "Lav StatusMaerke.razor", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
-        md: "Lav komponenten i mappen `Components` (ikke i `Pages`: den er ikke en side og har ingen `@page`). {{Højreklik på `Components` → **Add → Razor Component…** → `StatusMaerke.razor`.||Højreklik på `Components` → **Add → File**, og kald filen `StatusMaerke.razor`.}} Skriv den selv ud fra kravene. Trin 7 og 8 viser byggestenene.",
+        md: "Lav komponenten i mappen `Components` (ikke i `Pages`: den er ikke en side og har ingen `@page`). {{Højreklik på `Components` → **Add → Razor Component…** → `StatusMaerke.razor`.||Højreklik på `Components` → **Add → File**, og kald filen `StatusMaerke.razor`.}} Skriv den selv ud fra kravene. Trin 8 og 9 viser byggestenene.",
         krav: [
           "Filen viser et `<span>` med Bootstrap-klassen `badge` og statussen som tekst",
           "Komponenten har en parameter: `[Parameter] public SkadeStatus Status { get; set; }`",
@@ -1284,8 +1547,9 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
         ],
         tip: [
           "To klasser i samme `class` står med mellemrum. Den ene kommer fra C#: `class=\"badge @Farve\"`.",
-          "`TypeMaerke` i trin 7 er bygget på samme måde. Skift `Type` ud med `Status`, og giv hver status sin farveklasse.",
-          "`private string Farve => Status switch { SkadeStatus.Anmeldt => \"text-bg-secondary\", … , _ => \"text-bg-danger\" };`"
+          "`TypeMaerke` i trin 8 er bygget på samme måde. Skift `Type` ud med `Status`, og giv hver status sin farveklasse.",
+          "`private string Farve => Status switch { SkadeStatus.Anmeldt => \"text-bg-secondary\", … , _ => \"text-bg-danger\" };`",
+          "Siger compileren, at `SkadeStatus` ikke findes, så mangler `@using SkadeApp.Models` nederst i `Components/_Imports.razor` (ideen \"Ret App.razor og _Imports.razor\" i denne lektion)."
         ],
         output: "Ingen ændring endnu. Komponenten bruges på overbliksiden i næste opgave.",
         loesning: R`@* En lille genbrugelig komponent: viser en status som et farvet mærke. Bruges på alle tre sider. *@
@@ -1302,6 +1566,34 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
         _ => "text-bg-danger"
     };
 }` },
+      { t: "forklar", h: "Til eksamen", q: "Censor: \"Hvorfor har du slået prerendering fra?\" Sig svaret højt, og peg på `prerender: false` i `Components/App.razor`.",
+        svar: "Med prerendering tegner serveren siden to gange: først som almindelig HTML, så den kommer hurtigt frem, og igen, når forbindelsen til browseren er oppe. Så kører OnInitializedAsync også to gange, og databasen bliver spurgt to gange. Jeg har slået det fra med new InteractiveServerRenderMode(prerender: false) i App.razor, så alt kun kører én gang. Det gør det også lettere at fejlsøge, fordi et breakpoint kun stopper én gang. Prisen er, at siden er et øjeblik længere om at komme frem.",
+        noegle: ["to gange", "OnInitializedAsync", "App.razor", "prerender: false", "breakpoint"] }
+  ] },
+
+  // ------------------------------------------------------------------
+  { id: "m30l8b", nr: "9b", titel: "Den første side, del 2: Overblik med tal og tabeller", min: 25,
+    ord: [
+      ["ToString(\"C\")", "Skriver et tal som et beløb i landets valuta: `4.500,00 kr.` på dansk."],
+      ["Null-betinget operator", "`?.` i `skade.Kunde?.Navn`: er `Kunde` null, bliver resultatet null i stedet for at programmet går ned."]
+    ],
+    trin: [
+      { t: "forudsig", h: "Husker du fra sidst?",
+        q: "Repetition: `GroupBy` samler ens værdier i grupper. Svar, før du kigger tilbage. Hvad skriver programmet?",
+        kode: R`List<SkadeStatus> statusser = new List<SkadeStatus> { SkadeStatus.Godkendt, SkadeStatus.Anmeldt, SkadeStatus.Godkendt };
+
+foreach (var gruppe in statusser.GroupBy(s => s).OrderBy(g => g.Key))
+{
+    Console.WriteLine(gruppe.Key + ": " + gruppe.Count());
+}
+
+enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
+        output: "Anmeldt: 1\nGodkendt: 2",
+        fordi: "Der bliver én gruppe pr. værdi, der findes i listen: Anmeldt og Godkendt. Behandles og Afvist findes ikke, så de får ingen gruppe. `OrderBy(g => g.Key)` sætter grupperne i enum'ens rækkefølge." },
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "Din `StatusMaerke` har `[Parameter] public SkadeStatus Status { get; set; }`. Hvad gør `[Parameter]`?",
+        svar: ["Værdien kommer udefra, fra den side, der bruger komponenten: `<StatusMaerke Status=\"skade.Status\" />`", "Den henter statussen fra databasen", "Den gør statussen skjult", "Den laver en ny side"],
+        ret: 0, fordi: "En parameter er komponentens indgang. Hver side, der bruger `StatusMaerke`, giver den en status, og komponenten vælger farven ud fra den." },
       { t: "laes", h: "Tre små ting til visningen",
         md: "Tre ting bruges på alle dine sider, når data skal vises pænt:",
         kode: R`@skade.Beloeb.ToString("C")          4.500,00 kr.
@@ -1314,7 +1606,7 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
           ["?.", "Er det til venstre `null`, gives `null` i stedet for at gå ned. På en side skrives `null` som ingenting."]
         ] },
       { t: "opgave", h: "Overblik, del 1: hent data, og vis tre tal", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
-        md: "Nu skal forsiden vise rigtige data. Erstat indholdet af `Components/Pages/Home.razor` med startkoden nedenfor. HTML-delen med de tre bokse er skrevet for dig (det er Bootstrap). Du skriver C#-delen: hvor data kommer fra, og hvad der står i boksene. Trin 1 og 3 viser byggestenene.",
+        md: "Nu skal forsiden vise rigtige data. Erstat indholdet af `Components/Pages/Home.razor` med startkoden nedenfor. HTML-delen med de tre bokse er skrevet for dig (det er Bootstrap). Du skriver C#-delen: hvor data kommer fra, og hvad der står i boksene. Lektion 9 viste byggestenene: en `.razor`-fil med `@inject`, `@if (… == null)` og `OnInitializedAsync`.",
         krav: [
           "Øverst: `@page \"/\"` og `@inject` af både `IKundeService` og `ISkadeService`",
           "`@code` har to felter: `List<Skade>? skader` og `int antalKunder`",
@@ -1324,9 +1616,10 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
           "Appen viser **4** kunder, **3** åbne skader og **13.900,00 kr.** udbetalt"
         ],
         tip: [
-          "Hele siden efter `<h1>` står inde i `@if (skader == null) { … } else { … }`, ligesom i trin 1.",
+          "Hele siden efter `<h1>` står inde i `@if (skader == null) { … } else { … }`, ligesom på den lille side i lektion 9.",
           "Antallet af åbne skader: `@skader.Count(s => s.ErAaben)`. Beløbet: `Where` på status `Godkendt`, så `Sum` på `Beloeb`, og til sidst `.ToString(\"C\")`.",
-          "Antal kunder: `antalKunder = (await KundeService.HentAlleAsync()).Count;`. Parentesen sørger for, at listen er hentet, før der tælles."
+          "Antal kunder: `antalKunder = (await KundeService.HentAlleAsync()).Count;`. Parentesen sørger for, at listen er hentet, før der tælles.",
+          "Siger compileren, at `IKundeService` eller `Skade` ikke findes, så mangler `@using SkadeApp.Services` eller `@using SkadeApp.Models` nederst i `Components/_Imports.razor`."
         ],
         start: R`@* Skriv @page og de to @inject her *@
 
@@ -1514,7 +1807,7 @@ else
         win: ["Sæt et breakpoint på linjen `skader = await SkadeService.HentAlleAsync();` i `Home.razor` (klik i den grå kant til venstre for linjen).", "Start med **F5**. Browseren åbner, og Visual Studio stopper på linjen.", "Tryk **F10** (Step Over) én gang. Se i vinduet **Locals**: `skader` har nu `Count = 7`.", "Fold `skader` ud med den lille pil, og fold den første skade ud. `Kunde` er udfyldt med en kunde, fordi servicen bruger `Include(s => s.Kunde)`.", "Fortsæt med **F5**, og stop debuggeren med den røde firkant."],
         mac: ["Sæt et breakpoint på linjen `skader = await SkadeService.HentAlleAsync();` i `Home.razor` (klik i kanten ved linjenummeret).", "Start med den **grønne bille** 🐞. Browseren åbner, og Rider stopper på linjen.", "Klik på **Step Over** én gang. Se i vinduet **Threads & Variables**: `skader` har nu 7 elementer.", "Fold `skader` ud med den lille pil, og fold den første skade ud. `Kunde` er udfyldt med en kunde, fordi servicen bruger `Include(s => s.Kunde)`.", "Fortsæt med den grønne pil i Debug-vinduet, og stop debuggeren med den røde firkant."],
         md2: "Det er en god ting at vise til eksamen: et breakpoint i siden, og så kan man se, hvad der kommer fra databasen." },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvad sker der, fra man åbner forsiden, til tallene står på skærmen?",
+      { t: "forklar", h: "Til eksamen", q: "Eksamensspørgsmål: Hvad sker der, fra man åbner forsiden, til tallene står på skærmen? Sig svaret højt, og peg på `OnInitializedAsync` i `Components/Pages/Home.razor`.",
         svar: "Adressen / passer til @page \"/\" i Home.razor, så Blazor laver siden og giver den IKundeService og ISkadeService med dependency injection. Siden tegnes med \"Henter data …\", og OnInitializedAsync kalder servicene. De laver en DbContext, og EF Core henter kunder og skader fra SQLite-databasen. Når data er kommet, tegnes siden igen, og LINQ regner antal, åbne skader og det udbetalte beløb ud.",
         noegle: ["@page", "@inject", "OnInitializedAsync", "service", "EF Core", "LINQ"] }
   ] }

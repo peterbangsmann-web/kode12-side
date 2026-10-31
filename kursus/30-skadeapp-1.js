@@ -8,13 +8,13 @@ const R = String.raw;
 
 window.KURSUS.push({
   id: "m30", nr: -1, del: "Eksamensprojekt", ikon: "🛡️",
-  titel: "Eksamensprojekt: SkadeApp trin for trin",
-  dag: "Aflevering fredag 30/10 kl. 12 · Mundtlig eksamen 6/11",
-  intro: "I dette modul bygger du dit eksamensprojekt, **SkadeApp**, fra en tom mappe til en færdig app. Det er et lille system til et forsikringsselskab: kunder, deres skadesanmeldelser og et overblik over, hvad der er udbetalt. Kun medarbejdere, der er logget ind, kan bruge det.\n\nHver lektion forklarer de ting, du skal bruge, og slutter med, at du bygger den næste del i dit eget projekt. Modulet står helt for sig selv: alt, projektet bruger, bliver forklaret her, og du skal ikke bruge andre moduler til det.\n\nKommer du i tidsnød, ligger et færdigt og afprøvet projekt i mappen `Desktop\\c#\\C#  Ekasmen\\Facit\\SkadeApp`. Brug det til at sammenligne med, når noget driller.",
+  titel: "Eksamensprojekt: SkadeApp",
+  dag: "Afleveret 30/10 · Mundtlig eksamen fredag 6/11",
+  intro: "**SkadeApp** er dit eksamensprojekt: et lille system til et forsikringsselskab med kunder, deres skadesanmeldelser og et overblik over, hvad der er udbetalt. Kun medarbejdere, der er logget ind, kan bruge det. Appen er afleveret, og til eksamen skal du vise den og forklare din kode.\n\nModulet har to dele:\n\n- **Del 1 · Sådan er appen bygget** (lektion 0–14 og et værksted): hele appen fra en tom mappe, del for del. Koden passer til din afleverede app, også dine startdata. Hver lektion starter med spørgsmål fra de tidligere lektioner og slutter med et eksamensspørgsmål, du svarer højt på.\n- **Del 2 · Eksamenstræning** (lektion E0–E14 og et værksted): din egen kode, som censor vil spørge til, læringsmålene, svære spørgsmål og præsentationen. Dagsplanen for 1.–5. november bruger denne del.\n\nDriller et emne i del 2, så tag den lektion i del 1, der bygger det. Modulet står helt for sig selv: alt, projektet bruger, bliver forklaret her.\n\nDin afleverede app ligger i `Desktop\\c#\\C#  Ekasmen\\min eksamen\\SkadeApp`. Den skal du vise til eksamen, så lav ikke om i den. Øv ændringer i en kopi (værkstedet i del 2 viser hvordan).",
   lektioner: [
 
   // ------------------------------------------------------------------
-  { id: "m30l0", nr: 0, titel: "Det store overblik: hvad er alle ordene?", min: 20,
+  { id: "m30l0", nr: 0, afsnit: "Del 1 · Sådan er appen bygget", titel: "Det store overblik: hvad er alle ordene?", min: 20,
     ord: [
       ["Browser", "Programmet, man ser hjemmesider i: Chrome, Edge eller Safari."],
       ["Server", "En computer, der kører et program og venter på, at browsere beder om noget. Mens du udvikler, er serveren din egen computer."],
@@ -54,6 +54,9 @@ viser siden`,
       { t: "valg", q: "Hvad er sammenhængen mellem ASP.NET Core og Blazor?",
         svar: ["Blazor er en del af ASP.NET Core: en måde at lave sider på, mens ASP.NET Core står for resten, fx webserveren og login", "De er to konkurrerende sprog", "ASP.NET Core er en del af Blazor", "Blazor er en database"],
         ret: 0, fordi: "ASP.NET Core er hele frameworket til web. Blazor og MVC er to måder at lave sider på inde i det." },
+      { t: "valg", q: "Blazor findes i to udgaver: Blazor Server og Blazor WebAssembly. Hvad er forskellen?",
+        svar: ["I Blazor Server kører C#-koden på serveren. I WebAssembly sendes C#-koden til browseren og kører dér", "Blazor Server kan ikke bruge en database", "WebAssembly er det samme som MVC", "Blazor Server virker kun på Mac"],
+        ret: 0, fordi: "Projektkravene har dem som skabelon 1 (WebAssembly eller Auto) og skabelon 2 (Server). Du bruger Blazor Server: koden kører på serveren ved siden af databasen, og browseren holder en forbindelse åben." },
       { t: "valg", q: "Projektkravene giver fire skabeloner. Hvad er den store forskel på MVC og Blazor?",
         svar: ["I MVC er en side delt i controller, model og view. I Blazor er en side én komponent med HTML og C# sammen", "MVC kan ikke bruge en database", "Blazor kan kun bruges på Mac", "Der er ingen forskel"],
         ret: 0, fordi: "Begge bygger på ASP.NET Core og kan bruge samme database og services. Forskellen er, hvordan siderne er bygget op." },
@@ -70,7 +73,7 @@ Backend (logikken)        C#: services, der henter og gemmer     mappen Services
 Database                  tabeller med kunder og skader          SQLite + EF Core (mappen Data)`,
         sprog: "text",
         md2: "Delingen i lag, der hver har ét ansvar, hedder **lagdelt arkitektur**. Du ser den igen i næste lektion og bygger den i lektion 6 og 7." },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvilke teknologier bruger din app, og hvad bruges de til?",
+      { t: "forklar", h: "Til eksamen", q: "Eksamensspørgsmål: Hvilke teknologier bruger din app, og hvad bruges de til? Sig svaret højt, og peg på `Program.cs` og mappen `Components`, mens du siger det.",
         svar: "Appen er bygget med ASP.NET Core, Microsofts framework til web-apps i C#. Siderne er lavet med Blazor Server: hver side er en komponent med HTML og C#, og koden kører på serveren. Udseendet er HTML og CSS med Bootstrap. Data gemmes i en SQLite-database, og EF Core oversætter mellem mine C#-klasser og tabellerne. Login klares af ASP.NET Core Identity. Tilsammen er det en full stack-app: frontend, backend og database.",
         noegle: ["ASP.NET Core", "Blazor Server", "HTML og CSS", "SQLite", "EF Core", "full stack"] }
     ] },
@@ -111,7 +114,7 @@ Models + Data      Modeller og   beskriver kunder og skader,
         md: "Lav projektet nu, og kør det, før du ændrer noget. Så ved du, at alt virker fra starten.\n\nProjektet laves **med login** (*Individual Accounts*). Så laver skabelonen selv siderne til at logge ind, oprette en bruger og logge ud. Dem skal du ikke skrive. Du slår login til for dine egne sider i lektion 13.",
         win: ["Åbn Visual Studio, og klik **Create a new project**.", "Skriv `blazor` i søgefeltet, vælg **Blazor Web App**, og klik **Next**.", "Project name: `SkadeApp`. Klik **Next**.", "Framework: **.NET 10.0**. Authentication type: **Individual Accounts**. Fjern fluebenet ved **Configure for HTTPS**.", "**Interactive render mode: Server**. **Interactivity location: Global**. Lad **Include sample pages** have flueben. Sæt **ikke** flueben i **Do not use top-level statements**: så ligner din `Program.cs` koden i lektionerne. Klik **Create**.", "Kør med den grønne pil ▶. Browseren åbner, og du ser **Hello, world!**. Klik på **Counter** i menuen, og klik på knappen et par gange. Menuen har også **Register** og **Login**: det er login-siderne fra skabelonen."],
         mac: ["Åbn en terminal i den mappe, hvor dine projekter skal ligge.", "Skriv `dotnet new blazor -n SkadeApp --auth Individual --interactivity Server --all-interactive --no-https`, og tryk Enter.", "Åbn mappen `SkadeApp` i Rider (**File → Open…**).", "Kør med den grønne pil ▶. Browseren åbner, og du ser **Hello, world!**. Klik på **Counter** i menuen, og klik på knappen et par gange. Menuen har også **Register** og **Login**: det er login-siderne fra skabelonen."],
-        md2: "Uden HTTPS slipper du for spørgsmål om certifikater, når appen starter. Det er fint til et projekt, der kun kører på din egen computer." },
+        md2: "Uden HTTPS slipper du for spørgsmål om certifikater, når appen starter. Det er fint til et projekt, der kun kører på din egen computer.\n\n{{Visual Studio sætter login op med **SQL Server LocalDB**, en database, der kun findes på Windows. I lektion 6 skifter du login over til **SQLite**, ligesom resten af appen, så projektet også kan køre på en Mac og hos censor.||Med `dotnet new` bruger login allerede **SQLite**, en database i én fil. Det samme bruger resten af appen fra lektion 6.}}" },
       { t: "laes", h: "Filerne i projektet",
         md: "Skabelonen har lavet en række filer. Dem her skal du kende:",
         kode: R`SkadeApp
@@ -152,7 +155,10 @@ Models + Data      Modeller og   beskriver kunder og skader,
       { t: "ide", h: "Ryd op: slet eksempelsiderne",
         md: "Eksempelsiderne fra skabelonen skal ikke med i dit projekt.",
         win: ["Højreklik på `Counter.razor` i mappen `Components/Pages` i Solution Explorer → **Delete**.", "Gør det samme med `Weather.razor` og `Auth.razor`.", "Kør appen. Menuen har stadig links til Counter og Weather, men de fører nu til en side om, at adressen ikke findes. Menuen retter du i lektionen om HTML, når du ved, hvad den er lavet af."],
-        mac: ["Højreklik på `Counter.razor` i mappen `Components/Pages` i Rider → **Delete**.", "Gør det samme med `Weather.razor` og `Auth.razor`.", "Kør appen. Menuen har stadig links til Counter og Weather, men de fører nu til en side om, at adressen ikke findes. Menuen retter du i lektionen om HTML, når du ved, hvad den er lavet af."] }
+        mac: ["Højreklik på `Counter.razor` i mappen `Components/Pages` i Rider → **Delete**.", "Gør det samme med `Weather.razor` og `Auth.razor`.", "Kør appen. Menuen har stadig links til Counter og Weather, men de fører nu til en side om, at adressen ikke findes. Menuen retter du i lektionen om HTML, når du ved, hvad den er lavet af."] },
+      { t: "forklar", h: "Til eksamen", q: "Censor: \"Hvad sker der i din app, når brugeren klikker på en knap?\" Sig svaret højt, som til eksamen.",
+        svar: "Min app er Blazor Server. Browseren viser siden og holder en forbindelse åben til serveren. Når brugeren klikker, sender browseren klikket til serveren, og den C#-metode, der hører til knappen, kører dér. Metoden beder fx en service om at gemme i databasen. Bagefter sender serveren de ændringer, der skal ske på siden, tilbage til browseren.",
+        noegle: ["Blazor Server", "serveren", "forbindelse", "C#-metode", "service", "ændringer"] }
 
     ] },
 
@@ -163,7 +169,7 @@ Models + Data      Modeller og   beskriver kunder og skader,
       ["Variabel", "Et navn til en værdi, som programmet husker: `int antal = 3;`."],
       ["Type", "Hvilken slags værdi en variabel kan have: `int` (heltal), `decimal` (kommatal), `string` (tekst), `bool` (sandt/falsk)."],
       ["if / else", "Programmet vælger: koden i `if` kører kun, når betingelsen er sand. Ellers kører koden i `else`."],
-      ["Array", "Mange værdier af samme type i én variabel: `string[] navne = { \"Mette\", \"Ali\" };`. Fast længde."],
+      ["Array", "Mange værdier af samme type i én variabel: `string[] navne = { \"Mette\", \"Peter\" };`. Fast længde."],
       ["foreach", "Gentager koden én gang for hvert element: `foreach (string n in navne) { … }`."],
       ["for", "Gentager koden et bestemt antal gange med en tæller: `for (int i = 0; i < 3; i++) { … }`."],
       ["Metode", "Et stykke kode med et navn, som kan kaldes: `LaegSammen(3, 4)`."],
@@ -258,9 +264,22 @@ else
 }`,
         output: "Ingen åbne skader\nIntet at vise",
         fordi: "`aabne` er 0, så den første besked skrives. `&&` kræver, at begge sider er sande, men `aabne > 0` er falsk, så `else` kører." },
+      { t: "fejl",
+        kode: R`int aabne = 0;
+if (aabne = 0)
+{
+    Console.WriteLine("Ingen åbne skader");
+}`,
+        linje: 2,
+        fordi: "Ét lighedstegn lægger en værdi i en variabel. I en `if` skal der stå et spørgsmål, der giver `true` eller `false`, og det skrives med to lighedstegn: `aabne == 0`. Compileren siger, at den ikke kan lave en `int` om til en `bool`.",
+        rettet: R`int aabne = 0;
+if (aabne == 0)
+{
+    Console.WriteLine("Ingen åbne skader");
+}` },
       { t: "laes", h: "Arrays og løkker: gentag for hvert element",
         md: "Et **array** er mange værdier af samme type i én variabel. Typen får `[]` bagefter, og værdierne står i `{ }` med komma imellem. Et array har en fast længde, og `.Length` er antallet.\n\nEn **løkke** gentager kode. `foreach` kører én gang for hvert element. `for` kører et bestemt antal gange med en tæller.",
-        kode: R`string[] navne = { "Mette", "Ali", "Søren" };
+        kode: R`string[] navne = { "Mette", "Peter", "Søren" };
 Console.WriteLine(navne.Length);
 Console.WriteLine(navne[0]);
 
@@ -279,7 +298,7 @@ for (int i = 0; i < 3; i++)
           ["foreach (string n in navne)", "For hvert element i `navne`: læg det i `n`, og kør koden i `{ }`."],
           ["for (int i = 0; i < 3; i++)", "Tre dele adskilt af semikolon: start `i` ved 0, fortsæt så længe `i < 3`, og læg 1 til `i` efter hver gang."]
         ],
-        output: "3\nMette\nKunde: Mette\nKunde: Ali\nKunde: Søren\n0\n1\n2" },
+        output: "3\nMette\nKunde: Mette\nKunde: Peter\nKunde: Søren\n0\n1\n2" },
       { t: "forudsig",
         kode: R`int[] beloeb = { 4500, 2400, 3200 };
 int sum = 0;
@@ -290,6 +309,20 @@ foreach (int b in beloeb)
 Console.WriteLine(sum);`,
         output: "10100",
         fordi: "Løkken kører tre gange og lægger hvert beløb til `sum`: 0 + 4500 + 2400 + 3200 = 10100." },
+      { t: "spor", h: "Følg løkken",
+        q: "Løkken lægger de tre godkendte beløb fra din forside sammen. Skriv `b` og `sum`, lige efter at linjen er udført. Linje 3 er `foreach`-linjen: der får `b` det næste beløb. Skemaet har kun linje 2, 3 og 5.",
+        kode: R`int[] beloeb = { 4500, 6200, 3200 };
+int sum = 0;
+foreach (int b in beloeb)
+{
+    sum = sum + b;
+}
+Console.WriteLine(sum);`,
+        kolonner: ["b", "sum"],
+        raekker: [[2, "=–", "=0"], [3, "=4500", "=0"], [5, "4500", "4500"], [3, "6200", "4500"], [5, "6200", "10700"], [3, "3200", "10700"], [5, "3200", "13900"]],
+        slut: false,
+        output: "13900",
+        fordi: "Hver gang løkken starter forfra, får `b` det næste beløb, og linje 5 lægger det til `sum`. 4500 + 6200 + 3200 = 13900. Det er tallet **Udbetalt i alt** på din forside." },
       { t: "laes", h: "Metoder: giv koden et navn",
         md: "En **metode** er et stykke kode med et navn. Du skriver den én gang og kalder den, så tit du vil. I parentesen står **parametrene**: de værdier, metoden får med. Foran navnet står, hvad metoden giver tilbage: en type, fx `int`, eller `void`, hvis den ikke giver noget tilbage. `return` giver værdien tilbage og stopper metoden.\n\nI et lille program står metoderne under den kode, der kalder dem.",
         kode: R`Hils("Mette");
@@ -326,7 +359,10 @@ static [[int]] Dobbelt(int tal)
         fordi: "Metoden giver et heltal tilbage, så typen foran navnet er `int`. `return` giver værdien `tal * 2` tilbage til den, der kaldte." },
       { t: "valg", q: "Hvad er forskellen på `=` og `==`?",
         svar: ["= lægger en værdi i en variabel. == spørger, om to værdier er ens", "Der er ingen forskel", "== lægger en værdi i en variabel. = spørger, om de er ens", "= bruges kun til tekst"],
-        ret: 0, fordi: "`antal = 3;` lægger 3 i `antal`. `antal == 3` er et spørgsmål, der giver `true` eller `false`, fx i en `if`." }
+        ret: 0, fordi: "`antal = 3;` lægger 3 i `antal`. `antal == 3` er et spørgsmål, der giver `true` eller `false`, fx i en `if`." },
+      { t: "forklar", h: "Sig det højt", q: "Forklar med dine egne ord: hvad er en metode, hvad er en parameter, og hvad gør `return`?",
+        svar: "En metode er et stykke kode med et navn, som man kan kalde, så tit man vil. Parametrene står i parentesen efter navnet: det er de værdier, metoden får med, når den kaldes. Foran navnet står typen på det, metoden giver tilbage, eller void, hvis den ikke giver noget. return giver værdien tilbage til det sted, hvor metoden blev kaldt, og stopper metoden. I min app er fx HentAlleAsync en metode i KundeService.",
+        noegle: ["navn", "kalde", "parameter", "return", "void"] }
     ] },
 
   // ------------------------------------------------------------------
@@ -340,16 +376,34 @@ static [[int]] Dobbelt(int tal)
       ["Namespace", "Et efternavn til klasserne, der svarer til mappen, fx `SkadeApp.Models`. Andre filer skriver `using SkadeApp.Models;` for at bruge dem."]
     ],
     trin: [
+      { t: "forudsig", h: "Husker du fra sidst?",
+        q: "Repetition: variabler og `if`. Svar, før du kigger tilbage. Hvad skriver programmet?",
+        kode: R`int antal = 2;
+antal++;
+if (antal >= 3)
+{
+    Console.WriteLine("Mange skader");
+}
+else
+{
+    Console.WriteLine("Få skader");
+}`,
+        output: "Mange skader",
+        fordi: "`antal++` lægger 1 til, så `antal` er 3. `3 >= 3` er sandt, så koden i `if` kører, og `else` springes over." },
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "Hvad betyder `void` foran navnet på en metode, fx `static void Hils(string navn)`?",
+        svar: ["At metoden ikke giver nogen værdi tilbage", "At metoden er tom", "At metoden ikke har parametre", "At metoden kun kan kaldes én gang"],
+        ret: 0, fordi: "Foran navnet står det, metoden giver tilbage. `void` betyder ingenting. En metode, der giver et tal tilbage, har fx `int` foran navnet og en `return`-linje." },
       { t: "laes", h: "To kunder med almindelige variabler",
         md: "I lektion 1b lavede du én variabel til hver oplysning. Sådan ser to kunder ud på den måde:",
         kode: R`string navn1 = "Mette Jensen";
-string telefon1 = "22334455";
-string navn2 = "Ali Hassan";
-string telefon2 = "33445566";
+string telefon1 = "12345678";
+string navn2 = "Peter Bangsmann";
+string telefon2 = "88888888";
 
 Console.WriteLine(navn1 + " " + telefon1);
 Console.WriteLine(navn2 + " " + telefon2);`,
-        output: "Mette Jensen 22334455\nAli Hassan 33445566",
+        output: "Mette Jensen 12345678\nPeter Bangsmann 88888888",
         md2: "Det virker med to kunder. Men der er to problemer:\n\n- SkadeApp har mange kunder, og hver kunde har fire oplysninger (id, navn, e-mail, telefon). 100 kunder ville kræve 400 variabler.\n- Intet i koden siger, at `navn1` og `telefon1` hører til den samme kunde. Det er kun tallet i navnene, der viser det.\n\nLøsningen hedder en **klasse**. Den kommer i næste trin." },
       { t: "laes", h: "En klasse beskriver, hvad én kunde har",
         md: "En **klasse** samler de oplysninger, der hører sammen. Klassen `Kunde` siger: en kunde har et navn og et telefonnummer. Klassen laver ikke selv nogen kunder. Den er som et tomt skema: felterne står der, men der er ikke skrevet noget i dem.",
@@ -371,10 +425,10 @@ Console.WriteLine(navn2 + " " + telefon2);`,
         md: "For at få en rigtig kunde skriver du `new Kunde()`. Det laver et **objekt**: én konkret kunde med sine egne felter, som du kan skrive i. Laver du `new Kunde()` to gange, får du to kunder, der hver har deres eget navn.",
         kode: R`Kunde k1 = new Kunde();
 k1.Navn = "Mette Jensen";
-k1.Telefon = "22334455";
+k1.Telefon = "12345678";
 
 Kunde k2 = new Kunde();
-k2.Navn = "Ali Hassan";
+k2.Navn = "Peter Bangsmann";
 
 Console.WriteLine(k1.Navn);
 Console.WriteLine(k2.Navn);
@@ -390,17 +444,17 @@ class Kunde
           ["Console.WriteLine(k1.Navn);", "Her læses feltet `Navn` i `k1`."],
           ["class Kunde", "Klassen står nederst. Når koden ikke står i en metode, kræver C#, at klasserne kommer efter de linjer, der kører."]
         ],
-        output: "Mette Jensen\nAli Hassan",
+        output: "Mette Jensen\nPeter Bangsmann",
         md2: "Nu hører navn og telefon sammen: begge er inde i `k1`. Ordene du skal kunne til eksamen: **klassen** er beskrivelsen (`class Kunde`). Et **objekt** er én konkret kunde, lavet med `new`." },
       { t: "valg", q: "Hvad betyder `k2.Navn` i koden fra forrige trin?",
         svar: ["Feltet Navn i kunden k2", "En ny kunde, der hedder k2", "Navnet på klassen", "Alle kunders navne"],
-        ret: 0, fordi: "Punktummet betyder: feltet efter punktummet, i objektet før punktummet. `k2.Navn` er derfor Ali Hassan." },
+        ret: 0, fordi: "Punktummet betyder: feltet efter punktummet, i objektet før punktummet. `k2.Navn` er derfor Peter Bangsmann." },
       { t: "forudsig",
         q: "To objekter af samme klasse har hver deres værdier. Hvad skriver programmet?",
         kode: R`Kunde a = new Kunde();
 a.Navn = "Søren";
 Kunde b = new Kunde();
-b.Navn = "Camilla";
+b.Navn = "Peter Parker";
 a.Navn = "Søren Nielsen";
 
 Console.WriteLine(a.Navn);
@@ -410,11 +464,11 @@ class Kunde
 {
     public string Navn { get; set; } = "";
 }`,
-        output: "Søren Nielsen\nCamilla",
+        output: "Søren Nielsen\nPeter Parker",
         fordi: "`a` og `b` er to objekter. At ændre `a.Navn` rører ikke `b`." },
       { t: "laes", h: "Giv værdierne med det samme",
         md: "I stedet for at sætte én property ad gangen kan du give værdierne, når objektet laves. Det hedder **objekt-initialisering** og bruges overalt i dit projekt, fx til startdata i databasen.",
-        kode: R`Kunde k = new Kunde { Id = 1, Navn = "Mette Jensen", Telefon = "22334455" };
+        kode: R`Kunde k = new Kunde { Id = 1, Navn = "Mette Jensen", Telefon = "12345678" };
 Console.WriteLine(k.Id + ": " + k.Navn);
 
 class Kunde
@@ -428,35 +482,71 @@ class Kunde
           ["Id", "Et `int` starter som 0. I databasen får hver kunde sit eget nummer, så man kan finde netop den kunde igen."]
         ],
         output: "1: Mette Jensen" },
-      { t: "udfyld", q: "Udfyld, så programmet laver en kunde, der hedder Ali, og skriver navnet ud.",
-        kode: R`Kunde k = [[new]] Kunde { Navn = "Ali" };
+      { t: "udfyld", q: "Udfyld, så programmet laver en kunde, der hedder Peter, og skriver navnet ud.",
+        kode: R`Kunde k = [[new]] Kunde { Navn = "Peter" };
 Console.WriteLine(k.[[Navn]]);
 
 class Kunde
 {
     public string Navn { [[get]]; set; } = "";
 }`,
-        output: "Ali",
+        output: "Peter",
         fordi: "`new` laver objektet, `k.Navn` læser propertyen, og `get` gør, at den kan læses." },
+      { t: "fejl",
+        kode: R`Kunde k = new Kunde();
+k.navn = "Mette Jensen";
+Console.WriteLine(k.Navn);
+
+class Kunde
+{
+    public string Navn { get; set; } = "";
+}`,
+        linje: 2,
+        fordi: "C# skelner mellem store og små bogstaver. Propertyen hedder `Navn` med stort N, så `k.navn` findes ikke. Compileren siger, at `Kunde` ikke har noget, der hedder `navn`.",
+        rettet: R`Kunde k = new Kunde();
+k.Navn = "Mette Jensen";
+Console.WriteLine(k.Navn);
+
+class Kunde
+{
+    public string Navn { get; set; } = "";
+}` },
       { t: "laes", h: "To variabler kan pege på det samme objekt",
         md: "Det her skal du vide til kundesiden senere. En variabel med et objekt indeholder ikke selve kunden, men en **henvisning** til den. Skriver du `Kunde b = a;`, får du ikke en ny kunde: `a` og `b` henviser til den **samme**.",
         kode: R`Kunde a = new Kunde { Navn = "Mette" };
 Kunde b = a;
-b.Navn = "Camilla";
+b.Navn = "Peter Parker";
 Console.WriteLine(a.Navn);
 
 class Kunde
 {
     public string Navn { get; set; } = "";
 }`,
-        output: "Camilla",
+        output: "Peter Parker",
         md2: "Vil du have en rigtig kopi, skal du lave et nyt objekt med `new` og flytte værdierne over. Det gør kundesiden, når man retter en kunde: man retter i en kopi, så **Annullér** ikke har ændret noget." },
+      { t: "spor", h: "Følg henvisningerne",
+        q: "To kunder, og så henviser `k2` til den samme kunde som `k1`. Skriv `k1.Navn` og `k2.Navn`, lige efter at linjen er udført. Skemaet har linje 1–4.",
+        kode: R`Kunde k1 = new Kunde { Navn = "Mette Jensen" };
+Kunde k2 = new Kunde { Navn = "Peter Parker" };
+k2 = k1;
+k2.Navn = "Mette Hansen";
+Console.WriteLine(k1.Navn);
+
+class Kunde
+{
+    public string Navn { get; set; } = "";
+}`,
+        kolonner: ["k1.Navn", "k2.Navn"],
+        raekker: [[1, "=Mette Jensen", "=–"], [2, "Mette Jensen", "Peter Parker"], [3, "Mette Jensen", "Mette Jensen"], [4, "Mette Hansen", "Mette Hansen"]],
+        slut: false,
+        output: "Mette Hansen",
+        fordi: "Efter linje 3 henviser `k1` og `k2` til det samme objekt (Mette). Derfor ændrer linje 4 navnet for begge. Kunden Peter Parker har ingen variabel, der henviser til den, mere." },
       { t: "forudsig",
         q: "Hvad skriver programmet? Læg mærke til, hvor der står `new`.",
-        kode: R`Kunde a = new Kunde { Navn = "Ali" };
+        kode: R`Kunde a = new Kunde { Navn = "Peter" };
 Kunde b = a;
 Kunde c = new Kunde { Navn = a.Navn };
-b.Navn = "Ali Hassan";
+b.Navn = "Peter Bangsmann";
 c.Navn = "Søren";
 
 Console.WriteLine(a.Navn);
@@ -466,13 +556,13 @@ class Kunde
 {
     public string Navn { get; set; } = "";
 }`,
-        output: "Ali Hassan\nSøren",
+        output: "Peter Bangsmann\nSøren",
         fordi: "`b` henviser til samme objekt som `a`, så `b.Navn = …` ændrer også `a`. `c` er et nyt objekt (der står `new`), så det er en kopi: at ændre `c` rører ikke `a`." },
       { t: "skriv", q: "Skriv klassen `Kunde` med fire properties: `Id` (int), `Navn`, `Email` og `Telefon` (alle tre `string` med startværdien `\"\"`). Alle skal være `public` med `{ get; set; }`.",
         foer: R`Kunde k = new Kunde
 {
     Id = 1, Navn = "Mette",
-    Email = "mette@eksempel.dk", Telefon = "22334455"
+    Email = "Mette@eksempel.com", Telefon = "12345678"
 };
 Console.WriteLine(k.Navn + " " + k.Email + " " + k.Telefon);
 `,
@@ -490,7 +580,7 @@ Console.WriteLine(k.Navn + " " + k.Email + " " + k.Telefon);
     public string Email { get; set; } = "";
     public string Telefon { get; set; } = "";
 }`,
-        output: "Mette mette@eksempel.dk 22334455" },
+        output: "Mette Mette@eksempel.com 12345678" },
       { t: "laes", h: "En fil pr. klasse og et namespace",
         md: "I et rigtigt projekt får hver klasse sin egen fil, og filerne samles i mapper. Modellerne kommer i mappen `Models`.\n\nØverst i filen står et **namespace**. Det svarer til mappen: `SkadeApp.Models`. Andre filer, der vil bruge `Kunde`, skal have linjen `using SkadeApp.Models;` øverst. Ellers kan de ikke finde klassen.",
         kode: R`namespace SkadeApp.Models;
@@ -508,7 +598,7 @@ public class Kunde
           ["public class", "Klassen må bruges af alle andre filer i projektet."]
         ] },
       { t: "opgave", h: "Lav Kunde.cs i dit projekt", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
-        md: "Nu får dit projekt sin første model. Du skrev klassen i trin 10. Nu skal den i sin egen fil med et namespace, som i trin 11.\n\n{{Højreklik på projektet **SkadeApp** i Solution Explorer → **Add → New Folder** → `Models`. Højreklik på `Models` → **Add → Class…** → `Kunde.cs` → **Add**.||Højreklik på projektet **SkadeApp** i Rider → **Add → Directory** → `Models`. Højreklik på `Models` → **Add → Class/Interface** → `Kunde`.}} Slet det, der står i filen, og skriv selv.",
+        md: "Nu får dit projekt sin første model. Du skrev klassen i trin 14. Nu skal den i sin egen fil med et namespace, som i trin 15.\n\n{{Højreklik på projektet **SkadeApp** i Solution Explorer → **Add → New Folder** → `Models`. Højreklik på `Models` → **Add → Class…** → `Kunde.cs` → **Add**.||Højreklik på projektet **SkadeApp** i Rider → **Add → Directory** → `Models`. Højreklik på `Models` → **Add → Class/Interface** → `Kunde`.}} Slet det, der står i filen, og skriv selv.",
         krav: [
           "Filen `Models/Kunde.cs` findes",
           "Øverst står `namespace SkadeApp.Models;`",
@@ -530,8 +620,8 @@ public class Kunde
     public string Email { get; set; } = "";
     public string Telefon { get; set; } = "";
 }` },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvad er forskellen på en klasse og et objekt? Brug dit eget projekt som eksempel.",
-        svar: "En klasse er en skabelon, der beskriver, hvilke oplysninger en slags ting har. Klassen Kunde siger, at en kunde har Id, Navn, Email og Telefon. Et objekt er én konkret kunde, lavet med new, fx Mette Jensen med sit eget telefonnummer. Der er én klasse, men mange objekter.",
+      { t: "forklar", h: "Til eksamen", q: "Eksamensspørgsmål: Hvad er forskellen på en klasse og et objekt? Brug dit eget projekt som eksempel. Sig svaret højt, og peg på `Models/Kunde.cs`.",
+        svar: "En klasse er en skabelon, der beskriver, hvilke oplysninger en slags ting har. Klassen Kunde i Models/Kunde.cs siger, at en kunde har Id, Navn, Email og Telefon. Et objekt er én konkret kunde, lavet med new, fx Mette Jensen med sit eget telefonnummer. Der er én klasse, men mange objekter: i mine startdata er der fire.",
         noegle: ["skabelon", "new", "konkret", "properties", "mange objekter"] }
     ] },
 
@@ -547,6 +637,29 @@ public class Kunde
       ["null", "Ingenting. `Kunde?` med spørgsmålstegn betyder, at værdien må være `null`."]
     ],
     trin: [
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "I SkadeApp står `Kunde k = new Kunde { Navn = \"Mette Jensen\" };`. Hvad er `Kunde`, og hvad er `k`?",
+        svar: ["`Kunde` er klassen (beskrivelsen), og `k` henviser til et objekt: én konkret kunde", "Begge er klasser", "`Kunde` er et objekt, og `k` er klassen", "`k` er en tekst med kundens navn"],
+        ret: 0, fordi: "Klassen beskriver, hvad en kunde har. `new` laver et objekt ud fra klassen, og variablen `k` henviser til det." },
+      { t: "forudsig", h: "Husker du fra sidst?",
+        q: "Repetition: en løkke, en `if` og en metode. Hvad skriver programmet?",
+        kode: R`int[] beloeb = { 4500, 18750, 6200 };
+int store = 0;
+foreach (int b in beloeb)
+{
+    if (ErStor(b))
+    {
+        store++;
+    }
+}
+Console.WriteLine(store);
+
+static bool ErStor(int tal)
+{
+    return tal > 5000;
+}`,
+        output: "2",
+        fordi: "`ErStor` giver `true` for 18750 og 6200, men ikke for 4500. Så `store++` kører to gange." },
       { t: "laes", h: "enum: en fast liste af muligheder",
         md: "En skade har en status: anmeldt, under behandling, godkendt eller afvist. Du kunne gemme den som tekst, men så kunne man skrive `\"godkent\"` med en stavefejl, og ingen ville opdage det. En **enum** er en type med en fast liste af værdier. Compileren nægter alt andet.",
         kode: R`SkadeStatus status = SkadeStatus.Anmeldt;
@@ -572,6 +685,17 @@ Console.WriteLine(s == SkadeStatus.Godkendt);
 enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
         output: "True\nAfvist\nFalse",
         fordi: "`==` sammenligner og giver `True` eller `False`. Efter `s = SkadeStatus.Afvist;` er status `Afvist`, og den er ikke `Godkendt`." },
+      { t: "fejl",
+        kode: R`SkadeStatus status = SkadeStatus.Godkent;
+Console.WriteLine(status);
+
+enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
+        linje: 1,
+        fordi: "Der står `Godkent` uden d. Fordi `SkadeStatus` er en enum, kender compileren alle de lovlige værdier og melder fejl med det samme. Var statussen en almindelig tekst, ville stavefejlen først blive opdaget, når appen viste forkerte tal.",
+        rettet: R`SkadeStatus status = SkadeStatus.Godkendt;
+Console.WriteLine(status);
+
+enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }` },
       { t: "laes", h: "decimal til penge",
         md: "Til penge bruger man typen **decimal**. `double` gemmer tal på en måde, hvor nogle kommatal ikke kan gemmes helt præcist. Det giver små afrundingsfejl, som ikke må ske med kroner og øre. Et `m` efter tallet betyder, at det er en `decimal`.",
         kode: R`double d = 0.1 + 0.2;
@@ -621,12 +745,12 @@ Console.WriteLine(sum);`,
         kode: R`Kunder                        Skader
 Id  Navn                      Id  Beskrivelse             KundeId
 1   Mette Jensen              1   Ridse i døren           1
-2   Ali Hassan                2   Vandskade               1
+2   Peter Bangsmann           2   Vandskade               1
                               3   Kuffert forsvundet      2`,
         sprog: "text",
         md2: "Mette har to skader, fordi to rækker i `Skader` har `KundeId` 1. `Skader` i Kunde og `Kunde` i Skade gemmes ikke som kolonner. De kaldes **navigation properties**: de giver nem adgang til det, relationen peger på." },
-      { t: "valg", q: "Hvor står det i databasen, at skaden \"Kuffert forsvundet\" hører til Ali Hassan?",
-        svar: ["I kolonnen KundeId i tabellen Skader, som indeholder Alis Id", "I en kolonne i tabellen Kunder med alle hans skader", "I klassen Kunde", "Det står ingen steder"],
+      { t: "valg", q: "Hvor står det i databasen, at skaden \"Kuffert forsvundet\" hører til Peter Bangsmann?",
+        svar: ["I kolonnen KundeId i tabellen Skader, som indeholder Peters Id", "I en kolonne i tabellen Kunder med alle hans skader", "I klassen Kunde", "Det står ingen steder"],
         ret: 0, fordi: "Relationen gemmes i fremmednøglen `KundeId` på skaden. Kundens liste `Skader` findes kun i C#: EF Core fylder den ud fra `KundeId`." },
       { t: "laes", h: "null, spørgsmålstegnet og new()",
         md: "Tre små ting, før du skriver klasserne med relationen.\n\n**null** betyder *ingenting*. En variabel med et objekt kan være `null`: der er ingen kunde i den endnu. Skriver du `k.Navn`, mens `k` er `null`, går programmet ned med fejlen `NullReferenceException`.\n\nEt **spørgsmålstegn** efter typen, fx `Kunde?`, betyder: denne variabel må godt være `null`. Uden spørgsmålstegnet advarer compileren dig, hvis den kan blive `null`. En skade får `public Kunde? Kunde`, fordi skaden kan være hentet uden sin kunde.\n\n`new()` uden klassenavn er en kort måde at skrive `new List<Skade>()` på. Den kan bruges, når typen allerede står til venstre: `public List<Skade> Skader { get; set; } = new();` starter med en tom liste.",
@@ -685,7 +809,7 @@ class Skade
         tip: [
           "En startværdi står efter `{ get; set; }` med `=`, fx `public SkadeType Type { get; set; } = SkadeType.Indbo;`",
           "Enums står efter klassens sidste `}`, og de skal være `public`: `public enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`",
-          "Listen i Kunde skrives som i trin 11: `public List<Skade> Skader { get; set; } = new();`"
+          "Listen i Kunde skrives som i trin 14: `public List<Skade> Skader { get; set; } = new();`"
         ],
         output: "Ingen ændring i appen endnu. Error List / Problems er tom.",
         loesning: R`namespace SkadeApp.Models;
@@ -720,8 +844,8 @@ public enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }
 // ===== I Kunde.cs, under Telefon =====
 public List<Skade> Skader { get; set; } = new();`,
         md2: "Linjer, der starter med `//`, er kommentarer: de er til dig og bliver ikke kørt. Skriv gerne dine egne, med dine egne ord." },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvordan hænger dine to modeller sammen, og hvordan er det gemt i databasen?",
-        svar: "Det er en en-til-mange-relation: én kunde kan have mange skader, og hver skade hører til én kunde. I C# har Kunde en List<Skade> Skader, og Skade har KundeId og Kunde. I databasen er der to tabeller, og relationen gemmes i fremmednøglen KundeId i tabellen Skader, som indeholder kundens Id.",
+      { t: "forklar", h: "Til eksamen", q: "Eksamensspørgsmål: Hvordan hænger dine to modeller sammen, og hvordan er det gemt i databasen? Sig svaret højt, og peg på `Skader` i `Kunde.cs` og `KundeId` i `Skade.cs`.",
+        svar: "Det er en en-til-mange-relation: én kunde kan have mange skader, og hver skade hører til én kunde. I C# har Kunde en List<Skade> Skader, og Skade har KundeId og Kunde. I databasen er der to tabeller, og relationen gemmes i fremmednøglen KundeId i tabellen Skader, som indeholder kundens Id. I mine startdata har Peter Bangsmann fx skade 3 og 4, fordi de har KundeId 2.",
         noegle: ["en-til-mange", "List<Skade>", "KundeId", "fremmednøgle", "to tabeller"] }
     ] },
 
@@ -737,6 +861,18 @@ public List<Skade> Skader { get; set; } = new();`,
       ["GroupBy", "Samler elementerne i grupper efter en værdi, fx én gruppe pr. status. `Key` er gruppens værdi."]
     ],
     trin: [
+      { t: "forudsig", h: "Husker du fra sidst?",
+        q: "Repetition: en `List` og en enum. Hvad skriver programmet?",
+        kode: R`List<SkadeStatus> statusser = new List<SkadeStatus>();
+statusser.Add(SkadeStatus.Anmeldt);
+statusser.Add(SkadeStatus.Godkendt);
+statusser.Add(SkadeStatus.Afvist);
+Console.WriteLine(statusser.Count);
+Console.WriteLine(statusser[1]);
+
+enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
+        output: "3\nGodkendt",
+        fordi: "Der er lagt tre værdier i listen, så `Count` er 3. Nummereringen starter ved 0, ligesom i et array, så `statusser[1]` er den anden: `Godkendt`." },
       { t: "laes", h: "En property, der regner selv",
         md: "Er en skade åben? Det kan regnes ud fra status: den er åben, så længe den er anmeldt eller under behandling. I stedet for at gemme det skriver du en **beregnet property** med `=>`. Den har ingen `set`, og den regnes ud, hver gang nogen læser den.",
         kode: R`Skade s1 = new Skade { Status = SkadeStatus.Behandles };
@@ -871,6 +1007,35 @@ class Skade
 enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
         output: "7700",
         fordi: "`Where` beholder de godkendte (4500 og 3200), og `Sum` lægger deres beløb sammen." },
+      { t: "spor", h: "Følg løkken bag Where og Sum",
+        q: "Sådan regner `Udbetalt` for Peter Bangsmann, skrevet som en løkke i stedet for `Where` og `Sum`. Han har en godkendt skade på 6200 kr. og en afvist på 7999 kr. Skriv `s.Status` og `sum`, lige efter at linjen er udført. Skemaet har kun linje 6, 7 og 11. Linje 11 kører kun, når skaden er godkendt.",
+        kode: R`List<Skade> skader = new List<Skade>
+{
+    new Skade { Beloeb = 6200m, Status = SkadeStatus.Godkendt },
+    new Skade { Beloeb = 7999m, Status = SkadeStatus.Afvist }
+};
+decimal sum = 0;
+foreach (Skade s in skader)
+{
+    if (s.Status == SkadeStatus.Godkendt)
+    {
+        sum = sum + s.Beloeb;
+    }
+}
+Console.WriteLine(sum);
+
+class Skade
+{
+    public decimal Beloeb { get; set; }
+    public SkadeStatus Status { get; set; }
+}
+
+enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
+        kolonner: ["s.Status", "sum"],
+        raekker: [[6, "=–", "=0"], [7, "=Godkendt", "=0"], [11, "Godkendt", "6200"], [7, "Afvist", "6200"]],
+        slut: false,
+        output: "6200",
+        fordi: "Den godkendte skade lægges til `sum`. Den afviste springes over, fordi betingelsen i linje 9 er falsk. `Where(s => s.Status == SkadeStatus.Godkendt).Sum(s => s.Beloeb)` gør præcis det samme på én linje." },
       { t: "laes", h: "Sortér og saml i grupper",
         md: "To LINQ-metoder mere, som overblikket bruger:\n\n- `OrderByDescending(s => s.Beloeb)` sorterer med det største beløb først. `Take(2)` tager de to første.\n- `GroupBy(s => s.Status)` samler skaderne i én gruppe pr. status. Hver gruppe har en `Key` (statussen), og du kan bruge `Count()` og `Sum()` på gruppen.",
         kode: R`List<Skade> skader = new List<Skade>
@@ -902,7 +1067,25 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
           ["var gruppe", "`var` lader compileren finde typen selv. Typen på en gruppe er lang at skrive."],
           ["OrderBy(g => g.Key)", "Sorterer grupperne i den rækkefølge, værdierne står i enum'en."]
         ],
-        output: "18750\n6200\nBehandles: 1\nGodkendt: 2" },
+        output: "18750\n6200\nBehandles: 1\nGodkendt: 2",
+        md2: "**Ekstra:** underviseren viste `Where` og `Select`. `Sum`, `GroupBy` og `Take` er med, fordi forsiden skal regne nøgletal ud. Det er godt at kunne forklare til eksamen, for LINQ hører til læringsmålene om programbiblioteker og algoritmer." },
+      { t: "fejl",
+        q: "Programmet skulle skrive de to største beløb, 18750 og 7999. Det skriver 4500 og 6200. Klik på linjen med fejlen.",
+        kode: R`List<decimal> beloeb = new List<decimal> { 4500m, 18750m, 6200m, 7999m };
+foreach (decimal b in beloeb.OrderBy(b => b).Take(2))
+{
+    Console.WriteLine(b);
+}`,
+        linje: 2,
+        logisk: true,
+        output: "4500\n6200",
+        rettetOutput: "18750\n7999",
+        fordi: "`OrderBy` sorterer stigende: det mindste først. Så tager `Take(2)` de to mindste. Med `OrderByDescending` kommer det største først.",
+        rettet: R`List<decimal> beloeb = new List<decimal> { 4500m, 18750m, 6200m, 7999m };
+foreach (decimal b in beloeb.OrderByDescending(b => b).Take(2))
+{
+    Console.WriteLine(b);
+}` },
       { t: "orden", q: "Sæt linjerne i rækkefølge, så programmet skriver summen af de tal, der er større end 3.",
         linjer: [R`List<int> tal = new List<int> { 5, 2, 8 };`, R`var store = tal.Where(t => t > 3);`, R`int sum = store.Sum();`, R`Console.WriteLine(sum);`],
         output: "13",
@@ -937,7 +1120,7 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
         loesning: R`    public decimal Udbetalt => Skader.Where(s => s.Status == SkadeStatus.Godkendt).Sum(s => s.Beloeb);`,
         output: "5500" },
       { t: "opgave", h: "Tilføj de beregnede properties", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "csharp",
-        md: "Tilføj tre beregnede properties i dine modeller. Du skrev `Udbetalt` i trin 10, og de to andre bygges på samme måde med `=>`.",
+        md: "Tilføj tre beregnede properties i dine modeller. Du skrev `Udbetalt` i trin 13, og de to andre bygges på samme måde med `=>`.",
         krav: [
           "`Skade` har `public bool ErAaben`, som er sand, når status er `Anmeldt` eller `Behandles`",
           "`Kunde` har `public decimal Udbetalt`: summen af `Beloeb` for de skader i `Skader`, der har status `Godkendt`",
@@ -945,8 +1128,8 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
           "Ingen af de tre har `set`, og projektet kan bygges uden fejl"
         ],
         tip: [
-          "`ErAaben` står i trin 1: `=>` og to sammenligninger med `||` imellem.",
-          "`Udbetalt` er den, du skrev i trin 10: `Where` og så `Sum`.",
+          "`ErAaben` står i trin 2: `=>` og to sammenligninger med `||` imellem.",
+          "`Udbetalt` er den, du skrev i trin 13: `Where` og så `Sum`.",
           "`AabneSkader` tæller med `Count` og en lambda: `Skader.Count(s => s.ErAaben)`."
         ],
         output: "Ingen ændring i appen endnu. Kundelisten viser tallene senere.",
@@ -959,7 +1142,10 @@ public bool ErAaben => Status == SkadeStatus.Anmeldt || Status == SkadeStatus.Be
 public decimal Udbetalt => Skader.Where(s => s.Status == SkadeStatus.Godkendt).Sum(s => s.Beloeb);
 
 public int AabneSkader => Skader.Count(s => s.ErAaben);` },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvad er LINQ, og hvor bruger du det i dit projekt?",
+      { t: "forklar", q: "Eksamensspørgsmål: Hvad er en beregnet property, og hvorfor bliver `Udbetalt` ikke gemt i databasen?",
+        svar: "En beregnet property har ingen set. Den skrives med => og regnes ud, hver gang nogen læser den. Udbetalt i Kunde lægger beløbene for de godkendte skader sammen med Where og Sum. Fordi den ingen set har, laver EF Core ingen kolonne til den. Derfor kan tallet aldrig komme ud af trit med skaderne: skifter en skade status, er tallet rigtigt, næste gang det læses.",
+        noegle: ["ingen set", "=>", "regnes ud", "Where og Sum", "kolonne"] },
+      { t: "forklar", h: "Til eksamen", q: "Eksamensspørgsmål: Hvad er LINQ, og hvor bruger du det i dit projekt? Sig svaret højt, og peg på `Udbetalt` i `Kunde.cs`.",
         svar: "LINQ er metoder til at søge, filtrere, sortere og regne på lister, fx Where, Count, Sum, OrderBy og GroupBy. Man giver dem en lambda, der siger, hvad de skal kigge på. I SkadeApp regner Kunde.Udbetalt summen af de godkendte skader med Where og Sum, overblikket grupperer skaderne pr. status med GroupBy, og kundelisten søger og sorterer med Where og OrderBy.",
         noegle: ["Where", "Sum", "lambda", "GroupBy", "OrderBy"] }
     ] }

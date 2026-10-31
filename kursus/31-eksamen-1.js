@@ -1,4 +1,5 @@
-// Modul 31 — Mundtlig eksamen: forklar din egen SkadeApp. Del 1 af 2: modulet og lektion 0–7.
+// Modul 30, del 2 (eksamenstræning): forklar din egen SkadeApp. Fil 1 af 2: lektion E0–E7.
+// Lå før 31/10-2026 som sit eget modul (m31). Lektions-id'erne m31l… er beholdt, så fremskridt og repetition virker.
 // Træner det, den mundtlige eksamen tester: at forklare og forsvare Peters AFLEVEREDE kode
 // (C#  Ekasmen\min eksamen\SkadeApp, commit d359baa, afleveret 30/10-2026). Kodeuddragene er hans egne,
 // kun med tomme linjer taget ud. Hans app må ikke ændres: live-ændringerne i værkstedet laves i en kopi.
@@ -29,15 +30,13 @@ class Skade
 
 enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`;
 
-window.KURSUS.push({
-  id: "m31", nr: -2, del: "Mundtlig eksamen", ikon: "🎤",
-  titel: "Mundtlig eksamen: forklar din egen SkadeApp",
-  dag: "Træning 1.–5. november · Eksamen fredag 6/11",
-  intro: "SkadeApp er afleveret. Til eksamen skal du vise appen, forklare din egen kode og svare på censors spørgsmål. Det er præcis det, dette modul træner.\n\nHver lektion tager én del af **din afleverede kode**, som den står i dine filer, og spørger dig om den: hvad gør linjen, hvad sker der, når man klikker, og hvordan siger du det til censor. Til sidst øver du læringsmålene, de svære spørgsmål, præsentationen og små ændringer, som censor kan bede dig om.\n\nDin afleverede app skal ikke ændres. Ændringerne i værkstedet laver du i en kopi.",
-  lektioner: [
+var m = window.KURSUS.filter(function (x) { return x.id === "m30"; })[0];
+if (!m) return;
+
+m.lektioner.push(
 
   // ------------------------------------------------------------------
-  { id: "m31l0", nr: 0, titel: "Sådan træner du til den mundtlige eksamen", min: 10,
+  { id: "m31l0", nr: "E0", afsnit: "Del 2 · Eksamenstræning (1.–5. november)", titel: "Sådan træner du til den mundtlige eksamen", min: 10,
     ord: [
       ["Oplæg", "Den første del af eksamen, hvor du selv præsenterer dit projekt. Ca. 10 minutter."],
       ["Votering", "Når censor og eksaminator taler om karakteren uden dig. Bagefter får du karakteren."],
@@ -45,12 +44,12 @@ window.KURSUS.push({
     ],
     trin: [
       { t: "laes", h: "Sådan foregår eksamen",
-        md: "Eksamen tager 30 minutter og foregår på Zoom:\n\n- **Ca. 10 minutter oplæg:** du viser appen og fortæller om den. Dispositionen er din køreplan.\n- **Ca. 15 minutter samtale:** censor og eksaminator spørger til din kode og til teorien bag den.\n- **Resten af tiden er votering:** de taler om karakteren uden dig, og så får du den.\n\nKarakteren er en **helhedsvurdering** af produktet, dispositionen og det, du siger." },
+        md: "Del 2 træner det, eksamen tester. Hver lektion tager én del af **din afleverede kode**, som den står i dine filer, og spørger dig om den: hvad gør linjen, hvad sker der, når man klikker, og hvordan siger du det til censor. Din afleverede app skal ikke ændres. Ændringerne i værkstedet laver du i en kopi.\n\nEksamen tager 30 minutter og foregår på Zoom:\n\n- **Ca. 10 minutter oplæg:** du viser appen og fortæller om den. Dispositionen er din køreplan.\n- **Ca. 15 minutter samtale:** censor og eksaminator spørger til din kode og til teorien bag den.\n- **Resten af tiden er votering:** de taler om karakteren uden dig, og så får du den.\n\nKarakteren er en **helhedsvurdering** af produktet, dispositionen og det, du siger." },
       { t: "valg", q: "Hvad bliver karakteren til den mundtlige eksamen givet for?",
         svar: ["En helhedsvurdering af produktet, dispositionen og det, du siger til eksamen", "Kun koden i zip-filen", "Kun præsentationen", "Hvor mange linjer kode appen har"],
         ret: 0, fordi: "Produkt, disposition og mundtlig præstation vurderes samlet. Derfor betyder det meget, at du kan forklare det, du har lavet." },
       { t: "laes", h: "Det, der virker, når man skal huske",
-        md: "Forskning i læring peger på fire ting, der virker, også for studerende med ADHD:\n\n- **Svar, før du ser svaret.** At hente svaret frem selv lærer dig mere end at læse det igen.\n- **Kom igen næste dag.** Det, du øver over flere dage, sidder bedre end det, du øver mange gange på én dag.\n- **Bland emnerne.** Når spørgsmålene kommer i blandet rækkefølge, øver du at finde det rigtige svar, ligesom til eksamen.\n- **Forklar hvorfor.** Når du siger, hvorfor koden er skrevet sådan, hænger det fast i det, du allerede ved.\n\nDerfor er modulet bygget af spørgsmål om din egen kode. Spørgsmålene kommer igen under **Repetition**, og du kan blande dem under **Test**." },
+        md: "Forskning i læring peger på fire ting, der virker, også for studerende med ADHD:\n\n- **Svar, før du ser svaret.** At hente svaret frem selv lærer dig mere end at læse det igen.\n- **Kom igen næste dag.** Det, du øver over flere dage, sidder bedre end det, du øver mange gange på én dag.\n- **Bland emnerne.** Når spørgsmålene kommer i blandet rækkefølge, øver du at finde det rigtige svar, ligesom til eksamen.\n- **Forklar hvorfor.** Når du siger, hvorfor koden er skrevet sådan, hænger det fast i det, du allerede ved.\n\nDerfor er del 2 bygget af spørgsmål om din egen kode. Spørgsmålene kommer igen under **Repetition**, og du kan blande dem under **Test**." },
       { t: "laes", h: "Tre regler for dig",
         md: "- **Svar højt.** Eksamen er mundtlig, så øv det på samme måde: sig svaret med din stemme, eller skriv stikord. Det, du selv siger, husker du bedre end det, du kun læser.\n- **Peg i koden.** Til eksamen deler du skærm. Du skal ikke kunne ordene udenad: åbn filen, peg på linjen, og sig, hvad den gør.\n- **Korte runder.** 25 minutter og så 5 minutters pause. Når hovedet er fyldt, stopper du for i dag. Træt læring sidder ikke fast." },
       { t: "valg", q: "Censor spørger: \"Hvordan henter du kunderne fra databasen?\" Du kan ikke komme på metodenavnet. Hvad er det bedste at gøre?",
@@ -69,7 +68,7 @@ window.KURSUS.push({
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m31l1", nr: 1, titel: "Rundvisning: din app i lag", min: 12,
+  { id: "m31l1", nr: "E1", titel: "Rundvisning: din app i lag", min: 12,
     ord: [
       ["Lagdelt arkitektur", "Koden er delt i lag, der hver har ét ansvar, fx sider, services og database. Et lag taler kun med laget lige under."]
     ],
@@ -109,7 +108,7 @@ Program.cs                         sætter det hele sammen, når appen starter`,
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m31l2", nr: 2, titel: "Modellerne: Kunde og Skade", min: 15,
+  { id: "m31l2", nr: "E2", titel: "Modellerne: Kunde og Skade", min: 15,
     ord: [
       ["Data annotations", "Regler i firkantede parenteser over en property, fx [Required]. Formularen tjekker dem, før der gemmes."],
       ["Beregnet property", "En property uden egen værdi i databasen. Den regnes ud, hver gang den læses, fx Udbetalt."],
@@ -290,7 +289,7 @@ Console.WriteLine(peter.AabneSkader);`,
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m31l3", nr: 3, titel: "Databasen: SkadeContext, SQLite og startdata", min: 12,
+  { id: "m31l3", nr: "E3", titel: "Databasen: SkadeContext, SQLite og startdata", min: 12,
     ord: [
       ["Startdata", "Rækker, der lægges i databasen, når den bliver lavet, så der er noget at se fra start. I EF Core med HasData."],
       ["EnsureCreated", "Laver databasen med tabeller og startdata, hvis den ikke findes. Findes den, gør den ingenting."]
@@ -365,7 +364,7 @@ Console.WriteLine(godkendte.Sum().ToString("C"));`,
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m31l4", nr: 4, titel: "Services: interface, async og dependency injection", min: 15,
+  { id: "m31l4", nr: "E4", titel: "Services: interface, async og dependency injection", min: 15,
     ord: [
       ["Løs kobling", "Når en del af koden kun kender et interface og ikke klassen bag. Så kan klassen skiftes ud uden at ændre resten."],
       ["DbContextFactory", "En fabrik, der laver en ny DbContext, hver gang man beder om det. Bruges i Blazor Server."]
@@ -485,7 +484,7 @@ builder.Services.AddScoped<ISkadeService, SkadeService>();`, frag: true,
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m31l5", nr: 5, titel: "Program.cs: når appen starter", min: 12,
+  { id: "m31l5", nr: "E5", titel: "Program.cs: når appen starter", min: 12,
     ord: [
       ["Kultur", "Indstillingen for sprog og formater: decimaltegn, tusindtalsskilletegn, valuta og datoer. Dansk er da-DK."]
     ],
@@ -549,7 +548,7 @@ builder.Services.AddScoped<ISkadeService, SkadeService>();` },
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m31l6", nr: 6, titel: "Overblik og StatusMaerke: LINQ og GroupBy", min: 15,
+  { id: "m31l6", nr: "E6", titel: "Overblik og StatusMaerke: LINQ og GroupBy", min: 15,
     ord: [
       ["GroupBy", "LINQ-metode, der samler elementer i grupper efter en værdi. Hver gruppe har en Key."],
       ["Komponent", "En genbrugelig del af en side med sin egen HTML og kode. I Blazor er det en .razor-fil, fx StatusMaerke."]
@@ -688,7 +687,7 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }` },
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m31l7", nr: 7, titel: "Kundelisten: søgning og formular", min: 15,
+  { id: "m31l7", nr: "E7", titel: "Kundelisten: søgning og formular", min: 15,
     ord: [
       ["OrdinalIgnoreCase", "En måde at sammenligne tekst på, hvor store og små bogstaver er ligegyldige."]
     ],
@@ -759,6 +758,5 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }` },
         noegle: ["data annotations", "Required", "regulært udtryk", "DataAnnotationsValidator", "OnValidSubmit", "ValidationMessage"] }
     ] }
 
-  ]
-});
+);
 })();

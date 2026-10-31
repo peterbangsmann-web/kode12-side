@@ -18,6 +18,14 @@ m.lektioner.push(
       ["OnValidSubmit", "Den metode, der kører, når formularen sendes, og alle regler er overholdt."]
     ],
     trin: [
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "Overblikket viser `@skade.Kunde?.Navn`. Hvad står der på siden, hvis `Kunde` er `null`?",
+        svar: ["Ingenting. `?.` giver `null` i stedet for at gå ned, og `null` skrives som ingenting", "Ordet null", "Siden går ned med en NullReferenceException", "Navnet på den første kunde"],
+        ret: 0, fordi: "Uden spørgsmålstegnet ville `skade.Kunde.Navn` gå ned, når `Kunde` er `null`. Med `?.` stopper udtrykket bare og giver `null`." },
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "Hvorfor kører `OnInitializedAsync` kun én gang, når du åbner en side i din app?",
+        svar: ["Fordi prerendering er slået fra i `App.razor` med `prerender: false`", "Fordi metoden er `async`", "Fordi siden har `@page`", "Fordi databasen er SQLite"],
+        ret: 0, fordi: "Med prerendering tegner serveren siden to gange, og så kører `OnInitializedAsync` også to gange. Din app har slået det fra, så data hentes én gang." },
       { t: "laes", h: "@bind: feltet og input-feltet følges ad",
         md: "Søgefeltet på kundelisten skal opdatere listen, mens man skriver. `@bind` forbinder et input-felt med et felt i `@code`. Uden mere opdateres feltet først, når man forlader input-feltet eller trykker Enter. Med `@bind:event=\"oninput\"` sker det ved hvert tastetryk. Hver gang feltet ændres, tegner Blazor siden igen.",
         kode: R`<input class="form-control" @bind="soegeord" @bind:event="oninput" />
@@ -52,7 +60,7 @@ m.lektioner.push(
         ] },
       { t: "forudsig",
         q: "Samme søgning som på kundelisten, bare på en liste af navne. Hvad skriver programmet?",
-        kode: R`List<string> navne = new List<string> { "Mette Jensen", "Ali Hassan", "Søren Nielsen", "Camilla Holm" };
+        kode: R`List<string> navne = new List<string> { "Mette Jensen", "Peter Bangsmann", "Søren Nielsen", "Peter Parker" };
 string soegeord = "SEN";
 
 var fundne = navne
@@ -65,6 +73,21 @@ foreach (string n in fundne)
 }`,
         output: "Mette Jensen\nSøren Nielsen",
         fordi: "\"Jensen\" og \"Nielsen\" indeholder \"sen\", og store og små bogstaver er ligegyldige. `OrderBy` sætter dem i alfabetisk rækkefølge." },
+      { t: "fejl",
+        q: "Søgningen skal være ligeglad med store og små bogstaver, så søgeordet `peter` skal finde 2 kunder. Programmet skriver 0. Klik på linjen med fejlen.",
+        kode: R`List<string> navne = new List<string> { "Mette Jensen", "Peter Bangsmann", "Søren Nielsen", "Peter Parker" };
+string soegeord = "peter";
+int antal = navne.Count(n => n.Contains(soegeord));
+Console.WriteLine(antal);`,
+        linje: 3,
+        logisk: true,
+        output: "0",
+        rettetOutput: "2",
+        fordi: "`Contains` skelner mellem store og små bogstaver, så \"peter\" findes ikke i \"Peter Bangsmann\". Med `StringComparison.OrdinalIgnoreCase` som ekstra argument er store og små bogstaver ligegyldige, som på din kundeliste.",
+        rettet: R`List<string> navne = new List<string> { "Mette Jensen", "Peter Bangsmann", "Søren Nielsen", "Peter Parker" };
+string soegeord = "peter";
+int antal = navne.Count(n => n.Contains(soegeord, StringComparison.OrdinalIgnoreCase));
+Console.WriteLine(antal);` },
       { t: "laes", h: "EditForm: en formular, der validerer",
         md: "Formularen til nye kunder er en `EditForm`. Den får et `Kunde`-objekt som model. `DataAnnotationsValidator` får den til at bruge reglerne fra lektion 5. Når man klikker på knappen, tjekker formularen reglerne: er de overholdt, kører `OnValidSubmit`. Ellers vises fejlbeskederne, og der bliver ikke gemt noget.\n\nNår kunden er gemt, laver siden et **nyt**, tomt `Kunde`-objekt til formularen: `nyKunde = new Kunde();`. Så bliver felterne tomme. Den gemte kunde har nu fået et id i databasen, og den må ikke blive gemt igen, hvis man klikker en gang til.",
         kode: R`<EditForm Model="nyKunde" OnValidSubmit="OpretKunde">
@@ -82,12 +105,12 @@ foreach (string n in fundne)
           ["<DataAnnotationsValidator />", "Får formularen til at tjekke reglerne (attributterne) på modellen."],
           ["<InputText>", "Blazors tekstfelt til en `EditForm`. Det bliver til et almindeligt `<input>` i browseren."],
           ["@bind-Value", "Som `@bind`, men til Blazors egne input-felter."],
-          ["<ValidationMessage>", "Viser fejlbeskeden for ét felt, fx \"Skriv kundens navn.\"."],
+          ["<ValidationMessage>", "Viser fejlbeskeden for ét felt, fx \"Skriv kundens navn\"."],
           ["For=\"() => nyKunde.Navn\"", "Hvilket felts fejlbesked der vises her. Det er en lambda uden parameter: de tomme parenteser `()` betyder, at den ikke får noget med."],
           ["type=\"submit\"", "Knappen sender formularen."]
         ] },
       { t: "valg", q: "En bruger klikker **Opret kunde** med et tomt navn. Formularen har `OnValidSubmit=\"OpretKunde\"`. Hvad sker der?",
-        svar: ["OpretKunde kører ikke. I stedet vises \"Skriv kundens navn.\" under feltet", "OpretKunde kører og gemmer en kunde uden navn", "Appen går ned", "Siden genindlæses"],
+        svar: ["OpretKunde kører ikke. I stedet vises \"Skriv kundens navn\" under feltet", "OpretKunde kører og gemmer en kunde uden navn", "Appen går ned", "Siden genindlæses"],
         ret: 0, fordi: "`OnValidSubmit` kører kun, når alle regler er overholdt. `[Required]` på `Navn` er ikke overholdt, så beskeden fra `ErrorMessage` vises." },
       { t: "valg", q: "Efter at en kunde er gemt, står der `nyKunde = new Kunde();` i `OpretKunde`. Hvorfor?",
         svar: ["Så formularen bliver tom og arbejder på et nyt objekt. Den gamle kunde har fået et id i databasen og må ikke gemmes igen", "Fordi new sletter den gamle kunde fra databasen", "For at validere kunden igen", "Det er ikke nødvendigt; det er bare pænt"],
@@ -100,14 +123,15 @@ foreach (string n in fundne)
           "Mens `kunder` er `null`, står der `Henter kunder …`",
           "En tabel med kolonnerne Navn, E-mail, Telefon, Skader, Åbne og Udbetalt, én række pr. kunde, sorteret efter navn",
           "Navnet er et link til `kunder/@kunde.Id`, Skader er `Skader.Count`, Åbne er `AabneSkader`, og Udbetalt er `Udbetalt` skrevet som kroner",
-          "Klik på **Kunder** i menuen: fire kunder i alfabetisk rækkefølge, med Ali Hassan øverst"
+          "Klik på **Kunder** i menuen: fire kunder i alfabetisk rækkefølge, med Mette Jensen øverst"
         ],
         tip: [
           "Kopiér opbygningen fra `Home.razor`: `@page`, `@inject`, `@if (… == null) { … } else { … }` og `@code` med felt og `OnInitializedAsync`.",
           "Sortering i `foreach`: `@foreach (var kunde in kunder.OrderBy(k => k.Navn))`.",
-          "Et link med id'et i adressen: `<a href=\"kunder/@kunde.Id\">@kunde.Navn</a>`. Linket fører til kundesiden, som du laver i næste lektion."
+          "Et link med id'et i adressen: `<a href=\"kunder/@kunde.Id\">@kunde.Navn</a>`. Linket fører til kundesiden, som du laver i næste lektion.",
+          "Siger compileren, at `Kunde` eller `IKundeService` ikke findes, så mangler `@using SkadeApp.Models` eller `@using SkadeApp.Services` nederst i `Components/_Imports.razor`."
         ],
-        output: "Kundelisten viser fire kunder: Ali Hassan, Camilla Holm, Mette Jensen og Søren Nielsen, hver med antal skader, åbne skader og udbetalt beløb.",
+        output: "Kundelisten viser fire kunder: Mette Jensen, Peter Bangsmann, Peter Parker og Søren Nielsen, hver med antal skader, åbne skader og udbetalt beløb.",
         loesning: R`@page "/kunder"
 @inject IKundeService KundeService
 
@@ -150,7 +174,7 @@ else
     }
 }` },
       { t: "opgave", h: "Kundelisten, del 2: søgefeltet", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
-        md: "Nu skal man kunne søge. Trin 1 viser `@bind` med `oninput`, og trin 3 viser propertyen `Fundne`, der filtrerer med LINQ. Byg dem ind i din side.",
+        md: "Nu skal man kunne søge. Trin 3 viser `@bind` med `oninput`, og trin 5 viser propertyen `Fundne`, der filtrerer med LINQ. Byg dem ind i din side.",
         krav: [
           "Feltet `string soegeord` med startværdien `\"\"`",
           "Over tabellen står et input-felt med pladsholderteksten `Søg på navn, e-mail eller telefon …`, bundet til `soegeord` ved hvert tastetryk",
@@ -161,7 +185,7 @@ else
         ],
         tip: [
           "Input-feltet: `<input class=\"form-control mb-3\" placeholder=\"…\" @bind=\"soegeord\" @bind:event=\"oninput\" />`",
-          "`Fundne` står i trin 3. Den hører til i `@code`, sammen med felterne.",
+          "`Fundne` står i trin 5. Den hører til i `@code`, sammen med felterne.",
           "Beskeden: `@if (!Fundne.Any()) { <p class=\"text-muted\">Ingen kunder passer til søgningen.</p> }`. `!` betyder \"ikke\"."
         ],
         output: "Mens du skriver i søgefeltet, bliver listen kortere. Med søgeordet zzz står der: Ingen kunder passer til søgningen.",
@@ -188,7 +212,7 @@ private IEnumerable<Kunde> Fundne => kunder!
              || k.Telefon.Contains(soegeord))
     .OrderBy(k => k.Navn);` },
       { t: "opgave", h: "Kundelisten, del 3: formularen Ny kunde", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
-        md: "Til sidst formularen. Trin 5 viser en `EditForm` med feltet Navn. Du laver de to andre felter på samme måde og metoden, der gemmer.\n\nListen og formularen skal stå ved siden af hinanden. Det gør Bootstrap med en række (`<div class=\"row\">`) med to kolonner: `<div class=\"col-lg-8\">` til søgefelt og tabel og `<div class=\"col-lg-4\">` til formularen.",
+        md: "Til sidst formularen. Trin 8 viser en `EditForm` med feltet Navn. Du laver de to andre felter på samme måde og metoden, der gemmer.\n\nListen og formularen skal stå ved siden af hinanden. Det gør Bootstrap med en række (`<div class=\"row\">`) med to kolonner: `<div class=\"col-lg-8\">` til søgefelt og tabel og `<div class=\"col-lg-4\">` til formularen.",
         krav: [
           "Søgefelt og tabel står i en `col-lg-8`, formularen i en `col-lg-4`, begge inde i en `row`",
           "Overskriften `Ny kunde` og en `EditForm` med `Model=\"nyKunde\"`, `OnValidSubmit=\"OpretKunde\"` og en `DataAnnotationsValidator`",
@@ -198,7 +222,7 @@ private IEnumerable<Kunde> Fundne => kunder!
           "Klik **Opret kunde** med tomme felter: tre røde beskeder. Opret en rigtig kunde: den kommer i listen"
         ],
         tip: [
-          "Kopiér hele `<div class=\"mb-2\">`-blokken med Navn fra trin 5 to gange, og ret `nyKunde.Navn` til `nyKunde.Email` og `nyKunde.Telefon` (begge steder i blokken).",
+          "Kopiér hele `<div class=\"mb-2\">`-blokken med Navn fra trin 8 to gange, og ret `nyKunde.Navn` til `nyKunde.Email` og `nyKunde.Telefon` (begge steder i blokken).",
           "Felterne i `@code`: `private Kunde nyKunde = new();` og `private string? besked;`",
           "`OpretKunde`: `await KundeService.OpretAsync(nyKunde);`, så `besked = $\"{nyKunde.Navn} er oprettet.\";`, så `nyKunde = new Kunde();` og til sidst `kunder = await KundeService.HentAlleAsync();`"
         ],
@@ -308,24 +332,31 @@ private IEnumerable<Kunde> Fundne => kunder!
     }
 }`,
         md2: "`$\"{nyKunde.Navn} er oprettet.\"` sætter navnet ind i teksten: det, der står i `{ }`, bliver sat ind, hvor det står." },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvordan virker valideringen i din formular, fra attributten til den røde tekst?",
+      { t: "forklar", q: "Censor: \"Hvad gør `@bind` på dit søgefelt, og hvorfor har det også `@bind:event`?\"",
+        svar: "@bind forbinder input-feltet med feltet soegeord i @code begge veje: det, brugeren skriver, kommer i soegeord, og ændres soegeord, ændres feltet. Uden mere opdateres soegeord først, når man forlader feltet eller trykker Enter. Med @bind:event=\"oninput\" sker det ved hvert tastetryk. Hver gang soegeord ændres, tegner Blazor siden igen, og den beregnede property Fundne filtrerer listen med det nye søgeord.",
+        noegle: ["begge veje", "soegeord", "hvert tastetryk", "tegner siden igen", "Fundne"] },
+      { t: "forklar", h: "Til eksamen", q: "Eksamensspørgsmål: Hvordan virker valideringen i din formular, fra attributten til den røde tekst? Sig svaret højt, og peg på `<DataAnnotationsValidator />` i `Components/Pages/Kunder.razor`.",
         svar: "Reglerne står som attributter på modellen, fx [Required] og [RegularExpression] på Kunde. Formularen er en EditForm med Model=\"nyKunde\" og en DataAnnotationsValidator, som læser attributterne. Når man klikker på knappen, tjekker den alle regler. Er en regel brudt, viser ValidationMessage beskeden fra ErrorMessage under feltet, og OnValidSubmit kører ikke. Først når alt er i orden, kaldes OpretKunde, som gemmer gennem servicen.",
         noegle: ["attributter", "EditForm", "DataAnnotationsValidator", "ValidationMessage", "OnValidSubmit"] }
   ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l10", nr: 11, titel: "Kundesiden: ruteparameter, ret og slet", min: 30,
+  { id: "m30l10", nr: 11, titel: "Kundesiden, del 1: ruteparameter og kundens skader", min: 25,
     ord: [
       ["Ruteparameter", "En del af adressen, som siden får som værdi: i `/kunder/3` er 3 parameteren."],
       ["{Id:int}", "I `@page \"/kunder/{Id:int}\"`: her står et tal, som kommer i propertyen `Id`. `:int` betyder, at kun tal passer."],
       ["OnParametersSetAsync", "Kører, hver gang siden får nye parametre, også når man går direkte fra én kunde til en anden."],
-      ["@onclick", "Kører en metode, når der klikkes: `@onclick=\"StartRet\"` eller med en lambda: `@onclick=\"() => SletSkade(skade.Id)\"`."],
-      ["NavigationManager", "En service, der kan sende brugeren til en anden side: `Navigation.NavigateTo(\"kunder\")`."],
-      ["Cascade delete", "Når en række slettes, slettes de rækker, der peger på den, også. Slettes en kunde, forsvinder kundens skader."],
-      ["ChangeEventArgs", "Oplysningerne om en ændring i et felt. `e.Value` er den nye værdi."],
-      ["Enum.Parse", "Laver en tekst om til en enum-værdi: `Enum.Parse<SkadeStatus>(\"Godkendt\")`."]
+      ["@onclick", "Kører en metode, når der klikkes: `@onclick=\"StartRet\"` eller med en lambda: `@onclick=\"() => SletSkade(skade.Id)\"`."]
     ],
     trin: [
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "På din kundeliste skriver en bruger telefonnummeret `1234567` (7 cifre) og klikker **Opret kunde**. Hvad sker der?",
+        svar: ["`OpretKunde` kører ikke. Under feltet står \"Telefonnummeret skal være 8 cifre.\"", "Kunden bliver gemt med 7 cifre", "Appen går ned", "Feltet bliver tømt uden besked"],
+        ret: 0, fordi: "`EditForm` med `DataAnnotationsValidator` tjekker attributterne på `Kunde`. Det regulære udtryk kræver præcis 8 cifre, så `OnValidSubmit` kører ikke, og `ValidationMessage` viser beskeden." },
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "Din app kører med dansk `CultureInfo`. Hvad viser `@skade.Beloeb.ToString(\"C\")` for en skade på 4500?",
+        svar: ["4.500,00 kr.", "4500", "$4,500.00", "4,500.00 DKK"],
+        ret: 0, fordi: "`\"C\"` skriver tallet som et beløb i landets valuta. Med `da-DK` er det punktum ved tusinder, komma før øre og `kr.` til sidst." },
       { t: "laes", h: "Én side til alle kunder",
         md: "Der er kun én kundeside, men den kan vise alle kunder. Hvilken kunde det er, står i adressen: `/kunder/3` er kunden med id 3. I `@page` står `{Id:int}`, og tallet kommer i propertyen `Id`, der er markeret med `[Parameter]`.",
         kode: R`@page "/kunder/{Id:int}"
@@ -375,67 +406,8 @@ else
       { t: "valg", q: "Ud for hver skade står `<button @onclick=\"() => SletSkade(skade.Id)\">Slet</button>`. Hvorfor står der `() =>` foran?",
         svar: ["Fordi metoden skal have skadens id med. Lambdaen er en lille metode, der kalder SletSkade med netop den skades id", "Fordi alle knapper skal have () =>", "For at slette alle skader på én gang", "Fordi SletSkade er async"],
         ret: 0, fordi: "`@onclick=\"SletSkade\"` ville ikke kunne give et id med. Lambdaen `() => SletSkade(skade.Id)` husker id'et for netop den række." },
-      { t: "laes", h: "Ret i en kopi",
-        md: "Når man klikker **Ret kunde**, laver siden en **kopi** af kunden med `new` og lader formularen rette i kopien. Klikker man **Annullér**, smides kopien væk, og den viste kunde er uændret. Klikker man **Gem**, sendes kopien til `OpdaterAsync`, som skriver de nye værdier i databasen.\n\nUden kopien ville formularen rette direkte i det objekt, siden viser. Så ville navnet ændre sig på skærmen, mens man skriver, også hvis man trykker Annullér. Det er det samme som i lektion 2: `Kunde b = a;` er ikke en kopi.",
-        kode: R`private void StartRet()
-{
-    // Ret i en kopi, så "Annullér" ikke ændrer den kunde, der vises.
-    rettet = new Kunde { Id = kunde!.Id, Navn = kunde.Navn, Email = kunde.Email, Telefon = kunde.Telefon };
-    retter = true;
-}`,
-        frag: true },
-      { t: "forudsig",
-        q: "Det samme som kundesiden gør: en kopi, der rettes, og en annullering. Hvad skriver programmet?",
-        kode: R`Kunde kunde = new Kunde { Id = 1, Navn = "Mette Jensen" };
-Kunde rettet = new Kunde { Id = kunde.Id, Navn = kunde.Navn };
-rettet.Navn = "Mette Hansen";
-
-// Brugeren klikker Annullér: rettet bruges ikke.
-Console.WriteLine(kunde.Navn);
-Console.WriteLine(rettet.Navn);
-
-class Kunde
-{
-    public int Id { get; set; }
-    public string Navn { get; set; } = "";
-}`,
-        output: "Mette Jensen\nMette Hansen",
-        fordi: "`rettet` er et nyt objekt (der står `new`), så at rette i det ændrer ikke `kunde`." },
-      { t: "laes", h: "Slet og send brugeren videre",
-        md: "Når kunden er slettet, findes siden ikke længere. Derfor sender `SletKunde` brugeren tilbage til kundelisten med `NavigationManager`, som siden får med `@inject NavigationManager Navigation`.\n\nKundens skader slettes automatisk med. EF Core har lavet fremmednøglen med **cascade delete**, fordi `KundeId` er en `int` og ikke må være tom: en skade kan ikke stå uden kunde.",
-        kode: R`private async Task SletKunde()
-{
-    await KundeService.SletAsync(Id);
-    Navigation.NavigateTo("kunder");
-}`,
-        frag: true },
-      { t: "valg", q: "Ali Hassan har to skader. En sagsbehandler sletter Ali på kundesiden. Hvad sker der med de to skader?",
-        svar: ["De slettes også (cascade delete), fordi en skade ikke kan stå uden kunde", "De bliver liggende uden kunde", "Sletningen afvises, fordi han har skader", "De flyttes til en anden kunde"],
-        ret: 0, fordi: "Fremmednøglen `KundeId` er påkrævet, så EF Core har sat den op med cascade delete. Derfor spørger siden også: \"Slet Ali Hassan og alle kundens skader?\"" },
-      { t: "laes", h: "Skift status, og anmeld en skade",
-        md: "Status skiftes med en rulleliste ud for hver skade. Når man vælger noget, kører det, der står i `@onchange`, og der kommer en `ChangeEventArgs` med. `e.Value` er teksten fra det valgte, fx `\"Godkendt\"`, og `Enum.Parse` laver den om til en `SkadeStatus`.\n\nFormularen **Anmeld ny skade** er en `EditForm` ligesom på kundelisten, men med andre felter: `InputDate` til datoen, `InputSelect` til typen, `InputTextArea` til beskrivelsen og `InputNumber` til beløbet. Før skaden gemmes, får den kundens id: `nySkade.KundeId = Id;`.",
-        kode: R`private async Task SkiftStatus(int skadeId, ChangeEventArgs e)
-{
-    var status = Enum.Parse<SkadeStatus>(e.Value!.ToString()!);
-    await SkadeService.SkiftStatusAsync(skadeId, status);
-    await HentKunde();
-}`,
-        frag: true,
-        noter: [
-          ["e.Value!.ToString()!", "Værdien som tekst. Udråbstegnene lover, at den ikke er `null`."],
-          ["HentKunde()", "Henter kunden igen, så siden viser den nye status og det nye udbetalte beløb."]
-        ] },
-      { t: "forudsig",
-        kode: R`string valgt = "Godkendt";
-SkadeStatus status = Enum.Parse<SkadeStatus>(valgt);
-Console.WriteLine(status == SkadeStatus.Godkendt);
-Console.WriteLine(status);
-
-enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
-        output: "True\nGodkendt",
-        fordi: "`Enum.Parse` finder den værdi i enum'en, der hedder det samme som teksten." },
       { t: "opgave", h: "Kundesiden, del 1: vis kunden", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
-        md: "Kundesiden er den største side, så du bygger den i fem dele. Lav `Components/Pages/KundeDetaljer.razor`.\n\nFørst skal siden finde kunden ud fra adressen (trin 1) og vise navn, e-mail og telefon. Én ny ting: `@(betingelse ? \"tekst 1\" : \"tekst 2\")` vælger mellem to tekster. Er betingelsen sand, bruges teksten før kolonet, ellers teksten efter.",
+        md: "Kundesiden er den største side, så du bygger den i fem dele: del 1 og 2 her og del 3–5 i lektion 11b. Lav `Components/Pages/KundeDetaljer.razor`.\n\nFørst skal siden finde kunden ud fra adressen (trin 3) og vise navn, e-mail og telefon. Én ny ting: `@(betingelse ? \"tekst 1\" : \"tekst 2\")` vælger mellem to tekster. Er betingelsen sand, bruges teksten før kolonet, ellers teksten efter.",
         krav: [
           "Adressen er `/kunder/{Id:int}`, og siden får en `IKundeService`",
           "`[Parameter] public int Id` får tallet fra adressen. Felterne `Kunde? kunde` og `bool indlaest`",
@@ -445,11 +417,11 @@ enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
           "Klik på Mette Jensen i kundelisten: hendes navn, e-mail og telefon står på siden. `/kunder/999` giver \"Kunden findes ikke.\""
         ],
         tip: [
-          "Opbygningen står i trin 1. Brug `OnParametersSetAsync`, ikke `OnInitializedAsync`, så siden også virker, når man går direkte fra én kunde til en anden.",
+          "Opbygningen står i trin 3. Brug `OnParametersSetAsync`, ikke `OnInitializedAsync`, så siden også virker, når man går direkte fra én kunde til en anden.",
           "`HentKunde` er en `private async Task`-metode med to linjer: `kunde = await KundeService.HentAsync(Id);` og `indlaest = true;`",
           "Teksten, når kunden mangler: `<p>@(indlaest ? \"Kunden findes ikke.\" : \"Henter kunden …\")</p>`"
         ],
-        output: "Mette Jensens side viser hendes navn som overskrift og mette@eksempel.dk · 22334455. Adressen /kunder/999 giver: Kunden findes ikke.",
+        output: "Mette Jensens side viser hendes navn som overskrift og Mette@eksempel.com · 12345678. Adressen /kunder/999 giver: Kunden findes ikke.",
         loesning: R`@page "/kunder/{Id:int}"
 @inject IKundeService KundeService
 
@@ -488,7 +460,7 @@ else
     }
 }` },
       { t: "opgave", h: "Kundesiden, del 2: kundens skader", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
-        md: "Nu skal kundens skader stå på siden i en tabel, og hver skade skal kunne slettes. Slet-knappen skal have skadens id med. Det gør lambdaen i trin 4.",
+        md: "Nu skal kundens skader stå på siden i en tabel, og hver skade skal kunne slettes. Slet-knappen skal have skadens id med. Det gør lambdaen i trin 6.",
         krav: [
           "Siden får også en `ISkadeService` med `@inject`",
           "Overskriften `Skader (2)` med det rigtige antal, og teksten `Kunden har ingen skader.`, hvis kunden ingen har",
@@ -542,8 +514,132 @@ private async Task SletSkade(int skadeId)
     await SkadeService.SletAsync(skadeId);
     await HentKunde();
 }` },
+      { t: "forklar", h: "Til eksamen", q: "Censor: \"Hvordan ved kundesiden, hvilken kunde den skal vise?\" Sig svaret højt, og peg på `@page` og `[Parameter]` i `Components/Pages/KundeDetaljer.razor`.",
+        svar: "Siden har @page \"/kunder/{Id:int}\". Tallet i adressen, fx 2 i /kunder/2, kommer i propertyen Id, der er markeret med [Parameter]. :int betyder, at kun tal passer. I OnParametersSetAsync henter siden kunden med KundeService.HentAsync(Id). Jeg bruger OnParametersSetAsync og ikke OnInitializedAsync, fordi den også kører, når man går direkte fra én kunde til en anden. Findes kunden ikke, står der \"Kunden findes ikke.\"",
+        noegle: ["@page", "{Id:int}", "[Parameter]", "OnParametersSetAsync", "HentAsync"] }
+  ] },
+
+  // ------------------------------------------------------------------
+  { id: "m30l10b", nr: "11b", titel: "Kundesiden, del 2: ret, slet og skift status", min: 30,
+    ord: [
+      ["NavigationManager", "En service, der kan sende brugeren til en anden side: `Navigation.NavigateTo(\"kunder\")`."],
+      ["Cascade delete", "Når en række slettes, slettes de rækker, der peger på den, også. Slettes en kunde, forsvinder kundens skader."],
+      ["ChangeEventArgs", "Oplysningerne om en ændring i et felt. `e.Value` er den nye værdi."],
+      ["Enum.Parse", "Laver en tekst om til en enum-værdi: `Enum.Parse<SkadeStatus>(\"Godkendt\")`."]
+    ],
+    trin: [
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "Hvorfor henter kundesiden kunden i `OnParametersSetAsync` og ikke i `OnInitializedAsync`?",
+        svar: ["Fordi `OnParametersSetAsync` kører, hver gang `Id` ændres, også når man går direkte fra én kunde til en anden", "Fordi `OnInitializedAsync` ikke kan bruge `await`", "Fordi `OnParametersSetAsync` er hurtigere til databasen", "Det er ligegyldigt, de gør det samme"],
+        ret: 0, fordi: "Blazor genbruger siden, når kun tallet i adressen skifter. `OnInitializedAsync` ville kun køre første gang, så siden ville blive ved med at vise den gamle kunde." },
+      { t: "forudsig", h: "Husker du fra sidst?",
+        q: "Repetition: to variabler og ét objekt. Svar, før du kigger tilbage. Hvad skriver programmet?",
+        kode: R`Kunde a = new Kunde { Navn = "Søren Nielsen" };
+Kunde b = a;
+b.Navn = "Søren N.";
+Console.WriteLine(a.Navn);
+
+class Kunde
+{
+    public string Navn { get; set; } = "";
+}`,
+        output: "Søren N.",
+        fordi: "`Kunde b = a;` laver ikke en ny kunde. `a` og `b` henviser til det samme objekt, så at ændre `b.Navn` ændrer også det, `a` viser. Det er derfor, kundesiden laver en kopi med `new`." },
+      { t: "laes", h: "Ret i en kopi",
+        md: "Når man klikker **Ret kunde**, laver siden en **kopi** af kunden med `new` og lader formularen rette i kopien. Klikker man **Annullér**, smides kopien væk, og den viste kunde er uændret. Klikker man **Gem**, sendes kopien til `OpdaterAsync`, som skriver de nye værdier i databasen.\n\nUden kopien ville formularen rette direkte i det objekt, siden viser. Så ville navnet ændre sig på skærmen, mens man skriver, også hvis man trykker Annullér. Det er det samme som i lektion 2: `Kunde b = a;` er ikke en kopi.",
+        kode: R`private void StartRet()
+{
+    // Ret i en kopi, så "Annullér" ikke ændrer den kunde, der vises.
+    rettet = new Kunde { Id = kunde!.Id, Navn = kunde.Navn, Email = kunde.Email, Telefon = kunde.Telefon };
+    retter = true;
+}`,
+        frag: true },
+      { t: "forudsig",
+        q: "Det samme som kundesiden gør: en kopi, der rettes, og en annullering. Hvad skriver programmet?",
+        kode: R`Kunde kunde = new Kunde { Id = 1, Navn = "Mette Jensen" };
+Kunde rettet = new Kunde { Id = kunde.Id, Navn = kunde.Navn };
+rettet.Navn = "Mette Hansen";
+
+// Brugeren klikker Annullér: rettet bruges ikke.
+Console.WriteLine(kunde.Navn);
+Console.WriteLine(rettet.Navn);
+
+class Kunde
+{
+    public int Id { get; set; }
+    public string Navn { get; set; } = "";
+}`,
+        output: "Mette Jensen\nMette Hansen",
+        fordi: "`rettet` er et nyt objekt (der står `new`), så at rette i det ændrer ikke `kunde`." },
+      { t: "spor", h: "Følg kopien",
+        q: "Det samme, som sker på kundesiden: en kopi, der bliver rettet, og så Gem. Linje 4 gør det, som `OpdaterAsync` gør med den gemte kunde. Skriv `kunde.Navn` og `rettet.Navn`, lige efter at linjen er udført. Skemaet har linje 1–4.",
+        kode: R`Kunde kunde = new Kunde { Id = 1, Navn = "Mette Jensen" };
+Kunde rettet = new Kunde { Id = kunde.Id, Navn = kunde.Navn };
+rettet.Navn = "Mette Hansen";
+kunde.Navn = rettet.Navn;
+Console.WriteLine(kunde.Navn);
+
+class Kunde
+{
+    public int Id { get; set; }
+    public string Navn { get; set; } = "";
+}`,
+        kolonner: ["kunde.Navn", "rettet.Navn"],
+        raekker: [[1, "=Mette Jensen", "=–"], [2, "Mette Jensen", "Mette Jensen"], [3, "Mette Jensen", "Mette Hansen"], [4, "Mette Hansen", "Mette Hansen"]],
+        slut: false,
+        output: "Mette Hansen",
+        fordi: "Indtil linje 4 er `kunde` uændret, fordi `rettet` er et nyt objekt. Havde brugeren klikket Annullér, var linje 4 aldrig kørt, og `kunde` ville stadig hedde Mette Jensen. Først Gem flytter navnet over." },
+      { t: "laes", h: "Slet og send brugeren videre",
+        md: "Når kunden er slettet, findes siden ikke længere. Derfor sender `SletKunde` brugeren tilbage til kundelisten med `NavigationManager`, som siden får med `@inject NavigationManager Navigation`.\n\nKundens skader slettes automatisk med. EF Core har lavet fremmednøglen med **cascade delete**, fordi `KundeId` er en `int` og ikke må være tom: en skade kan ikke stå uden kunde.",
+        kode: R`private async Task SletKunde()
+{
+    await KundeService.SletAsync(Id);
+    Navigation.NavigateTo("kunder");
+}`,
+        frag: true },
+      { t: "valg", q: "Peter Bangsmann har to skader. En sagsbehandler sletter Peter Bangsmann på kundesiden. Hvad sker der med de to skader?",
+        svar: ["De slettes også (cascade delete), fordi en skade ikke kan stå uden kunde", "De bliver liggende uden kunde", "Sletningen afvises, fordi han har skader", "De flyttes til en anden kunde"],
+        ret: 0, fordi: "Fremmednøglen `KundeId` er påkrævet, så EF Core har sat den op med cascade delete. Derfor spørger siden også: \"Slet Peter Bangsmann og alle kundens skader?\"" },
+      { t: "laes", h: "Skift status, og anmeld en skade",
+        md: "Status skiftes med en rulleliste ud for hver skade. Når man vælger noget, kører det, der står i `@onchange`, og der kommer en `ChangeEventArgs` med. `e.Value` er teksten fra det valgte, fx `\"Godkendt\"`, og `Enum.Parse` laver den om til en `SkadeStatus`.\n\nFormularen **Anmeld ny skade** er en `EditForm` ligesom på kundelisten, men med andre felter: `InputDate` til datoen, `InputSelect` til typen, `InputTextArea` til beskrivelsen og `InputNumber` til beløbet. Før skaden gemmes, får den kundens id: `nySkade.KundeId = Id;`.",
+        kode: R`private async Task SkiftStatus(int skadeId, ChangeEventArgs e)
+{
+    var status = Enum.Parse<SkadeStatus>(e.Value!.ToString()!);
+    await SkadeService.SkiftStatusAsync(skadeId, status);
+    await HentKunde();
+}`,
+        frag: true,
+        noter: [
+          ["e.Value!.ToString()!", "Værdien som tekst. Udråbstegnene lover, at den ikke er `null`."],
+          ["HentKunde()", "Henter kunden igen, så siden viser den nye status og det nye udbetalte beløb."]
+        ] },
+      { t: "forudsig",
+        kode: R`string valgt = "Godkendt";
+SkadeStatus status = Enum.Parse<SkadeStatus>(valgt);
+Console.WriteLine(status == SkadeStatus.Godkendt);
+Console.WriteLine(status);
+
+enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
+        output: "True\nGodkendt",
+        fordi: "`Enum.Parse` finder den værdi i enum'en, der hedder det samme som teksten." },
+      { t: "fejl",
+        kode: R`string valgt = "Godkendt";
+SkadeStatus status = Enum.Parse<SkadeType>(valgt);
+Console.WriteLine(status);
+
+enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }
+enum SkadeType { Bil, Indbo, Rejse, Ulykke }`,
+        linje: 2,
+        output: "Godkendt",
+        fordi: "`Enum.Parse<SkadeType>` laver teksten om til en `SkadeType`, men variablen er en `SkadeStatus`. Compileren siger, at den ikke kan lave en `SkadeType` om til en `SkadeStatus`. I vinkelparenteserne skal stå den enum, teksten skal blive til: `Enum.Parse<SkadeStatus>(valgt)`.",
+        rettet: R`string valgt = "Godkendt";
+SkadeStatus status = Enum.Parse<SkadeStatus>(valgt);
+Console.WriteLine(status);
+
+enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }
+enum SkadeType { Bil, Indbo, Rejse, Ulykke }` },
       { t: "opgave", h: "Kundesiden, del 3: skift status", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
-        md: "Status skal kunne skiftes direkte i tabellen. I stedet for `StatusMaerke` kommer en rulleliste med de fire statusser. Når man vælger, kører `SkiftStatus` fra trin 9.\n\n`Enum.GetValues<SkadeStatus>()` giver alle fire statusser, så du kan lave én `<option>` pr. status med en `foreach`.",
+        md: "Status skal kunne skiftes direkte i tabellen. I stedet for `StatusMaerke` kommer en rulleliste med de fire statusser. Når man vælger, kører `SkiftStatus` fra trin 8.\n\n`Enum.GetValues<SkadeStatus>()` giver alle fire statusser, så du kan lave én `<option>` pr. status med en `foreach`.",
         krav: [
           "I status-kolonnen står en `<select>` med `value=\"@skade.Status\"`, så den viser skadens status",
           "Rullelisten har én `<option>` for hver værdi i `Enum.GetValues<SkadeStatus>()`",
@@ -553,7 +649,7 @@ private async Task SletSkade(int skadeId)
         ],
         tip: [
           "En rulleliste: `<select class=\"form-select form-select-sm\" …> … </select>` med `<option value=\"@status\">@status</option>` indeni.",
-          "`SkiftStatus` står i trin 9. Kopiér den ind i `@code`.",
+          "`SkiftStatus` står i trin 8. Kopiér den ind i `@code`.",
           "`@onchange=\"e => SkiftStatus(skade.Id, e)\"`: `e` er hændelsen med det valgte. Lambdaen giver den videre sammen med skadens id."
         ],
         output: "Status-kolonnen har en rulleliste. Vælger du Godkendt for vandskaden, bliver Udbetalt i alt til kunden 23.250,00 kr.",
@@ -581,7 +677,7 @@ private async Task SkiftStatus(int skadeId, ChangeEventArgs e)
           "Overskriften `Anmeld ny skade` og en `EditForm` med `Model=\"nySkade\"`, `OnValidSubmit=\"AnmeldSkade\"` og `DataAnnotationsValidator`",
           "Felterne Dato (`InputDate`), Type (`InputSelect` med én `option` pr. `SkadeType`), Beskrivelse (`InputTextArea`) og Beløb (`InputNumber`), med `ValidationMessage` under Beskrivelse og Beløb, og knappen **Anmeld skade**",
           "`AnmeldSkade` sætter `nySkade.KundeId = Id`, gemmer med `OpretAsync`, laver en ny tom `Skade` og henter kunden igen",
-          "Anmeld uden beskrivelse: `Beskriv skaden.` vises. Anmeld en rigtig skade: den står øverst i tabellen"
+          "Anmeld uden beskrivelse: `Beskriv skaden` vises. Anmeld en rigtig skade: den står øverst i tabellen"
         ],
         tip: [
           "Alle fire felter bindes som på kundelisten: `@bind-Value=\"nySkade.Dato\"` osv.",
@@ -638,7 +734,7 @@ private async Task AnmeldSkade()
     await HentKunde();
 }` },
       { t: "opgave", h: "Kundesiden, del 5: ret og slet kunden", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
-        md: "Til sidst knapperne **Ret kunde** og **Slet kunde**. Siden skifter mellem tilstande med `bool`-felter (trin 3): `retter` og `bekraeftSlet`. Man retter i en kopi (trin 5), og efter sletning sendes man til kundelisten (trin 7). Løsningsforslaget viser hele siden, som den ser ud, når alle fem dele er lavet.",
+        md: "Til sidst knapperne **Ret kunde** og **Slet kunde**. Siden skifter mellem tilstande med `bool`-felter (lektion 11, trin 5): `retter` og `bekraeftSlet`. Man retter i en kopi (trin 3), og efter sletning sendes man til kundelisten (trin 6). Løsningsforslaget viser hele siden, som den ser ud, når alle fem dele er lavet.",
         krav: [
           "Under navnet står knapperne **Ret kunde** og **Slet kunde**",
           "**Ret kunde** kalder `StartRet`, der laver en kopi af kunden i feltet `rettet` og sætter `retter = true`",
@@ -648,9 +744,9 @@ private async Task AnmeldSkade()
           "`SletKunde` sletter med `SletAsync(Id)` og sender brugeren til `kunder` med `NavigationManager`, som siden får med `@inject NavigationManager Navigation`"
         ],
         tip: [
-          "`StartRet` står i trin 5, og `SletKunde` står i trin 7.",
+          "`StartRet` står i trin 3, og `SletKunde` står i trin 6.",
           "Ret-formularen er de samme tre felter som Ny kunde-formularen, bare med `rettet` i stedet for `nyKunde`. Knappen Annullér skal have `type=\"button\"`, ellers sender den formularen.",
-          "Bekræftelsen står i trin 3: `@if (bekraeftSlet) { … Ja, slet … Nej … } else { … Slet kunde … }`"
+          "Bekræftelsen så du i lektion 11, trin 5: `@if (bekraeftSlet) { … Ja, slet … Nej … } else { … Slet kunde … }`"
         ],
         output: "Ret kunde viser en formular med kundens oplysninger. Annullér ændrer intet, Gem gemmer. Slet kunde spørger først, og Ja, slet sender dig tilbage til kundelisten.",
         loesning: R`@page "/kunder/{Id:int}"
@@ -852,9 +948,9 @@ else
         await HentKunde();
     }
 }` },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvordan ved kundesiden, hvilken kunde den skal vise, og hvad sker der, når man retter kunden?",
-        svar: "Siden har @page \"/kunder/{Id:int}\", så tallet i adressen kommer i propertyen Id, der er markeret med [Parameter]. I OnParametersSetAsync henter siden kunden med KundeService.HentAsync(Id). Når man klikker Ret kunde, laves en kopi med new, og formularen retter i kopien, så Annullér ikke ændrer noget. Ved Gem sendes kopien til OpdaterAsync, som finder kunden i databasen, sætter de nye værdier og kalder SaveChangesAsync.",
-        noegle: ["ruteparameter", "[Parameter]", "OnParametersSetAsync", "kopi", "OpdaterAsync", "SaveChangesAsync"] }
+      { t: "forklar", h: "Til eksamen", q: "Eksamensspørgsmål: Hvad sker der, når man retter en kunde og klikker Gem eller Annullér? Sig svaret højt, og peg på `StartRet` og `GemKunde` i `Components/Pages/KundeDetaljer.razor`.",
+        svar: "Når man klikker Ret kunde, kører StartRet. Den laver en kopi af kunden med new og lægger den i feltet rettet, og formularen retter i kopien. Klikker man Annullér, sættes retter til false, og kopien bruges ikke, så den viste kunde er uændret. Klikker man Gem, og reglerne er overholdt, kører GemKunde. Den sender kopien til OpdaterAsync, som finder kunden i databasen med FindAsync, sætter de nye værdier og kalder SaveChangesAsync. Til sidst henter siden kunden igen.",
+        noegle: ["StartRet", "kopi", "new", "Annullér", "OpdaterAsync", "SaveChangesAsync"] }
   ] },
 
   // ------------------------------------------------------------------
@@ -866,6 +962,16 @@ else
       ["ToString(\"C\")", "Skriver et tal som et beløb i landets valuta: `4.500,00 kr.` på dansk."]
     ],
     trin: [
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "Hvorfor laver kundesiden en kopi af kunden med `new`, når man klikker **Ret kunde**?",
+        svar: ["Så formularen retter i kopien, og Annullér ikke ændrer den kunde, der vises", "For at gemme kunden to gange", "Fordi `EditForm` ikke kan bruge den rigtige kunde", "For at slette den gamle kunde"],
+        ret: 0, fordi: "Uden kopien ville formularen rette direkte i det objekt, siden viser. Så ville navnet ændre sig på skærmen, også hvis man klikker Annullér." },
+      { t: "forudsig", h: "Husker du fra sidst?",
+        q: "Repetition: søgningen fra kundelisten. Svar, før du kigger tilbage. Hvad skriver programmet?",
+        kode: R`List<string> navne = new List<string> { "Mette Jensen", "Peter Bangsmann", "Søren Nielsen", "Peter Parker" };
+Console.WriteLine(navne.Count(n => n.Contains("PETER", StringComparison.OrdinalIgnoreCase)));`,
+        output: "2",
+        fordi: "Med `StringComparison.OrdinalIgnoreCase` er store og små bogstaver ligegyldige, så \"PETER\" findes i begge Peter-kunder." },
       { t: "laes", h: "Filtrér først, sortér bagefter",
         md: "Skadesiden har to rullelister: status og sortering. Begge er bundet med `@bind` til et felt. Propertyen `Viste` bruger dem: først filtreres der med `Where`, hvis der er valgt en status, og så sorteres der efter det valgte med et switch-udtryk.",
         kode: R`private IEnumerable<Skade> Viste
@@ -920,12 +1026,39 @@ foreach (decimal b in beloeb.[[OrderByDescending]](b => b).[[Take]](3))
 }`,
         output: "25000\n7999\n4500",
         fordi: "`OrderByDescending` sorterer med det største først, og `Take(3)` tager de tre første." },
+      { t: "fejl",
+        q: "Det er statusserne for dine syv startskader. Med filteret Godkendt skal programmet tælle 3 skader, men det skriver 4. Klik på linjen med fejlen.",
+        kode: R`List<SkadeStatus> statusser = new List<SkadeStatus>
+{
+    SkadeStatus.Godkendt, SkadeStatus.Behandles, SkadeStatus.Godkendt, SkadeStatus.Afvist,
+    SkadeStatus.Anmeldt, SkadeStatus.Godkendt, SkadeStatus.Anmeldt
+};
+string statusFilter = "Godkendt";
+int antal = statusser.Count(s => s.ToString() != statusFilter);
+Console.WriteLine(antal);
+
+enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }`,
+        linje: 7,
+        logisk: true,
+        output: "4",
+        rettetOutput: "3",
+        fordi: "`!=` betyder \"er forskellig fra\", så programmet tæller alle dem, der **ikke** er godkendt. Filteret skal beholde dem, der er ens med det valgte: `==`.",
+        rettet: R`List<SkadeStatus> statusser = new List<SkadeStatus>
+{
+    SkadeStatus.Godkendt, SkadeStatus.Behandles, SkadeStatus.Godkendt, SkadeStatus.Afvist,
+    SkadeStatus.Anmeldt, SkadeStatus.Godkendt, SkadeStatus.Anmeldt
+};
+string statusFilter = "Godkendt";
+int antal = statusser.Count(s => s.ToString() == statusFilter);
+Console.WriteLine(antal);
+
+enum SkadeStatus { Anmeldt, Behandles, Godkendt, Afvist }` },
       { t: "opgave", h: "Lav skadesiden", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
-        md: "Den sidste side. Lav `Components/Pages/Skader.razor`, og skriv den selv. Du har bygget alle delene før: data i `OnInitializedAsync`, rullelister med `@bind` og `Enum.GetValues`, en tabel og LINQ. Trin 1 viser propertyen `Viste`, der filtrerer og sorterer.",
+        md: "Den sidste side. Lav `Components/Pages/Skader.razor`, og skriv den selv. Du har bygget alle delene før: data i `OnInitializedAsync`, rullelister med `@bind` og `Enum.GetValues`, en tabel og LINQ. Trin 3 viser propertyen `Viste`, der filtrerer og sorterer.",
         krav: [
           "Adressen er `/skader`, siden får en `ISkadeService`, og feltet `List<Skade>? skader` hentes i `OnInitializedAsync`",
           "To rullelister bundet med `@bind`: Status (`Alle` og de fire statusser) til feltet `statusFilter` med startværdien `\"Alle\"`, og Sortér efter (`Nyeste først`, `Ældste først`, `Højeste beløb først` med værdierne `nyeste`, `aeldste` og `beloeb`) til feltet `sortering`",
-          "Propertyen `Viste` filtrerer på status, hvis der ikke er valgt `Alle`, og sorterer efter det valgte (trin 1)",
+          "Propertyen `Viste` filtrerer på status, hvis der ikke er valgt `Alle`, og sorterer efter det valgte (trin 3)",
           "En tabel med Dato, Kunde (link), Type, Beskrivelse, Beløb og Status (`StatusMaerke`) for skaderne i `Viste`",
           "Under tabellen: antallet af viste skader og deres samlede beløb som kroner, fx `7 skader · i alt 68.049,00 kr.`",
           "Vælg **Godkendt**: 3 skader. Vælg **Højeste beløb først**: 25.000,00 kr. øverst"
@@ -1026,7 +1159,7 @@ else
     }
 }` },
       { t: "laes", h: "Danske beløb",
-        md: "I lektion 6 skrev du to linjer med `CultureInfo` øverst i `Program.cs`. De sætter appens sprog og land til dansk (`da-DK`). Derfor skriver `ToString(\"C\")` beløb som danske kroner med punktum ved tusinder og komma før øre.",
+        md: "I lektion 6b skrev du to linjer med `CultureInfo` øverst i `Program.cs`. De sætter appens sprog og land til dansk (`da-DK`). Derfor skriver `ToString(\"C\")` beløb som danske kroner med punktum ved tusinder og komma før øre.",
         kode: R`Console.WriteLine(4500m.ToString("C"));
 Console.WriteLine(0.5m.ToString("C"));`,
         output: "4.500,00 kr.\n0,50 kr.",
@@ -1038,14 +1171,17 @@ Console.WriteLine(udbetalt.ToString("C"));`,
         output: "13.900,00 kr.",
         fordi: "4500 + 6200 + 3200 = 13900. `\"C\"` skriver det som danske kroner med to decimaler. Det er tallet på din forside." },
       { t: "ide", h: "Test hele appen, som censor ville",
-        md: "Nu er appen færdig. Gå den igennem fra ende til anden, før du afleverer. Start forfra med de rigtige startdata: stop appen, slet `skader.db` i mappen `Data`, og kør igen. (Lader du `app.db` ligge, beholder du din bruger.)",
+        md: "Nu er appen færdig. Gå den igennem fra ende til anden, før du afleverer. Start forfra med de rigtige startdata: stop appen, slet `skade.db` i mappen `Data`, og kør igen. (Lader du `app.db` ligge, beholder du din bruger.)",
         win: ["**Overblik**: 4 kunder, 3 åbne skader, 13.900,00 kr. udbetalt.", "**Kunder**: søg på `søren`, så på `zzz`. Prøv at oprette en tom kunde og en med forkert e-mail og telefon. Opret så en rigtig kunde.", "**Kundesiden** for din nye kunde: anmeld en skade på 12.000 kr. Prøv først at anmelde uden beskrivelse. Sæt skaden til **Godkendt**: udbetalt skal være 12.000,00 kr.", "Ret kunden, og prøv både **Annullér** og **Gem**.", "**Overblik** igen: nu er der udbetalt 25.900,00 kr. **Skader**: 8 skader. Filtrér på **Godkendt** (4 skader), og sortér efter beløb.", "Slet skaden, og slet så kunden. Du kommer tilbage til kundelisten, og kunden er væk.", "Skriv `/kunder/999` i adresselinjen: \"Kunden findes ikke.\""],
         mac: ["**Overblik**: 4 kunder, 3 åbne skader, 13.900,00 kr. udbetalt.", "**Kunder**: søg på `søren`, så på `zzz`. Prøv at oprette en tom kunde og en med forkert e-mail og telefon. Opret så en rigtig kunde.", "**Kundesiden** for din nye kunde: anmeld en skade på 12.000 kr. Prøv først at anmelde uden beskrivelse. Sæt skaden til **Godkendt**: udbetalt skal være 12.000,00 kr.", "Ret kunden, og prøv både **Annullér** og **Gem**.", "**Overblik** igen: nu er der udbetalt 25.900,00 kr. **Skader**: 8 skader. Filtrér på **Godkendt** (4 skader), og sortér efter beløb.", "Slet skaden, og slet så kunden. Du kommer tilbage til kundelisten, og kunden er væk.", "Skriv `/kunder/999` i adresselinjen: \"Kunden findes ikke.\""],
         md2: "Virker et punkt ikke, så sammenlign den fil, det handler om, med facit i `Desktop\\c#\\C#  Ekasmen\\Facit\\SkadeApp`. Sæt et breakpoint i den metode, der skulle køre, og se, om den bliver kaldt." },
       { t: "valg", q: "Til eksamen spørger censor: \"Hvad sker der i din app, når man vælger Godkendt i rullelisten på kundesiden?\" Hvilket svar er rigtigt?",
         svar: ["@onchange kalder SkiftStatus med skadens id. Den laver teksten om til en SkadeStatus, SkadeService gemmer den nye status med SaveChangesAsync, og siden henter kunden igen, så det udbetalte beløb opdateres", "Browseren gemmer statussen i en cookie", "Rullelisten ændrer databasen direkte uden C#", "Hele siden genindlæses fra serveren som en ny side"],
         ret: 0, fordi: "Det er hele kæden: hændelse på siden → metode i `@code` → service → EF Core → database, og så tegnes siden igen med de nye data." },
-      { t: "forklar", q: "Eksamensspørgsmål: Vis din app for censor på to minutter. Hvad viser du, og i hvilken rækkefølge?",
+      { t: "forklar", q: "Censor: \"Hvad er forskellen på at filtrere og at sortere, og hvilke LINQ-metoder bruger du til det på skadesiden?\"",
+        svar: "At filtrere er at vise kun de skader, der passer, fx kun de godkendte. Det gør jeg med Where. At sortere er at sætte dem i rækkefølge, fx nyeste først eller højeste beløb først. Det gør jeg med OrderBy og OrderByDescending. På skadesiden filtrerer jeg først og sorterer bagefter, så der ikke sorteres skader, som alligevel bliver fjernet.",
+        noegle: ["Where", "OrderBy", "OrderByDescending", "først", "bagefter"] },
+      { t: "forklar", h: "Til eksamen", q: "Eksamensspørgsmål: Vis din app for censor på to minutter. Hvad viser du, og i hvilken rækkefølge? Sig det højt, mens du klikker rundt i appen.",
         svar: "Jeg starter på Overblik og forklarer problemet: en sagsbehandler skal holde styr på kunder og skader. Så går jeg til Kunder, søger og opretter en kunde, også med en fejl, så valideringen ses. På kundesiden anmelder jeg en skade og sætter den til Godkendt, så det udbetalte beløb ændrer sig. Til sidst viser jeg Skader med filter og sortering, og Overblik igen, hvor tallene er opdateret. Undervejs peger jeg på, at siderne bruger services, og at data gemmes med EF Core i SQLite.",
         noegle: ["problemet", "validering", "kundesiden", "Godkendt", "filter", "services"] }
   ] },
@@ -1062,6 +1198,19 @@ Console.WriteLine(udbetalt.ToString("C"));`,
       ["AuthorizeView", "En komponent, der viser én ting til brugere, der er logget ind (`<Authorized>`), og noget andet til alle andre (`<NotAuthorized>`)."]
     ],
     trin: [
+      { t: "valg", h: "Husker du fra sidst?",
+        q: "Hvad gør `Navigation.NavigateTo(\"kunder\")` i `SletKunde` på kundesiden?",
+        svar: ["Sender brugeren til kundelisten, fordi kundesiden ikke kan vise en kunde, der er slettet", "Sletter alle kunder", "Genindlæser den samme side", "Henter kunderne fra databasen"],
+        ret: 0, fordi: "`NavigationManager` er en service, siden får med `@inject`. `NavigateTo` skifter side, som hvis brugeren havde klikket på et link." },
+      { t: "forudsig", h: "Husker du fra sidst?",
+        q: "Repetition: filtrér først, sortér bagefter. Svar, før du kigger tilbage. Hvad skriver programmet?",
+        kode: R`List<decimal> beloeb = new List<decimal> { 4500m, 18750m, 6200m, 7999m, 25000m };
+foreach (decimal b in beloeb.Where(b => b > 5000m).OrderBy(b => b).Take(2))
+{
+    Console.WriteLine(b);
+}`,
+        output: "6200\n7999",
+        fordi: "`Where` beholder 18750, 6200, 7999 og 25000. `OrderBy` sætter dem med det mindste først, og `Take(2)` tager de to første." },
       { t: "laes", h: "Hvorfor login?",
         md: "SkadeApp indeholder kunders navne, e-mails, telefonnumre og skader. Det er personoplysninger, og dem må kun selskabets medarbejdere se. Derfor skal man logge ind.\n\nDer er to ord, du skal kunne holde ude fra hinanden til eksamen:\n\n- **Authentication**: hvem er du? Brugeren logger ind med e-mail og adgangskode.\n- **Autorisation**: hvad må du? Siderne med kunder og skader må kun ses af brugere, der er logget ind.",
         md2: "Underviseren sagde i undervisningen, at han gerne ser login i projektet. Det har SkadeApp nu." },
@@ -1081,7 +1230,7 @@ Components/Routes.razor     AuthorizeRouteView: sender til login, hvis man ikke 
           ["Cookie", "Efter login gemmer browseren en cookie, så serveren kan se, hvem du er, uden at du logger ind igen."],
           ["EnsureCreated", "Brugertabellerne bliver lavet med `EnsureCreated()` i `Program.cs`, ligesom dine egne tabeller. Underviseren brugte i stedet *migrations* med `Add-Migration` og `Update-Database`: de kan ændre en database, der allerede har data, uden at slette den."]
         ],
-        md2: "Login-siderne er på engelsk, fordi skabelonen er det. Det er helt i orden: de er ikke en del af din egen kode." },
+        md2: "Skabelonens login-sider er på engelsk. I din afleverede app har du selv oversat dem til dansk og fjernet delen om at logge ind med andre tjenester (`ExternalLoginPicker`). Det er ekstra og ikke noget, opgaven kræver." },
       { t: "valg", q: "Hvordan gemmer ASP.NET Core Identity en brugers adgangskode i databasen?",
         svar: ["Som en hash, der ikke kan regnes tilbage til adgangskoden", "Som almindelig tekst", "I en cookie i browseren", "Den gemmes slet ikke"],
         ret: 0, fordi: "Ved login laver Identity en hash af det, brugeren skriver, og sammenligner den med den gemte hash. Selve adgangskoden står aldrig i databasen." },
@@ -1113,12 +1262,13 @@ Components/Routes.razor     AuthorizeRouteView: sender til login, hvis man ikke 
           ["@context.User.Identity?.Name", "Navnet på den bruger, der er logget ind. Her er det e-mailen."],
           ["Log ud", "En lille `<form>`, der sender til `Account/Logout`, når man klikker. `<AntiforgeryToken />` beskytter mod falske formularer fra andre hjemmesider. Den har skabelonen lavet."],
           ["@code nederst i NavMenu.razor", "Skabelonens kode. Den husker den adresse, du står på (`currentUrl`), så du kommer tilbage dertil efter login. `@implements IDisposable` og `Dispose` rydder op, når menuen forsvinder. Du skal ikke skrive eller ændre den."]
-        ] },
+        ],
+        md2: "**Ekstra:** underviseren viste `[Authorize]`. `AuthorizeView` kom med skabelonen, og du har brugt den til at skjule dine egne links, indtil brugeren er logget ind." },
       { t: "valg", q: "Menuen har `<AuthorizeView>` med `<Authorized>` og `<NotAuthorized>`. Hvad ser en bruger, der ikke er logget ind?",
         svar: ["Kun det, der står i <NotAuthorized>: Log ind og Opret bruger", "Alle links, men de virker ikke", "Ingen menu", "Både <Authorized> og <NotAuthorized>"],
         ret: 0, fordi: "`AuthorizeView` viser én af de to dele. Linkene til dine sider står i `<Authorized>`, så de vises først efter login." },
       { t: "opgave", h: "Slå login til for dine sider", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
-        md: "Fire rettelser, og så er alle dine sider beskyttet. Trin 5 viser `[Authorize]`, og trin 7 viser `AuthorizeView` i menuen.\n\nI `NavMenu.razor` står der allerede en `<AuthorizeView>` fra skabelonen med `<Authorized>` (brugerens navn og Logout) og `<NotAuthorized>` (Register og Login). Dine tre links står over den. De skal flyttes ind i `<Authorized>`, så de kun vises efter login.",
+        md: "Fire rettelser, og så er alle dine sider beskyttet. Trin 7 viser `[Authorize]`, og trin 9 viser `AuthorizeView` i menuen.\n\nI `NavMenu.razor` står der allerede en `<AuthorizeView>` fra skabelonen med `<Authorized>` (brugerens navn og Logout) og `<NotAuthorized>` (Register og Login). Dine tre links står over den. De skal flyttes ind i `<Authorized>`, så de kun vises efter login.",
         krav: [
           "`Program.cs`: `options.SignIn.RequireConfirmedAccount` er rettet fra `true` til `false` (appen sender ingen e-mails, så nye brugere skal ikke bekræfte deres e-mail)",
           "`Components/_Imports.razor`: `@using Microsoft.AspNetCore.Authorization` står nederst",
@@ -1235,14 +1385,14 @@ options.SignIn.RequireConfirmedAccount = false;
         md: "Nu prøver du login, som en ny medarbejder ville.",
         win: ["Kør appen. Du bliver sendt til siden **Log in**, fordi forsiden kræver login. Menuen viser kun **Log ind** og **Opret bruger**.", "Klik **Opret bruger**. Skriv en e-mail, fx `sagsbehandler@skadeapp.dk`, og en adgangskode to gange, fx `Skade123!`. Klik **Register**.", "Du er logget ind og ser overblikket. Menuen viser dine tre sider, din e-mail og **Log ud**.", "Klik **Log ud**. Skriv adressen `/skader`: du bliver sendt til login.", "Log ind med en forkert adgangskode: der står *Invalid login attempt*. Log ind med den rigtige: du kommer til skadesiden."],
         mac: ["Kør appen. Du bliver sendt til siden **Log in**, fordi forsiden kræver login. Menuen viser kun **Log ind** og **Opret bruger**.", "Klik **Opret bruger**. Skriv en e-mail, fx `sagsbehandler@skadeapp.dk`, og en adgangskode to gange, fx `Skade123!`. Klik **Register**.", "Du er logget ind og ser overblikket. Menuen viser dine tre sider, din e-mail og **Log ud**.", "Klik **Log ud**. Skriv adressen `/skader`: du bliver sendt til login.", "Log ind med en forkert adgangskode: der står *Invalid login attempt*. Log ind med den rigtige: du kommer til skadesiden."],
-        md2: "Adgangskoden skal være mindst 6 tegn og have et stort bogstav, et lille bogstav, et tal og et tegn som `!`. Det er Identitys regler fra starten. Brugeren gemmes i `Data/app.db`, så den er der også næste gang." },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvordan har du sikret, at kun medarbejdere kan se kunderne?",
+        md2: "Adgangskoden skal være mindst 6 tegn og have et stort bogstav, et lille bogstav, et tal og et tegn som `!`. Det er Identitys regler fra starten. Brugeren gemmes i `Data/app.db`, så den er der også næste gang.\n\nI din afleverede app er login-siderne oversat til dansk, så der står danske tekster på knapperne og i beskederne i stedet for de engelske, der står her." },
+      { t: "forklar", h: "Til eksamen", q: "Eksamensspørgsmål: Hvordan har du sikret, at kun medarbejdere kan se kunderne? Sig svaret højt, og peg på `@attribute [Authorize]` øverst i `Kunder.razor` og `<AuthorizeView>` i `NavMenu.razor`.",
         svar: "Projektet bruger ASP.NET Core Identity, som skabelonen lavede, da jeg valgte Individual Accounts. Brugerne gemmes i deres egen database, og adgangskoderne gemmes som hash. Mine sider har @attribute [Authorize], så en bruger, der ikke er logget ind, bliver sendt til login af AuthorizeRouteView. Menuen bruger AuthorizeView, så linkene til kunder og skader kun vises efter login. Det er authentication (hvem er du) og autorisation (hvad må du).",
         noegle: ["Identity", "hash", "[Authorize]", "AuthorizeView", "authentication", "autorisation"] }
   ] },
 
   // ------------------------------------------------------------------
-  { id: "m30l13", nr: 14, titel: "Eget udseende og et SVG-diagram", min: 30,
+  { id: "m30l13", nr: 14, titel: "Ekstra: eget udseende og et SVG-diagram", min: 30,
     ord: [
       ["CSS", "Sproget, der bestemmer udseendet: farver, størrelser og placering."],
       ["Scoped CSS", "En `.razor.css`-fil, der kun gælder for én komponent, fx `MainLayout.razor.css`."],
@@ -1253,7 +1403,7 @@ options.SignIn.RequireConfirmedAccount = false;
     ],
     trin: [
       { t: "laes", h: "Egne farver",
-        md: "Skabelonen er blå og lilla. SkadeApp får sine egne farver: mørkegrøn. To filer bestemmer udseendet:\n\n- `wwwroot/app.css` gælder **hele appen**, fx farven på links og knapper.\n- `Components/Layout/MainLayout.razor.css` gælder **kun layoutet**, fx baggrunden i menuen. En `.razor.css`-fil med samme navn som en komponent kaldes **scoped CSS**: den rører ikke andre komponenter.",
+        md: "**Denne lektion er ekstra.** Din afleverede app har skabelonens farver, intet logo og intet diagram. Tag lektionen, hvis du vil kunne svare på spørgsmål om CSS og SVG, eller som en idé til punktet *Udvidelser* i præsentationen. Lav ændringerne i en kopi, ikke i den app, du har afleveret.\n\nSkabelonen er blå og lilla. Her får SkadeApp sine egne farver: mørkegrøn. To filer bestemmer udseendet:\n\n- `wwwroot/app.css` gælder **hele appen**, fx farven på links og knapper.\n- `Components/Layout/MainLayout.razor.css` gælder **kun layoutet**, fx baggrunden i menuen. En `.razor.css`-fil med samme navn som en komponent kaldes **scoped CSS**: den rører ikke andre komponenter.",
         kode: R`/* wwwroot/app.css: SkadeApps egne farver i stedet for skabelonens blå */
 a, .btn-link {
     color: #2d6a4f;
@@ -1469,22 +1619,22 @@ Console.WriteLine(260.0 * antal / stoerste);`,
 @* Home.razor, lige under <h2 class="h4">Skader pr. status</h2>: *@
 <StatusDiagram Skader="skader" />`,
         md2: "Diagrammet bruger de samme skader som resten af overblikket. Skift en skade til **Godkendt** på kundesiden, og gå tilbage til **Overblik**: søjlen er blevet længere.\n\n`role=\"img\"` og `aria-label` fortæller skærmlæsere, at det er et billede, og hvad det viser. `Math.Max(1, …)` giver det største af de to tal." },
-      { t: "forklar", q: "Eksamensspørgsmål: Hvordan tegner du diagrammet på overbliksiden, og hvorfor bruger du heltal?",
+      { t: "forklar", q: "Hvis du laver diagrammet: Hvordan tegner du det på overbliksiden, og hvorfor bruger du heltal?",
         svar: "Diagrammet er en komponent, StatusDiagram, som får listen med skader som parameter. For hver status tæller den skaderne med LINQ og tegner en SVG-rect, hvor bredden er 260 gange antallet delt med det største antal. Jeg ganger før jeg deler, fordi heltalsdivision ellers giver 0. Jeg bruger heltal, fordi et kommatal ville blive skrevet med dansk komma, og SVG kræver punktum.",
         noegle: ["komponent", "parameter", "SVG", "rect", "heltal", "dansk komma"] }
   ] },
 
   // ------------------------------------------------------------------
-  { id: "m30v", titel: "Værksted: udvid SkadeApp, find fejlen, og aflever", vaerksted: true, min: 120, ord: [], trin: [
-      { t: "laes", h: "Arbejd selv i dit eget projekt",
-        md: "I værkstedet arbejder du videre i **dit eget SkadeApp-projekt** uden en opskrift. Opgaverne er ekstra: de gør projektet stærkere til eksamen, men appen virker også uden dem.\n\nEn Blazor-side skriver ikke noget i et sort vindue, som siden her kan sammenligne. Så gør sådan: læs kravene, byg, kør, og sæt flueben, efterhånden som kravene virker. Løsningsforslaget ligger bag en knap.\n\nVigtigst er den sidste opgave: afleveringen. Den skal være på WISEflow **før fredag 30/10 kl. 12:00**." },
-      { t: "opgave", h: "Søg i skaderne", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true, sprog: "razor",
-        md: "Arbejd i dit SkadeApp-projekt. Skadesiden skal have et søgefelt ligesom kundelisten, så man kan finde en skade ud fra beskrivelsen eller kundens navn.",
+  { id: "m30v", titel: "Værksted: udvid SkadeApp, og find fejlen", vaerksted: true, min: 120, ord: [], trin: [
+      { t: "laes", h: "Arbejd selv i en kopi af dit projekt",
+        md: "I værkstedet arbejder du videre uden en opskrift. Din app er afleveret, og den skal du vise til eksamen. Lav derfor opgaverne i en **kopi**, `SkadeApp-oevelse`. Værkstedet sidst i modulet (del 2) viser, hvordan du laver kopien.\n\nEn Blazor-side skriver ikke noget i et sort vindue, som siden her kan sammenligne. Så gør sådan: læs kravene, byg, kør, og sæt flueben, efterhånden som kravene virker. Løsningsforslaget ligger bag en knap.\n\nOpgaverne er god træning til eksamen: censor kan bede dig forklare, hvordan du ville lave sådan en ændring." },
+      { t: "opgave", h: "Søg i skaderne", projekt: "SkadeApp-oevelse", fortsaet: true, frag: true, fri: true, sprog: "razor",
+        md: "Arbejd i din kopi `SkadeApp-oevelse`. Skadesiden skal have et søgefelt ligesom kundelisten, så man kan finde en skade ud fra beskrivelsen eller kundens navn.",
         krav: [
           "Over tabellen på `Skader.razor` står et søgefelt med pladsholderteksten `Søg i beskrivelse eller kundenavn …`",
           "Listen filtreres ved hvert tastetryk",
           "Søgningen er ligeglad med store og små bogstaver: `VAND` finder `Vandskade under opvaskemaskinen`",
-          "Søgning på `camilla` viser Camilla Holms to skader",
+          "Søgning på `parker` viser Peter Parkers to skader",
           "Søgningen virker sammen med filteret og sorteringen"
         ],
         tip: [
@@ -1492,7 +1642,7 @@ Console.WriteLine(260.0 * antal / stoerste);`,
           "Læg `Where` ind i `Viste`, før sorteringen. Kundens navn er `s.Kunde?.Navn`, som kan være `null`: skriv `(s.Kunde?.Navn ?? \"\")`. `??` betyder: brug teksten til højre, hvis det til venstre er `null`.",
           "`liste = liste.Where(s => s.Beskrivelse.Contains(soegeord, StringComparison.OrdinalIgnoreCase) || (s.Kunde?.Navn ?? \"\").Contains(soegeord, StringComparison.OrdinalIgnoreCase));`"
         ],
-        output: "(Ingen udskrift: søg på \"camilla\", og se, at der kun er to skader tilbage i tabellen.)",
+        output: "(Ingen udskrift: søg på \"parker\", og se, at der kun er to skader tilbage i tabellen.)",
         loesning: R`<!-- Over tabellen, fx lige under de to rullelister -->
 <input class="form-control mb-3" style="max-width: 600px" placeholder="Søg i beskrivelse eller kundenavn …"
        @bind="soegeord" @bind:event="oninput" />
@@ -1505,8 +1655,8 @@ Console.WriteLine(260.0 * antal / stoerste);`,
     //                           || (s.Kunde?.Navn ?? "").Contains(soegeord, StringComparison.OrdinalIgnoreCase));
 }`,
         ekstra: ["Vis antallet af fundne skader i overskriften, fx `Alle skader (2)`.", "Lav søgningen, så den også finder skader ud fra typen, fx `bil`."] },
-      { t: "opgave", h: "Fejlfinding: den nye kunde forsvinder", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true,
-        md: "Arbejd i dit SkadeApp-projekt. En kollega har \"ryddet op\" i `KundeService`, og nu sker der noget mærkeligt: når man opretter en kunde, kommer den grønne besked, men kunden står ikke i listen, og den er heller ikke der efter en genindlæsning. Erstat metoden `OpretAsync` i din `KundeService` med kollegaens udgave nedenfor, og find fejlen **med debuggeren**, før du læser tipsene.",
+      { t: "opgave", h: "Fejlfinding: den nye kunde forsvinder", projekt: "SkadeApp-oevelse", fortsaet: true, frag: true, fri: true,
+        md: "Arbejd i din kopi `SkadeApp-oevelse`. En kollega har \"ryddet op\" i `KundeService`, og nu sker der noget mærkeligt: når man opretter en kunde, kommer den grønne besked, men kunden står ikke i listen, og den er heller ikke der efter en genindlæsning. Erstat metoden `OpretAsync` i din `KundeService` med kollegaens udgave nedenfor, og find fejlen **med debuggeren**, før du læser tipsene.",
         krav: [
           "Du har sat et breakpoint i `OpretAsync` og gået metoden igennem én linje ad gangen",
           "Du kan sige, hvilken linje der mangler, og hvad den gør",
@@ -1531,8 +1681,8 @@ Console.WriteLine(260.0 * antal / stoerste);`,
 }`,
         fordi: "Uden `SaveChangesAsync` bliver ændringen aldrig sendt til databasen. Compileren giver kun en advarsel (CS1998: en `async`-metode uden `await`), ikke en fejl, så appen kører. Læs advarslerne i {{Error List||Problems}}: de peger ofte lige på fejlen.",
         ekstra: ["Hvorfor kom den grønne besked alligevel? Find linjen i `Kunder.razor`, der skriver den, og forklar, hvorfor den ikke ved, om kunden blev gemt."] },
-      { t: "opgave", h: "Postnummer på kunden", projekt: "SkadeApp", fortsaet: true, frag: true, fri: true,
-        md: "Arbejd i dit SkadeApp-projekt. Selskabet vil kende kundens postnummer. Det er en opgave gennem alle lag: modellen, reglen, databasen, formularerne og tabellen. Husk, at databasen skal laves forfra, når modellen ændres.",
+      { t: "opgave", h: "Postnummer på kunden", projekt: "SkadeApp-oevelse", fortsaet: true, frag: true, fri: true,
+        md: "Arbejd i din kopi `SkadeApp-oevelse`. Selskabet vil kende kundens postnummer. Det er en opgave gennem alle lag: modellen, reglen, databasen, formularerne og tabellen. Husk, at databasen skal laves forfra, når modellen ændres.",
         krav: [
           "`Kunde` har en ny property `Postnummer` (string)",
           "Postnummeret skal udfyldes og være præcis 4 cifre (regulært udtryk), med de danske fejlbeskeder `Skriv kundens postnummer.` og `Postnummeret skal være 4 cifre.`",
@@ -1543,7 +1693,7 @@ Console.WriteLine(260.0 * antal / stoerste);`,
         ],
         tip: [
           "Start i `Kunde.cs`: kopiér `Telefon` med dens to attributter, og ret navn, mønster og beskeder.",
-          "Mønsteret er `^\\d{4}$`. I `HasData` skal hver kunde have `Postnummer = \"…\"`, ellers fejler valideringen ikke, men databasen får tomme postnumre. Stop appen, og slet `Data/skader.db`, før du kører igen.",
+          "Mønsteret er `^\\d{4}$`. I `HasData` skal hver kunde have `Postnummer = \"…\"`, ellers fejler valideringen ikke, men databasen får tomme postnumre. Stop appen, og slet `Data/skade.db`, før du kører igen.",
           "I `OpdaterAsync` mangler `gemt.Postnummer = kunde.Postnummer;`. I `StartRet` på kundesiden skal kopien også have `Postnummer = kunde.Postnummer`."
         ],
         output: "(Ingen udskrift: opret en kunde med postnummeret 800 og se fejlbeskeden, ret det til 8000, og se det i listen.)",
@@ -1553,7 +1703,7 @@ Console.WriteLine(260.0 * antal / stoerste);`,
 public string Postnummer { get; set; } = "";
 
 // SkadeContext.cs (HasData): fx
-new Kunde { Id = 1, Navn = "Mette Jensen", Email = "mette@eksempel.dk", Telefon = "22334455", Postnummer = "8000" },
+new Kunde { Id = 1, Navn = "Mette Jensen", Email = "Mette@eksempel.com", Telefon = "12345678", Postnummer = "8000" },
 
 // KundeService.OpdaterAsync
 gemt.Postnummer = kunde.Postnummer;
@@ -1570,11 +1720,11 @@ rettet = new Kunde { Id = kunde!.Id, Navn = kunde.Navn, Email = kunde.Email, Tel
 
 // Kundelisten: <th>Postnr.</th> i overskriften og <td>@kunde.Postnummer</td> i rækken`,
         ekstra: ["Vis postnummeret på kundesiden ved siden af e-mail og telefon.", "Lad søgefeltet på kundelisten også søge på postnummer."] },
-      { t: "ide", h: "Aflevering: zip-filen og WISEflow",
-        md: "Du afleverer to filer på WISEflow: projektet som en **zip-fil** og dispositionen som en **pdf**. Fristen er **fredag 30/10 kl. 12:00**. Upload hellere torsdag end fredag morgen.\n\nZip-filen skal kun indeholde din kode, ikke de filer, der laves, når projektet bygges eller køres.",
-        win: ["Luk Visual Studio, så ingen filer er i brug.", "Åbn mappen med projektet i Stifinder (den mappe, hvor `SkadeApp.csproj` ligger).", "Slet mapperne `bin` og `obj`. Slet også `skader.db` og `app.db` i mappen `Data` (og filerne, der ender på `-shm` og `-wal`, hvis de findes). Alt sammen laves igen, næste gang projektet køres.", "Gå én mappe op, højreklik på mappen `SkadeApp` → **Komprimer til ZIP-fil**.", "Åbn zip-filen, og tjek, at `Program.cs`, `Components`, `Models`, `Services` og `Data` er med.", "Log ind på WISEflow med MitID (linket står i mailen fra kurser@itucation.dk), og upload zip-filen og pdf'en med dispositionen."],
-        mac: ["Luk Rider, så ingen filer er i brug.", "Åbn mappen med projektet i Finder (den mappe, hvor `SkadeApp.csproj` ligger).", "Slet mapperne `bin` og `obj`. Slet også `skader.db` og `app.db` i mappen `Data` (og filerne, der ender på `-shm` og `-wal`, hvis de findes). Alt sammen laves igen, næste gang projektet køres.", "Gå én mappe op, højreklik på mappen `SkadeApp` → **Komprimer \"SkadeApp\"**.", "Åbn zip-filen, og tjek, at `Program.cs`, `Components`, `Models`, `Services` og `Data` er med.", "Log ind på WISEflow med MitID (linket står i mailen fra kurser@itucation.dk), og upload zip-filen og pdf'en med dispositionen."],
-        md2: "Skriv i dispositionen, at man opretter en bruger med **Opret bruger**, når appen starter første gang: databaserne er tomme for brugere.\n\nDispositionen er højst én side i stikord. Vi skriver den sammen ud fra dit projekt." }
+      { t: "ide", h: "Aflevering: zip-filen og WISEflow (allerede gjort)",
+        md: "Du afleverede 30/10: projektet som en **zip-fil** og dispositionen som en **pdf**. Trinene står her, hvis du nogensinde skal lave en zip-fil af projektet igen.\n\nZip-filen skal kun indeholde din kode, ikke de filer, der laves, når projektet bygges eller køres.",
+        win: ["Luk Visual Studio, så ingen filer er i brug.", "Åbn mappen med projektet i Stifinder (den mappe, hvor `SkadeApp.csproj` ligger).", "Slet mapperne `bin` og `obj`. Slet også `skade.db` og `app.db` i mappen `Data` (og filerne, der ender på `-shm` og `-wal`, hvis de findes). Alt sammen laves igen, næste gang projektet køres.", "Gå én mappe op, højreklik på mappen `SkadeApp` → **Komprimer til ZIP-fil**.", "Åbn zip-filen, og tjek, at `Program.cs`, `Components`, `Models`, `Services` og `Data` er med.", "Log ind på WISEflow med MitID (linket står i mailen fra kurser@itucation.dk), og upload zip-filen og pdf'en med dispositionen."],
+        mac: ["Luk Rider, så ingen filer er i brug.", "Åbn mappen med projektet i Finder (den mappe, hvor `SkadeApp.csproj` ligger).", "Slet mapperne `bin` og `obj`. Slet også `skade.db` og `app.db` i mappen `Data` (og filerne, der ender på `-shm` og `-wal`, hvis de findes). Alt sammen laves igen, næste gang projektet køres.", "Gå én mappe op, højreklik på mappen `SkadeApp` → **Komprimer \"SkadeApp\"**.", "Åbn zip-filen, og tjek, at `Program.cs`, `Components`, `Models`, `Services` og `Data` er med.", "Log ind på WISEflow med MitID (linket står i mailen fra kurser@itucation.dk), og upload zip-filen og pdf'en med dispositionen."],
+        md2: "Når appen startes første gang et nyt sted, er databasen tom for brugere. Så opretter man en bruger med **Opret bruger**. Det er godt at kunne sige til censor." }
   ] }
 
 );

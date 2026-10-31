@@ -128,7 +128,10 @@
     if (navne.length) ORD_RE = new RegExp("(^|[^A-Za-zÆØÅæøå0-9_])(" + navne.join("|") + ")([a-zæøå]{0,4})(?![A-Za-zÆØÅæøå0-9_])", "gi");
   })();
   function modulPct(m) { var n = (m.lektioner || []).length; if (!n) return 0; var f = m.lektioner.filter(function (l) { return S.lek[l.id]; }).length; return Math.round(100 * f / n); }
-  function naesteLektion() { for (var i = 0; i < ALLE.length; i++) if (!S.lek[ALLE[i].l.id]) return ALLE[i]; return null; }
+  function naesteLektion() {   // først dagens plan (plan.js), ellers den første lektion, der ikke er lavet
+    var p = planStatus(); if (p.nu && p.nu.naeste && LEK[p.nu.naeste.id]) return LEK[p.nu.naeste.id];
+    for (var i = 0; i < ALLE.length; i++) if (!S.lek[ALLE[i].l.id]) return ALLE[i]; return null;
+  }
   function forfaldne() { var d = dato(), ud = []; for (var id in S.rep) { if (S.rep[id].due <= d && findTrin(id)) ud.push(id); } ud.sort(function (a, b) { return S.rep[a].due < S.rep[b].due ? -1 : 1; }); return ud; }
   function findTrin(id) { var p = id.split("#"), o = LEK[p[0]]; if (!o) return null; var st = o.l.trin[+p[1]]; return st && KAN_REPETERES[st.t] ? st : null; }
   function stribe() { var n = 0, d = new Date(); if (!S.dage[dato(d)]) d.setDate(d.getDate() - 1); while (S.dage[dato(d)]) { n++; d.setDate(d.getDate() - 1); } return n; }
@@ -731,7 +734,7 @@
     html += '<div class="lekliste">' + (m.lektioner || []).map(function (l, i) {
       var f = S.lek[l.id], opg = l.trin.filter(function (s) { return KAN_REPETERES[s.t]; }).length;
       var prog = l.trin.filter(function (s) { return s.t === "opgave" || s.t === "ide"; }).length, ideNavn = erMac() ? "Rider" : "Visual Studio";
-      return '<a class="lek' + (f ? " faerdig" : "") + (n && n.l === l ? " naeste" : "") + (l.vaerksted ? " vaerksted" : "") + '" href="#/l/' + l.id + '"><span class="nr">' + (f ? "✓" : l.vaerksted ? "💻" : l.nr != null ? l.nr : i + 1) + '</span><span><div class="t">' + esc(l.titel) + '</div><div class="d">' +
+      return (l.afsnit ? '<h3 class="afsnit">' + esc(l.afsnit) + "</h3>" : "") + '<a class="lek' + (f ? " faerdig" : "") + (n && n.l === l ? " naeste" : "") + (l.vaerksted ? " vaerksted" : "") + '" href="#/l/' + l.id + '"><span class="nr">' + (f ? "✓" : l.vaerksted ? "💻" : l.nr != null ? l.nr : i + 1) + '</span><span><div class="t">' + esc(l.titel) + '</div><div class="d">' +
         (l.vaerksted ? prog + " programmer, du selv skriver i " + ideNavn : l.trin.length + " trin · " + opg + (opg === 1 ? " øvelse" : " øvelser") + (prog ? " · " + prog + " i " + ideNavn : "")) + (l.min ? " · ca. " + l.min + " min" : "") + '</div></span><span class="hoejre">' + (f ? "Færdig " + f.d.slice(8) + "/" + f.d.slice(5, 7) : n && n.l === l ? "Næste →" : "") + "</span></a>";
     }).join("") + "</div>";
     ramme(html, "mellem");

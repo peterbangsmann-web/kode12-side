@@ -1,13 +1,13 @@
-// Modul 31, del 2 af 2: lektion 8–15 og værkstedet. Se 31-eksamen-1.js.
+// Modul 30, del 2 (eksamenstræning), fil 2 af 2: lektion E8–E14 og værkstedet. Se 31-eksamen-1.js.
 (function () {
 const R = String.raw;
-var m = window.KURSUS.filter(function (x) { return x.id === "m31"; })[0];
+var m = window.KURSUS.filter(function (x) { return x.id === "m30"; })[0];
 if (!m) return;
 
 m.lektioner.push(
 
   // ------------------------------------------------------------------
-  { id: "m31l8", nr: 8, titel: "Kundesiden: ruteparameter, ret, slet og status", min: 15,
+  { id: "m31l8", nr: "E8", titel: "Kundesiden: ruteparameter, ret, slet og status", min: 15,
     ord: [
       ["Ruteparameter", "En værdi i adressen, som siden får, fx 2 i /kunder/2."],
       ["Cascade delete", "Når en række slettes, slettes de rækker, der peger på den, også. Slettes en kunde, slettes kundens skader."]
@@ -109,7 +109,7 @@ private async Task GemKunde()
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m31l9", nr: 9, titel: "Skadesiden: filter og sortering", min: 12,
+  { id: "m31l9", nr: "E9", titel: "Skadesiden: filter og sortering", min: 12,
     ord: [
       ["Switch-udtryk", "En kort måde at vælge en værdi ud fra en anden: værdi switch { mulighed => resultat, … }. _ betyder alle andre."]
     ],
@@ -212,7 +212,7 @@ class Skade
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m31l10", nr: 10, titel: "Login: kun for medarbejdere", min: 10,
+  { id: "m31l10", nr: "E10", titel: "Login: kun for medarbejdere", min: 10,
     ord: [
       ["Hash", "En kode, der laves ud fra et kodeord, og som ikke kan regnes tilbage til kodeordet. Kodeord gemmes som hash."]
     ],
@@ -252,7 +252,7 @@ class Skade
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m31l11", nr: 11, titel: "Læringsmålene i din kode", min: 15,
+  { id: "m31l11", nr: "E11", titel: "Læringsmålene i din kode", min: 15,
     ord: [
       ["Læringsmål", "Det, studieordningen siger, du skal kunne efter faget. Censor bedømmer ud fra dem."],
       ["Designmønster", "En kendt, gennemprøvet løsning på et problem, der går igen, fx dependency injection."]
@@ -302,7 +302,7 @@ Brugerflade (GUI)           Blazor-komponenter, formularer og StatusMaerke`,
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m31l12", nr: 12, titel: "Svære spørgsmål og valg, du skal forsvare", min: 15,
+  { id: "m31l12", nr: "E12", titel: "Svære spørgsmål og valg, du skal forsvare", min: 15,
     ord: [
       ["Concurrency", "At to brugere arbejder med de samme data på samme tid."]
     ],
@@ -336,7 +336,7 @@ Brugerflade (GUI)           Blazor-komponenter, formularer og StatusMaerke`,
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m31l13", nr: 13, titel: "Præsentationen på 10 minutter", min: 20,
+  { id: "m31l13", nr: "E13", titel: "Præsentationen på 10 minutter", min: 20,
     ord: [
       ["Stikord", "Få ord, der minder dig om, hvad du vil sige. Du skal ikke læse op fra en tekst."]
     ],
@@ -377,7 +377,7 @@ Brugerflade (GUI)           Blazor-komponenter, formularer og StatusMaerke`,
     ] },
 
   // ------------------------------------------------------------------
-  { id: "m31l14", nr: 14, titel: "Generalprøve: blandede spørgsmål", min: 15,
+  { id: "m31l14", nr: "E14", titel: "Generalprøve: blandede spørgsmål", min: 15,
     ord: [
       ["Generalprøve", "En prøve på det hele under de samme forhold som til eksamen."]
     ],

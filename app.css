@@ -483,4 +483,6 @@ details.kort[open] summary { margin-bottom: .6rem; }
 .svar .hoved.facit-h { margin-top: .8rem; color: var(--tekst); }
 @media (max-width: 600px) { .katraekke { grid-template-columns: 1fr auto; } .katraekke .bar { grid-column: 1 / -1; grid-row: 2; } }
 .ordslaa + h3, .lekliste + h3 { margin-top: 1.5rem; }
+.lekliste .afsnit { margin: 1rem 0 0; font-size: 1.05rem; }   /* overskrift for en del af et modul (lektionens afsnit-felt) */
+.lekliste .afsnit:first-child { margin-top: 0; }
 .ordpost, .kilde, .ordside, .noter span { overflow-wrap: anywhere; }

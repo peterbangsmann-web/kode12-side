@@ -9,6 +9,7 @@
   var AFLEVERING = "2026-10-30", EKSAMEN = "2026-11-06";
   var INTERVAL = [0, 1, 3, 7, 14, 30];           // dage mellem repetitioner pr. kasse
   var KAN_TJEKKES = { valg: 1, forudsig: 1, udfyld: 1, skriv: 1, orden: 1, fejl: 1, spor: 1 };
+  var KAN_REPETERES = { valg: 1, forudsig: 1, udfyld: 1, skriv: 1, orden: 1, fejl: 1, spor: 1, forklar: 1 };   // "Forklar med egne ord" kommer også igen: det er den mundtlige eksamens vigtigste øvelse
   var TEMAER = [["sand", "Sand", "hsl(14 68% 45%)", "hsl(36 48% 88%)"], ["skov", "Skov", "hsl(152 58% 30%)", "hsl(105 26% 86%)"], ["lavendel", "Lavendel", "hsl(268 58% 50%)", "hsl(262 50% 90%)"],
                 ["rose", "Rose", "hsl(338 68% 46%)", "hsl(345 60% 90%)"], ["hav", "Hav", "hsl(186 80% 28%)", "hsl(172 36% 86%)"], ["sol", "Sol", "hsl(30 92% 36%)", "hsl(50 78% 84%)"], ["papir", "Papir", "hsl(220 12% 24%)", "hsl(40 8% 88%)"]];
   var NAVN = { laes: "Læs", valg: "Spørgsmål", forudsig: "Forudsig", udfyld: "Udfyld", skriv: "Skriv kode",
@@ -129,7 +130,7 @@
   function modulPct(m) { var n = (m.lektioner || []).length; if (!n) return 0; var f = m.lektioner.filter(function (l) { return S.lek[l.id]; }).length; return Math.round(100 * f / n); }
   function naesteLektion() { for (var i = 0; i < ALLE.length; i++) if (!S.lek[ALLE[i].l.id]) return ALLE[i]; return null; }
   function forfaldne() { var d = dato(), ud = []; for (var id in S.rep) { if (S.rep[id].due <= d && findTrin(id)) ud.push(id); } ud.sort(function (a, b) { return S.rep[a].due < S.rep[b].due ? -1 : 1; }); return ud; }
-  function findTrin(id) { var p = id.split("#"), o = LEK[p[0]]; if (!o) return null; var st = o.l.trin[+p[1]]; return st && KAN_TJEKKES[st.t] ? st : null; }
+  function findTrin(id) { var p = id.split("#"), o = LEK[p[0]]; if (!o) return null; var st = o.l.trin[+p[1]]; return st && KAN_REPETERES[st.t] ? st : null; }
   function stribe() { var n = 0, d = new Date(); if (!S.dage[dato(d)]) d.setDate(d.getDate() - 1); while (S.dage[dato(d)]) { n++; d.setDate(d.getDate() - 1); } return n; }
 
   // Emner (kategorier.js), som testen og ordbogen deler. Mangler filen, virker resten af siden som før.
@@ -651,7 +652,7 @@
       var l = P.o.l;
       S.lek[l.id] = { d: dato() };
       P.koe.forEach(function (post) {            // læg lektionens opgaver i repetitionskassen
-        if (!KAN_TJEKKES[post.st.t] || S.rep[post.id]) return;
+        if (!KAN_REPETERES[post.st.t] || S.rep[post.id]) return;
         var box = P.foerste[post.id] ? 2 : 1; S.rep[post.id] = { box: box, due: plusDage(INTERVAL[box]) };
       });
       gem();
@@ -728,10 +729,10 @@
     if (!(m.lektioner || []).length) html += '<p class="mt svag">Lektionerne til dette modul er ikke lagt ind endnu.</p>';
     else html += '<p class="mt"><a class="knap" href="#/ark/' + m.id + '">📄 Opslag: hele modulet på én side</a></p>';
     html += '<div class="lekliste">' + (m.lektioner || []).map(function (l, i) {
-      var f = S.lek[l.id], opg = l.trin.filter(function (s) { return KAN_TJEKKES[s.t]; }).length;
+      var f = S.lek[l.id], opg = l.trin.filter(function (s) { return KAN_REPETERES[s.t]; }).length;
       var prog = l.trin.filter(function (s) { return s.t === "opgave" || s.t === "ide"; }).length, ideNavn = erMac() ? "Rider" : "Visual Studio";
       return '<a class="lek' + (f ? " faerdig" : "") + (n && n.l === l ? " naeste" : "") + (l.vaerksted ? " vaerksted" : "") + '" href="#/l/' + l.id + '"><span class="nr">' + (f ? "✓" : l.vaerksted ? "💻" : l.nr != null ? l.nr : i + 1) + '</span><span><div class="t">' + esc(l.titel) + '</div><div class="d">' +
-        (l.vaerksted ? prog + " programmer, du selv skriver i " + ideNavn : l.trin.length + " trin · " + opg + " øvelser" + (prog ? " · " + prog + " i " + ideNavn : "")) + (l.min ? " · ca. " + l.min + " min" : "") + '</div></span><span class="hoejre">' + (f ? "Færdig " + f.d.slice(8) + "/" + f.d.slice(5, 7) : n && n.l === l ? "Næste →" : "") + "</span></a>";
+        (l.vaerksted ? prog + " programmer, du selv skriver i " + ideNavn : l.trin.length + " trin · " + opg + (opg === 1 ? " øvelse" : " øvelser") + (prog ? " · " + prog + " i " + ideNavn : "")) + (l.min ? " · ca. " + l.min + " min" : "") + '</div></span><span class="hoejre">' + (f ? "Færdig " + f.d.slice(8) + "/" + f.d.slice(5, 7) : n && n.l === l ? "Næste →" : "") + "</span></a>";
     }).join("") + "</div>";
     ramme(html, "mellem");
   }
@@ -841,7 +842,7 @@
     (window.TEGN || []).forEach(function (t) { var p = post(t.tegn); p.tegn = t; (t.kat || []).forEach(function (k) { p.fag[k] = 1; }); });
     ALLE.forEach(function (o) {
       (o.l.ord || []).forEach(function (x) {
-        var p = post(x[0]), skade = o.m.id === "m30";
+        var p = post(x[0]), skade = o.m.id === "m30" || o.m.id === "m31";
         p.kilder.push({ tekst: String(x[1]), o: o });
         var fag = (KX.lektion || {})[o.l.id] || (skade ? (KX.skadeappFag || {})[o.l.id] : (KX.modul || {})[o.m.id]);
         if (fag) p.fag[fag] = 1;

@@ -25,10 +25,11 @@
   function bland(liste) { var a = liste.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 
   // ---------- gemt tilstand ----------
-  function tom() { return { trin: {}, lek: {}, rep: {}, dage: {}, sidst: null, set: { os: "win", farve: "sand", mode: "auto", skrift: "normal" } }; }
+  function tom() { return { trin: {}, lek: {}, rep: {}, dage: {}, sidst: null, test: [], set: { os: "win", farve: "sand", mode: "auto", skrift: "normal" } }; }
   function hent() {
     var s = tom();
     try { var g = JSON.parse(localStorage.getItem(LS) || "{}"); for (var k in g) { if (k === "set") { for (var x in g.set) s.set[x] = g.set[x]; } else s[k] = g[k]; } } catch (e) { }
+    if (!Array.isArray(s.test)) s.test = [];
     return s;
   }
   var S = hent();
@@ -40,7 +41,7 @@
   // de hører til den enkelte computer.
   var SKY = null, skyTimer = null, skyKoerer = false, skyIgen = false, skyTekst = "";
   var SKYDELE = ["trin", "rep", "rest"];
-  function skyData(k) { return JSON.stringify(k === "rest" ? { lek: S.lek, dage: S.dage, sidst: S.sidst } : S[k]); }
+  function skyData(k) { return JSON.stringify(k === "rest" ? { lek: S.lek, dage: S.dage, sidst: S.sidst, test: S.test } : S[k]); }
   function skyFlet(fjern) {
     var k;
     if (fjern.trin) for (k in fjern.trin) { if (!S.trin[k] || (fjern.trin[k].d || "") > (S.trin[k].d || "")) S.trin[k] = fjern.trin[k]; }
@@ -50,6 +51,11 @@
       for (k in (r.lek || {})) { if (!S.lek[k]) S.lek[k] = r.lek[k]; }
       for (k in (r.dage || {})) { S.dage[k] = Math.max(S.dage[k] || 0, r.dage[k] || 0); }
       if (!S.sidst && r.sidst) S.sidst = r.sidst;
+      if (r.test && r.test.length) {          // testresultater: læg dem sammen, hver test har sit eget id
+        var har = {}; S.test.forEach(function (t) { har[t.id] = 1; });
+        r.test.forEach(function (t) { if (!har[t.id]) S.test.push(t); });
+        S.test.sort(function (a, b) { return a.id - b.id; }); if (S.test.length > 100) S.test = S.test.slice(-100);
+      }
     }
     try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) { }
   }
@@ -125,6 +131,14 @@
   function forfaldne() { var d = dato(), ud = []; for (var id in S.rep) { if (S.rep[id].due <= d && findTrin(id)) ud.push(id); } ud.sort(function (a, b) { return S.rep[a].due < S.rep[b].due ? -1 : 1; }); return ud; }
   function findTrin(id) { var p = id.split("#"), o = LEK[p[0]]; if (!o) return null; var st = o.l.trin[+p[1]]; return st && KAN_TJEKKES[st.t] ? st : null; }
   function stribe() { var n = 0, d = new Date(); if (!S.dage[dato(d)]) d.setDate(d.getDate() - 1); while (S.dage[dato(d)]) { n++; d.setDate(d.getDate() - 1); } return n; }
+
+  // Emner (kategorier.js), som testen og ordbogen deler. Mangler filen, virker resten af siden som før.
+  var KX = window.KATEGORIER || {}, KAT = {}, LEKNR = {};
+  (KX.liste || []).forEach(function (k) { KAT[k.id] = k; });
+  ALLE.forEach(function (o, n) { LEKNR[o.l.id] = n; });
+  function katNavn(id) { var k = KAT[id]; return k ? k.ikon + " " + k.navn : "Andet"; }
+  function testKat(o) { return (KX.lektion || {})[o.l.id] || (KX.modul || {})[o.m.id] || "andet"; }
+  function lekNavn(o) { return o.m.titel + " · " + (o.l.vaerksted ? "værksted: " : "lektion " + (o.l.nr != null ? o.l.nr : o.i + 1) + ": ") + o.l.titel; }
 
   // ---------- tekst: lille markdown ----------
   function inl(s) {
@@ -557,8 +571,8 @@
 
   function visTrin() {
     if (P.i >= P.koe.length) return slut();
-    var post = P.koe[P.i], st = post.st, tilbage = P.type === "lek" ? "#/m/" + P.o.m.id : "#/";
-    var titel = P.type === "lek" ? P.o.l.titel : "Repetition";
+    var post = P.koe[P.i], st = post.st, erTest = P.type === "test", tilbage = P.type === "lek" ? "#/m/" + P.o.m.id : erTest ? "#/test" : "#/";
+    var titel = P.type === "lek" ? P.o.l.titel : erTest ? katNavn(post.kat) + " · " + post.o.m.titel : "Repetition";
     P.set = P.set || {}; P.set[P.i] = true;
     var sti = "";
     if (P.type === "lek") {
@@ -572,14 +586,14 @@
       '<div class="kort trin t-' + st.t + '"><span class="maerke">' + IKON[st.t] + " " + NAVN[st.t] + '</span> <span class="lille svag">' + esc(titel) + '</span><div id="trin"></div><div id="svar"></div>' +
       '<div class="fod"><span id="venstre"></span><span class="hoejre" id="knapper"></span></div></div></div>', P.type === "lek" ? "lektion" : "lektion uden-sti");
     $$(".sti a[data-hop]").forEach(function (a) { a.onclick = function (e) { e.preventDefault(); P.i = +a.getAttribute("data-hop"); visTrin(); }; });
-    ordBrugt = {};
+    ordBrugt = erTest ? null : {};   // i en test forklares fagord ikke, når man peger på dem: det ville afsløre svaret
     var el = $("#trin"), c = TYPER[st.t](st, el), svar = $("#svar"), knapper = $("#knapper"), forsoeg = 0, faerdig = false;
 
     function videre() { S.dage[dato()] = (S.dage[dato()] || 0) + 1; gem(); P.i++; visTrin(); }
     function resultat(ok) {
       if (P.foerste[post.id] == null) { P.foerste[post.id] = ok; P.tjekbare++; if (ok) P.rigtige++; }
       if (P.type === "lek") S.trin[post.id] = { ok: P.foerste[post.id], d: dato() };
-      else { var r = S.rep[post.id] || { box: 1 }; r.box = P.foerste[post.id] ? Math.min(5, r.box + 1) : 1; r.due = plusDage(INTERVAL[r.box]); S.rep[post.id] = r; }
+      else if (P.type === "rep") { var r = S.rep[post.id] || { box: 1 }; r.box = P.foerste[post.id] ? Math.min(5, r.box + 1) : 1; r.due = plusDage(INTERVAL[r.box]); S.rep[post.id] = r; }
       gem();
     }
     function knap(tekst, pri, fn) { var b = document.createElement("button"); b.type = "button"; b.className = "knap" + (pri ? " pri" : ""); b.textContent = tekst; b.onclick = fn; knapper.appendChild(b); return b; }
@@ -590,6 +604,10 @@
       var r = c.tjek(); if (!r) { boks("info", "", "<p>Svar først — så tjekker jeg.</p>"); return; }
       forsoeg++;
       if (r.ok) { resultat(true); if (c.laas) c.laas(); boks("ok", forsoeg === 1 ? "✓ Rigtigt!" : "✓ Rigtigt — nu sad den.", r.html); visVidere(); }
+      else if (erTest) {                         // i en test tæller første svar: vis det rigtige svar med det samme
+        resultat(false); if (c.laas) c.laas();
+        boks("nej", "✗ Forkert", r.html + '<div class="hoved facit-h">Det rigtige svar</div>' + c.vis()); visVidere();
+      }
       else {
         resultat(false);
         boks("nej", "✗ Ikke helt.", r.html + (st.hint && st.t !== "skriv" ? "<p>Tip: " + inl(st.hint) + "</p>" : ""));
@@ -600,6 +618,7 @@
     }
     function normal() {
       knapper.innerHTML = "";
+      if (erTest && c.tjek) knap("Ved ikke", false, function () { resultat(false); if (c.laas) c.laas(); boks("info", "Det rigtige svar", c.vis()); visVidere(); });
       if (c.tjek) knap("Tjek svar", true, tjek);
       else if (c.selvvurder) {
         knap("Sammenlign med et godt svar", true, function () {
@@ -623,10 +642,11 @@
       var pri = $(".knap.pri", knapper); if (pri) pri.click();
     };
   }
-  document.addEventListener("keydown", function (e) { if (P && P.tast && /^#\/(l\/|rep)/.test(RUTE)) P.tast(e); });
+  document.addEventListener("keydown", function (e) { if (P && P.tast && /^#\/(l\/|rep|test)/.test(RUTE)) P.tast(e); });
 
   function slut() {
     var pct = P.tjekbare ? Math.round(100 * P.rigtige / P.tjekbare) : 100;
+    if (P.type === "test") return testSlut();
     if (P.type === "lek") {
       var l = P.o.l;
       S.lek[l.id] = { d: dato() };
@@ -636,7 +656,7 @@
       });
       gem();
       var idx = ALLE.indexOf(P.o), naeste = ALLE[idx + 1];
-      var ord = (l.ord || []).map(function (o) { return "<div><dt>" + esc(o[0]) + "</dt><dd>" + inl(o[1]) + "</dd></div>"; }).join("");
+      var ord = (l.ord || []).map(function (o) { return "<div><dt>" + ordLink(o[0]) + "</dt><dd>" + inl(o[1]) + "</dd></div>"; }).join("");
       ramme('<div class="kort fest"><div class="stor">🎉</div><h1>Lektionen er færdig</h1><p>' + esc(l.titel) + "</p>" +
         (P.tjekbare ? "<p><b>" + P.rigtige + " af " + P.tjekbare + "</b> opgaver rigtige i første forsøg (" + pct + " %).</p>" : "") +
         '<p class="svag lille">Opgaverne kommer igen under <b>Repetition</b> — de svære i morgen, de lette om tre dage.</p>' +
@@ -663,7 +683,7 @@
     var h = RUTE, f = forfaldne().length;
     function a(href, tekst, ekstra) { var aktiv = href === "#/" ? (h === "" || h === "#/" || /^#\/[ml]\//.test(h)) : h.indexOf(href) === 0; return '<a href="' + href + '" class="' + (aktiv ? "aktiv" : "") + '">' + tekst + (ekstra || "") + "</a>"; }
     return '<div class="top"><div class="ind"><a class="logo" href="#/">Kode<span>12</span></a><nav class="nav">' +
-      a("#/", "Kursus") + a("#/plan", "Plan") + a("#/rep", "Repetition", f ? '<span class="tal">' + f + "</span>" : "") + a("#/soeg", "Søg") + a("#/ord", "Ordbog") + a("#/set", "Indstillinger") +
+      a("#/", "Kursus") + a("#/plan", "Plan") + a("#/rep", "Repetition", f ? '<span class="tal">' + f + "</span>" : "") + a("#/test", "Test") + a("#/soeg", "Søg") + a("#/ord", "Ordbog") + a("#/set", "Indstillinger") +
       '</nav><button type="button" class="osknap" id="osknap" title="Skift mellem Windows og Mac">' + (erMac() ? "⌘ Mac · Rider" : "⊞ Windows · Visual Studio") + "</button></div></div>";
   }
   document.addEventListener("click", function (e) {
@@ -676,8 +696,8 @@
     function dageTekst(x) { return x > 1 ? "om " + x + " dage" : x === 1 ? "i morgen" : x === 0 ? "i dag" : "overstået"; }
     var html = '<div class="helt"><div class="kort stort">' +
       (n ? '<span class="maerke">' + (faerdige ? "Fortsæt her" : "Start her") + "</span><h1>" + esc(n.l.titel) + '</h1><p class="svag">' + esc(n.m.titel) + " · lektion " + (n.l.nr != null ? n.l.nr : n.i + 1) + " af " + n.m.lektioner.length + (n.l.min ? " · ca. " + n.l.min + " min" : "") + "</p>" +
-        '<div class="rk"><a class="knap pri stor" href="#/l/' + n.l.id + '">' + (faerdige ? "Fortsæt" : "Kom i gang") + " →</a>" + (f ? '<a class="knap" href="#/rep">Repetér ' + f + " opgaver</a>" : "") + "</div>"
-        : '<h1>Du har lavet alle lektioner 🎉</h1><p>Brug Repetition hver dag, så det sidder til eksamen.</p><a class="knap pri" href="#/rep">Repetition</a>') +
+        '<div class="rk"><a class="knap pri stor" href="#/l/' + n.l.id + '">' + (faerdige ? "Fortsæt" : "Kom i gang") + " →</a>" + (f ? '<a class="knap" href="#/rep">Repetér ' + f + " opgaver</a>" : "") + '<a class="knap" href="#/test">🎯 Test dig selv</a></div>'
+        : '<h1>Du har lavet alle lektioner 🎉</h1><p>Brug Repetition hver dag, så det sidder til eksamen.</p><div class="rk"><a class="knap pri" href="#/rep">Repetition</a><a class="knap" href="#/test">🎯 Test dig selv</a></div>') +
       '</div><div class="kort"><div class="tal3"><div><b>' + faerdige + "</b><span>lektioner færdige</span></div><div><b>" + stribe() + "</b><span>dage i træk</span></div><div><b>" + (S.dage[dato()] || 0) + "</b><span>trin i dag</span></div></div>" +
       '<div class="mt"><div class="frist"><span>Aflevering af projekt + disposition<br><span class="lille svag">fredag 30. oktober</span></span><b>' + dageTekst(da) + '</b></div>' +
       '<div class="frist"><span>Mundtlig eksamen<br><span class="lille svag">fredag 6. november</span></span><b>' + dageTekst(de) + "</b></div></div></div></div>";
@@ -793,23 +813,381 @@
       if (!dele.length && !(l.ord || []).length) return;
       html += '<div class="kort mt ark"><h2>' + esc(l.titel) + "</h2>";
       dele.forEach(function (st) { html += (st.h ? "<h3>" + inl(st.h) + "</h3>" : "") + md(st.md) + kodeblok(st.kode, st.sprog) + noter(st) + udblok(st.output) + md(st.md2); });
-      if ((l.ord || []).length) html += '<h3>Fagord</h3><dl class="ord">' + l.ord.map(function (o) { return "<div><dt>" + esc(o[0]) + "</dt><dd>" + inl(o[1]) + "</dd></div>"; }).join("") + "</dl>";
+      if ((l.ord || []).length) html += '<h3>Fagord</h3><dl class="ord">' + l.ord.map(function (o) { return "<div><dt>" + ordLink(o[0]) + "</dt><dd>" + inl(o[1]) + "</dd></div>"; }).join("") + "</dl>";
       html += "</div>";
     });
     ramme(html, "mellem");
   }
 
-  function ordbog() {
-    var alle = [];
-    ALLE.forEach(function (o) { (o.l.ord || []).forEach(function (x) { alle.push({ ord: x[0], tekst: x[1], hvor: o.m.titel }); }); });
-    alle.sort(function (a, b) { return a.ord.localeCompare(b.ord, "da"); });
-    ramme('<h1>Ordbog</h1><p class="svag">Alle fagord fra lektionerne — ' + alle.length + ' i alt. Brug den, når et ord driller.</p><input class="soeg" id="soeg" placeholder="Søg efter et ord …" autocomplete="off"><div class="kort"><dl class="ord" id="ordliste"></dl></div>', true);
-    function tegn(q) {
-      q = (q || "").toLowerCase();
-      var vis = alle.filter(function (a) { return !q || a.ord.toLowerCase().indexOf(q) !== -1 || a.tekst.toLowerCase().indexOf(q) !== -1; });
-      $("#ordliste").innerHTML = vis.map(function (a) { return "<div><dt>" + esc(a.ord) + "<small>" + esc(a.hvor) + "</small></dt><dd>" + inl(a.tekst) + "</dd></div>"; }).join("") || '<p class="svag">Ingen ord matcher.</p>';
+  // ---------- ordbog: alle fagord og tegn, med søgning, emner og en side pr. opslag ----------
+  // Fagordene kommer fra lektionernes ordlister, tegnene fra tegn.js. Samme ord fra flere lektioner bliver ét opslag med flere forklaringer.
+  var OB = null, NOTER = null, ORDQ = "", ORDKAT = "alle";
+  function obNoegle(s) { s = String(s).trim(); var k = s.replace(/\s+\([^)]*\)$/, ""); return (k || s).toLowerCase(); }
+  function ordHref(navn) { return "#/ord/" + encodeURIComponent(obNoegle(navn)); }
+  function ordLink(navn) { return '<a class="ordlink" href="' + ordHref(navn) + '">' + esc(navn) + "</a>"; }
+  function dekod(s) { try { return decodeURIComponent(s); } catch (e) { return s; } }
+  function erTegnTekst(s) { return !/[A-Za-zÆØÅæøåé0-9]/.test(s); }
+  function rx(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+  function ordRe(navn, flag) { return new RegExp("(^|[^A-Za-zÆØÅæøå0-9_])" + rx(navn) + "(?![A-Za-zÆØÅæøå0-9_])", flag || "i"); }
+  function obByg() {
+    if (OB) return OB;
+    var poster = [], idx = Object.create(null), orden = (KX.liste || []).map(function (k) { return k.id; });
+    function post(navn) {
+      var k = obNoegle(navn), p = idx[k];
+      if (!p) { p = idx[k] = { key: k, navn: navn, varianter: [], fag: {}, skade: false, kilder: [], tegn: null }; poster.push(p); }
+      if (p.varianter.indexOf(navn) < 0) p.varianter.push(navn);
+      return p;
     }
-    tegn(""); $("#soeg").oninput = function () { tegn(this.value); };
+    (window.TEGN || []).forEach(function (t) { var p = post(t.tegn); p.tegn = t; (t.kat || []).forEach(function (k) { p.fag[k] = 1; }); });
+    ALLE.forEach(function (o) {
+      (o.l.ord || []).forEach(function (x) {
+        var p = post(x[0]), skade = o.m.id === "m30";
+        p.kilder.push({ tekst: String(x[1]), o: o });
+        var fag = (KX.lektion || {})[o.l.id] || (skade ? (KX.skadeappFag || {})[o.l.id] : (KX.modul || {})[o.m.id]);
+        if (fag) p.fag[fag] = 1;
+        if (skade) p.skade = true;
+      });
+    });
+    poster.forEach(function (p) {
+      var ov = (KX.ord || {})[p.key], kat = ov && !p.tegn ? [].concat(ov) : Object.keys(p.fag);
+      if (p.skade && kat.indexOf("skadeapp") < 0) kat.push("skadeapp");
+      p.kat = kat.sort(function (a, b) { return orden.indexOf(a) - orden.indexOf(b); });
+      p.navn = p.tegn ? p.tegn.tegn : (p.varianter.filter(function (v) { return !/\s\(/.test(v); })[0] || p.varianter[0]);   // opslagsordet: helst navnet uden parentes
+      p.egne = p.varianter.map(function (v) { return v.toLowerCase(); });   // opslagets egne navne; et præcist match på dem vinder over et match på en ekstra søgeord
+      p.soeg = p.egne.concat(p.tegn ? [p.tegn.navn].concat(p.tegn.soeg || []).map(function (v) { return String(v).toLowerCase(); }) : []);
+      p.navne = p.varianter.map(function (v) { return v.replace(/\s+\([^)]*\)$/, ""); });
+      p.kort = p.tegn ? p.tegn.kort : (p.kilder[0] ? p.kilder[0].tekst : "");
+      p.alfa = p.tegn ? p.tegn.tegn : (p.navn.replace(/^[^A-Za-zÆØÅæøåé0-9]+/, "") || p.navn);   // [Authorize] står under A, @bind under B
+    });
+    poster.sort(function (a, b) { return a.alfa.localeCompare(b.alfa, "da", { sensitivity: "base" }); });
+    OB = { poster: poster, idx: idx };
+    return OB;
+  }
+  function obSoeg(q, kat) {
+    var ob = obByg(); q = q.trim().toLowerCase();
+    var liste = ob.poster.filter(function (p) { return kat === "alle" || (kat === "tegn" ? !!p.tegn : p.kat.indexOf(kat) >= 0); });
+    if (!q) return liste.map(function (p) { return { p: p, s: 0 }; });
+    var tegnQ = erTegnTekst(q), ordStart = new RegExp("(^|[^a-zæøå0-9])" + rx(q)), ud = [];
+    liste.forEach(function (p) {
+      var s = 0;
+      p.soeg.forEach(function (n) {
+        if (n === q) s = Math.max(s, p.egne.indexOf(n) >= 0 ? 100 : 90);
+        else if (tegnQ) {      // et tegn: det skal stå forrest eller bagerst i et af navnets ord, fx @bind, int? eller ?.
+          n.split(/\s+/).forEach(function (t) { t = t.replace(/^\((.*)\)$/, "$1"); if (t === q) s = Math.max(s, 85); else if (t.indexOf(q) === 0 || t.slice(-q.length) === q) s = Math.max(s, 60); });
+        } else if (n.indexOf(q) === 0) s = Math.max(s, 80);
+        else if (ordStart.test(n)) s = Math.max(s, 70);
+        else if (n.indexOf(q) >= 0) s = Math.max(s, 55);
+      });
+      if (!s && !tegnQ && q.length >= 3) {
+        var tekst = ((p.tegn ? p.tegn.kort : "") + " " + p.kilder.map(function (k) { return k.tekst; }).join(" ")).toLowerCase();
+        if (tekst.indexOf(q) >= 0) s = 20;
+      }
+      if (s) ud.push({ p: p, s: s });
+    });
+    ud.sort(function (a, b) { return b.s - a.s || a.p.alfa.localeCompare(b.p.alfa, "da", { sensitivity: "base" }); });
+    return ud;
+  }
+  // Kodeforklaringerne i lektionerne (noter): små stykker kode med en forklaring ved siden af
+  function noterIdx() {
+    if (NOTER) return NOTER;
+    NOTER = []; var set = {};
+    ALLE.forEach(function (o) { o.l.trin.forEach(function (st, i) { (st.noter || []).forEach(function (n) { var k = n[0] + "|" + n[1]; if (set[k]) return; set[k] = 1; NOTER.push({ kode: String(n[0]), tekst: String(n[1]), o: o, i: i }); }); }); });
+    return NOTER;
+  }
+  function noterHtml(liste) {
+    return '<div class="noter">' + liste.map(function (n) {
+      return "<div><code>" + esc(n.kode) + "</code><span>" + inl(n.tekst) + ' <a class="lille" href="#/l/' + n.o.l.id + "/" + (n.i + 1) + '">' + esc(n.o.m.titel) + " →</a></span></div>";
+    }).join("") + "</div>";
+  }
+  function noterFind(test, maks) {
+    var fund = noterIdx().filter(function (n) { return test(n.kode); });
+    fund.sort(function (a, b) { return a.kode.length - b.kode.length; });
+    return { fund: fund.slice(0, maks), antal: fund.length };
+  }
+  function noterTilSoeg(q) {
+    q = q.trim(); if (!q || (q.length < 2 && !erTegnTekst(q))) return { fund: [], antal: 0 };
+    var lq = q.toLowerCase(), tegnQ = erTegnTekst(q);
+    return noterFind(function (k) { return tegnQ ? k.indexOf(q) >= 0 : k.toLowerCase().indexOf(lq) >= 0; }, 12);
+  }
+  function noterTilPost(p) {
+    if (p.tegn) {
+      var t = p.tegn, tegn = [t.tegn].concat((t.soeg || []).filter(erTegnTekst)).filter(function (x) { return !/\s/.test(x) && !(x.length === 1 && /[;,.(){}\[\]=+\-*\/<>:"']/.test(x)); });
+      if (!tegn.length) return [];
+      return noterFind(function (k) { return tegn.some(function (x) { return k.indexOf(x) >= 0; }); }, 8).fund;
+    }
+    // Fagord: med store og små bogstaver præcis som i ordet. Noter fra de lektioner, hvor ordet er forklaret, og noter om netop ordet kommer først.
+    var navne = p.navne.filter(function (n) { return n.length >= 2; }), re = navne.map(function (n) { return ordRe(n, ""); }), egne = {};
+    if (!re.length) return [];
+    p.kilder.forEach(function (k) { egne[k.o.l.id] = 1; });
+    var fund = noterIdx().filter(function (n) { return re.some(function (r) { return r.test(n.kode); }); });
+    function vaegt(n) { return (navne.indexOf(n.kode.trim()) >= 0 ? 0 : 2) + (egne[n.o.l.id] ? 0 : 1); }
+    fund.sort(function (a, b) { return vaegt(a) - vaegt(b) || a.kode.length - b.kode.length; });
+    return fund.slice(0, 8);
+  }
+  function laesTekst(st) { return [st.h, st.md, st.md2, (st.noter || []).map(function (n) { return n.join(" "); }).join(" "), st.kode].filter(Boolean).join(" "); }
+  function findForklaring(o, p) {     // det første læsetrin i lektionen, hvor ordet står
+    var re = p.navne.map(function (n) { return ordRe(n); });
+    for (var i = 0; i < o.l.trin.length; i++) { var st = o.l.trin[i]; if (st.t === "laes" && re.some(function (r) { return r.test(laesTekst(st)); })) return i + 1; }
+    return 1;
+  }
+  function brugtI(p) {                // andre lektioner, hvor ordet står i et læsetrin
+    var egne = {}, ud = [], re = p.navne.filter(function (n) { return n.length >= 3; }).map(function (n) { return ordRe(n); });
+    if (!re.length) return ud;
+    p.kilder.forEach(function (k) { egne[k.o.l.id] = 1; });
+    for (var n = 0; n < ALLE.length && ud.length < 8; n++) {
+      var o = ALLE[n]; if (egne[o.l.id]) continue;
+      for (var i = 0; i < o.l.trin.length; i++) { var st = o.l.trin[i]; if (st.t === "laes" && re.some(function (r) { return r.test(laesTekst(st)); })) { ud.push({ o: o, i: i }); break; } }
+    }
+    return ud;
+  }
+  function bogstav(alfa) { var c = alfa.charAt(0).toUpperCase(); if (c === "É") c = "E"; return /[A-ZÆØÅ]/.test(c) ? c : "Tegn og tal"; }
+  function navnHtml(p) { return p.tegn ? "<code>" + esc(p.tegn.visning || p.tegn.tegn) + "</code>" : /[@<>\[\]{}=_]|\(\)|\.[A-Za-z]/.test(p.navn) ? "<code>" + esc(p.navn) + "</code>" : esc(p.navn); }
+  function ordChip(p) { return '<a class="ordchip" href="#/ord/' + encodeURIComponent(p.key) + '">' + navnHtml(p) + "</a>"; }
+  function ordKort(p) {
+    var kort = String(p.kort || "").replace(/[*`]/g, ""); if (kort.length > 170) kort = kort.slice(0, 168).replace(/\s+\S*$/, "") + " …";
+    return '<a class="ordpost" href="#/ord/' + encodeURIComponent(p.key) + '"><div class="navn">' + navnHtml(p) + (p.tegn ? '<span class="under">' + esc(p.tegn.navn) + "</span>" : "") + "</div>" +
+      (kort ? '<div class="kort-t">' + esc(kort) + "</div>" : "") +
+      "<div>" + p.kat.map(function (k) { return '<span class="katm">' + esc(katNavn(k)) + "</span>"; }).join("") + "</div></a>";
+  }
+
+  function ordbog() {
+    var ob = obByg(), antal = { alle: ob.poster.length, tegn: 0 };
+    ob.poster.forEach(function (p) { if (p.tegn) antal.tegn++; p.kat.forEach(function (k) { antal[k] = (antal[k] || 0) + 1; }); });
+    var chips = [["alle", "Alle"], ["tegn", "🔣 Tegn"]].concat((KX.liste || []).map(function (k) { return [k.id, k.ikon + " " + k.navn]; })).filter(function (c) { return antal[c[0]]; });
+    if (!antal[ORDKAT]) ORDKAT = "alle";
+    ramme('<h1>Ordbog</h1><p class="svag">' + ob.poster.length + " ord og tegn fra hele kurset. Søg på et ord, et stykke kode eller et tegn, fx <code>=></code>, <code>?</code>, <code>@bind</code> eller <code>Include</code>. Klik på et opslag for at læse mere.</p>" +
+      '<input class="soeg" id="soeg" placeholder="Søg efter et ord eller et tegn …" autocomplete="off" autocapitalize="off" spellcheck="false">' +
+      '<div class="chips" id="chips">' + chips.map(function (c) { return '<button type="button" data-k="' + c[0] + '" class="' + (ORDKAT === c[0] ? "aktiv" : "") + '">' + esc(c[1]) + "<small>" + antal[c[0]] + "</small></button>"; }).join("") + "</div>" +
+      '<div id="ordres"></div>', "mellem");
+    var felt = $("#soeg"); felt.value = ORDQ;
+    function tegn() {
+      ORDQ = felt.value;
+      var q = ORDQ.trim(), fund = obSoeg(ORDQ, ORDKAT), html = "", sidst = null;
+      if (q) html += '<p class="lille svag">' + (fund.length ? fund.length + " opslag" : "Ingen opslag") + " passer på <b>" + esc(q) + "</b>" + (ORDKAT !== "alle" ? " i det valgte emne" : "") + ".</p>";
+      html += '<div class="ordliste">' + fund.map(function (f) {
+        var g = "";
+        if (!q) { var b = bogstav(f.p.alfa); if (b !== sidst) { g = '<div class="ordbogstav">' + esc(b) + "</div>"; sidst = b; } }
+        return g + ordKort(f.p);
+      }).join("") + "</div>";
+      if (q && ORDKAT === "alle") {
+        var nf = noterTilSoeg(q);
+        if (nf.antal) html += '<h2 class="mt">I kodeeksemplerne</h2><p class="lille svag">Forklaringer til kode i lektionerne, hvor <code>' + esc(q) + "</code> indgår" + (nf.antal > nf.fund.length ? ". Viser " + nf.fund.length + " af " + nf.antal : "") + ".</p>" + noterHtml(nf.fund);
+      }
+      $("#ordres").innerHTML = html;
+    }
+    $$("#chips button").forEach(function (b) { b.onclick = function () { ORDKAT = b.getAttribute("data-k"); $$("#chips button").forEach(function (x) { x.className = x === b ? "aktiv" : ""; }); tegn(); }; });
+    felt.oninput = tegn; tegn(); felt.focus();
+  }
+
+  function ordPost(noegle) {
+    var ob = obByg(), p = ob.idx[noegle];
+    if (!p) { ramme('<p><a href="#/ord">← Ordbog</a></p><div class="kort"><h1>Ikke fundet</h1><p>Der er intet opslag, der hedder <b>' + esc(noegle) + "</b>.</p></div>", true); return; }
+    var t = p.tegn, html = '<p><a href="#/ord">← Ordbog</a></p><div class="kort ordside"><h1 class="ordtitel">' + navnHtml(p) + "</h1>";
+    if (t) html += '<p class="ordnavn">' + esc(t.navn) + "</p>";
+    var andre = p.varianter.filter(function (v) { return v !== p.navn; });
+    if (andre.length) html += '<p class="lille svag">Står også som: ' + andre.map(esc).join(" · ") + "</p>";
+    html += "<div>" + p.kat.map(function (k) { return '<a class="katm" href="#/ord" data-kat="' + k + '">' + esc(katNavn(k)) + "</a>"; }).join("") + "</div>";
+    if (t) {
+      html += '<p class="ordkort">' + inl(t.kort) + "</p>";
+      (t.betydninger || []).forEach(function (b) { html += '<div class="betydning"><h3>' + inl(b.h) + "</h3>" + md(b.md || "") + kodeblok(b.kode, b.sprog) + "</div>"; });
+    }
+    html += "</div>";
+    if (p.kilder.length) {         // samme forklaring i flere lektioner vises én gang
+      var grupper = [], efterTekst = {};
+      p.kilder.forEach(function (k) { var g = efterTekst[k.tekst]; if (!g) { g = efterTekst[k.tekst] = { tekst: k.tekst, o: [] }; grupper.push(g); } g.o.push(k.o); });
+      html += '<div class="kort mt"><h2>' + (t ? "Forklaret i lektionerne" : grupper.length > 1 ? "Forklaringer fra kurset" : "Forklaring fra kurset") + "</h2>" + grupper.map(function (g) {
+        return '<div class="kilde">' + md(g.tekst) + g.o.map(function (o) { return '<div class="hvor">' + esc(lekNavn(o)) + ' · <a href="#/l/' + o.l.id + "/" + findForklaring(o, p) + '">Læs i lektionen →</a></div>'; }).join("") + "</div>";
+      }).join("") + "</div>";
+    }
+    var nf = noterTilPost(p);
+    if (nf.length) html += '<div class="kort mt"><h2>' + (t ? "Sådan ser det ud i koden" : "Står i lektionernes noter") + '</h2><p class="lille svag">' +
+      (t ? "Kodestykker fra lektionerne, hvor tegnet indgår, med forklaringen fra lektionen." : "Korte noter fra lektionerne, hvor ordet står, med forklaringen fra lektionen. Nogle steder er det bare et navn i et eksempel.") +
+      " Klik på modulet for at se hele trinnet.</p>" + noterHtml(nf) + "</div>";
+    if (!t) {
+      var brugt = brugtI(p);
+      if (brugt.length) html += '<div class="kort mt"><h2>Står også i</h2><div class="lekliste">' + brugt.map(function (b) {
+        return '<a class="lek" href="#/l/' + b.o.l.id + "/" + (b.i + 1) + '"><span class="nr">' + (b.o.m.ikon || "📘") + '</span><span><div class="t">' + esc(b.o.l.titel) + '</div><div class="d">' + esc(b.o.m.titel) + "</div></span></a>";
+      }).join("") + "</div></div>";
+    }
+    var se = [], fra = [];
+    if (t) (t.se || []).forEach(function (k) { var q = ob.idx[k]; if (q && q !== p && se.indexOf(q) < 0) se.push(q); });
+    p.kilder.forEach(function (k) { (k.o.l.ord || []).forEach(function (x) { var q = ob.idx[obNoegle(x[0])]; if (q && q !== p && se.indexOf(q) < 0 && fra.indexOf(q) < 0) fra.push(q); }); });
+    if (se.length || fra.length) html += '<div class="kort mt">' + (se.length ? "<h2>Se også</h2><p>" + se.map(ordChip).join(" ") + "</p>" : "") +
+      (fra.length ? "<h2>Andre ord fra samme lektion</h2><p>" + fra.slice(0, 16).map(ordChip).join(" ") + "</p>" : "") + "</div>";
+    ramme(html, true);
+    $$("a[data-kat]").forEach(function (a) { a.onclick = function () { ORDKAT = a.getAttribute("data-kat"); ORDQ = ""; }; });
+  }
+
+  // ---------- test: find ud af, hvad du kan, og hvad du mangler ----------
+  // Spørgsmålene er lektionernes egne opgaver. Kun dem, der kan stå alene, kommer med: ikke dem, der bygger på et tidligere trin.
+  var TEST_TYPER = { valg: 1, forudsig: 1, udfyld: 1, fejl: 1, orden: 1, spor: 1 };
+  var TEST_KONTEKST = /ovenfor|herover|forrige|lige (har|lavede|skrev|så|læste|oprettede|byggede)|i trin|trin \d|denne lektion|i lektionen|eksemplet|samme kode|koden fra|du lige|som før|tidligere i/i;
+  var TEST_LAENGDE = [[15, "Kort"], [30, "Mellem"], [50, "Lang"]];
+  function testValg() { var v = S.set.tv || {}; return { emne: v.emne || "alle", antal: +v.antal || 15, fra: v.fra || "alt", slags: v.slags || "quiz" }; }
+  function testPulje(slags, kunLavet) {
+    var ude = {}, udeLek = {}, ud = [];
+    (KX.testUde || []).forEach(function (id) { ude[id] = 1; });
+    (KX.testUdeLektioner || []).forEach(function (id) { udeLek[id] = 1; });
+    ALLE.forEach(function (o) {
+      if (udeLek[o.l.id] || (kunLavet && !S.lek[o.l.id])) return;
+      o.l.trin.forEach(function (st, i) {
+        var id = trinId(o.l.id, i);
+        if (slags === "forklar" ? st.t !== "forklar" : !TEST_TYPER[st.t]) return;
+        if (ude[id] || TEST_KONTEKST.test((st.h || "") + " " + (st.q || ""))) return;
+        ud.push({ st: st, id: id, o: o, i: i, kat: testKat(o) });
+      });
+    });
+    return ud;
+  }
+  // Vælg spørgsmål fra så mange forskellige lektioner som muligt. Spørgsmål, du ikke har haft i en test før, kommer først.
+  function vaelgSpm(pulje, antal, blandet) {
+    var set = {};
+    S.test.forEach(function (t) { (t.svar || []).forEach(function (s) { set[s[0]] = 1; }); });
+    function rundt(liste, n) {     // én fra hver lektion ad gangen, lektionerne i tilfældig rækkefølge
+      var lek = {}, navne = [], ud = [];
+      bland(liste).forEach(function (p) { var k = p.o.l.id; if (!lek[k]) { lek[k] = []; navne.push(k); } lek[k].push(p); });
+      navne = bland(navne);
+      for (var r = 0; ud.length < n; r++) {
+        var fik = false;
+        navne.forEach(function (k) { if (ud.length < n && lek[k][r]) { ud.push(lek[k][r]); fik = true; } });
+        if (!fik) break;
+      }
+      return ud;
+    }
+    function fordel(liste, n) {    // først spørgsmål, du ikke har haft i en test; er der ikke nok, så dem, du har haft
+      var ud = rundt(liste.filter(function (p) { return !set[p.id]; }), n);
+      return ud.length < n ? ud.concat(rundt(liste.filter(function (p) { return set[p.id]; }), n - ud.length)) : ud;
+    }
+    function iKursusorden(a, b) { return LEKNR[a.o.l.id] - LEKNR[b.o.l.id] || a.i - b.i; }
+    if (!blandet) return fordel(pulje, antal).sort(iKursusorden);
+    // Blandet: mindst ét spørgsmål fra hvert emne (hvis der er plads), resten efter emnets størrelse
+    var grp = {}, kats = [];
+    pulje.forEach(function (p) { if (!grp[p.kat]) { grp[p.kat] = []; kats.push(p.kat); } grp[p.kat].push(p); });
+    var orden = (KX.liste || []).map(function (k) { return k.id; });
+    kats.sort(function (a, b) { return (orden.indexOf(a) + 1 || 99) - (orden.indexOf(b) + 1 || 99); });
+    var kvote = {}, rest = Math.min(antal, pulje.length);
+    if (rest < kats.length) bland(kats).slice(0, rest).forEach(function (k) { kvote[k] = 1; });
+    else {
+      kats.forEach(function (k) { kvote[k] = 1; }); rest -= kats.length;
+      while (rest > 0) {
+        var bedst = null, bv = -1;
+        kats.forEach(function (k) { if (kvote[k] < grp[k].length) { var v = Math.sqrt(grp[k].length) / (kvote[k] + 1); if (v > bv) { bv = v; bedst = k; } } });
+        if (!bedst) break; kvote[bedst]++; rest--;
+      }
+    }
+    var ud = [];
+    kats.forEach(function (k) { if (kvote[k]) ud = ud.concat(fordel(grp[k], kvote[k]).sort(iKursusorden)); });
+    return ud;
+  }
+  function minutter(antal, slags) { return Math.max(5, Math.round(antal * (slags === "forklar" ? 100 : 40) / 60 / 5) * 5); }
+  function niveau(pct) { return pct >= 90 ? ["Rigtig stærkt", "ok"] : pct >= 75 ? ["Godt", "ok"] : pct >= 50 ? ["På vej", "gul"] : ["Skal trænes", "fejl"]; }
+  function testEmne(t) { return t.emne === "alle" ? "Alle emner" : katNavn(t.emne); }
+
+  function testside(besked) {
+    var v = testValg(), pulje = testPulje(v.slags, v.fra === "lavet"), antal = { alle: pulje.length };
+    pulje.forEach(function (p) { antal[p.kat] = (antal[p.kat] || 0) + 1; });
+    if (v.emne !== "alle" && !antal[v.emne]) v.emne = "alle";
+    var lavet = Object.keys(S.lek).filter(function (id) { return LEK[id]; }).length;
+    var iEmne = antal[v.emne] || 0, faktisk = Math.min(v.antal, iEmne);
+    function gruppe(navn, noegle, valg, note) {
+      return '<div class="felt"><b>' + navn + '</b><div class="vaelg">' + valg.map(function (x) {
+        return '<button type="button" data-k="' + noegle + '" data-v="' + x[0] + '" class="' + (String(v[noegle]) === String(x[0]) ? "aktiv" : "") + '"' + (x[2] === false ? " disabled" : "") + ">" + x[1] + "</button>";
+      }).join("") + "</div>" + (note ? '<p class="lille svag" style="margin:.45rem 0 0">' + note + "</p>" : "") + "</div>";
+    }
+    var emner = [["alle", "Alle emner, blandet <small>" + antal.alle + "</small>"]].concat((KX.liste || []).filter(function (k) { return antal[k.id]; }).map(function (k) { return [k.id, esc(k.ikon + " " + k.navn) + " <small>" + antal[k.id] + "</small>"]; }));
+    var html = '<h1>Test dig selv</h1><p class="svag">Testen viser, hvad du kan, og hvad du mangler. Du får ét forsøg pr. spørgsmål og ser det rigtige svar med det samme. Til sidst får du point pr. emne og en liste over præcis de lektioner, du skal læse.</p>' +
+      (besked ? '<p class="plan-bagud">' + esc(besked) + "</p>" : "") + '<div class="kort testvalg">' +
+      gruppe("Slags", "slags", [["quiz", "❓ Spørgsmål, siden retter"], ["forklar", "🗣️ Forklar med egne ord"]],
+        v.slags === "forklar" ? "Som til den mundtlige eksamen: du skriver eller siger svaret selv, ser et godt svar og vurderer ærligt, om du kunne det." : "Svarmuligheder, kode, du skal forudsige, udfylde eller finde fejlen i, og linjer, du skal sætte i rækkefølge.") +
+      gruppe("Emne", "emne", emner, v.emne !== "alle" && KAT[v.emne] ? esc(KAT[v.emne].tekst) : "Blandet: spørgsmål fra alle emner, så du ser, hvor du står i det hele.") +
+      gruppe("Længde", "antal", TEST_LAENGDE.map(function (l) { return [l[0], l[1] + " · " + l[0] + " spørgsmål · ca. " + minutter(l[0], v.slags) + " min"]; }),
+        !faktisk ? "Ingen spørgsmål passer. Vælg Hele kurset eller et andet emne." : faktisk < v.antal ? "Der er kun " + faktisk + " spørgsmål, der passer, så testen bliver på " + faktisk + "." : "") +
+      gruppe("Spørgsmål fra", "fra", [["alt", "Hele kurset"], ["lavet", "Kun lektioner, jeg har lavet (" + lavet + ")", lavet > 0]],
+        v.fra === "alt" ? "Hele kurset finder også huller i det, du ikke har lært endnu. Det er meningen." : "") +
+      '<div class="rk"><button type="button" class="knap pri stor" id="start"' + (faktisk ? "" : " disabled") + ">Start testen →</button></div></div>" + testOversigt();
+    ramme(html, "mellem");
+    $$(".testvalg .vaelg button").forEach(function (b) { b.onclick = function () { var tv = testValg(), k = b.getAttribute("data-k"), x = b.getAttribute("data-v"); tv[k] = k === "antal" ? +x : x; S.set.tv = tv; gem(); testside(); }; });
+    $("#start").onclick = function () { var tv = testValg(); tv.emne = v.emne; startTest(tv); };
+  }
+  function testOversigt() {
+    if (!S.test.length) return '<div class="kort mt"><h2>Sådan står du</h2><p class="svag">Når du har taget din første test, ser du her, hvordan det går i hvert emne, og om du bliver bedre.</p></div>';
+    var pr = {};      // resultaterne pr. emne, ældste først (kun tests, hvor siden retter)
+    S.test.forEach(function (t) {
+      if (t.slags === "forklar") return;
+      var k = {}; (t.svar || []).forEach(function (s) { var x = k[s[2]] = k[s[2]] || [0, 0]; x[1]++; if (s[1]) x[0]++; });
+      Object.keys(k).forEach(function (id) { (pr[id] = pr[id] || []).push({ r: k[id][0], n: k[id][1] }); });
+    });
+    var raekker = (KX.liste || []).filter(function (k) { return pr[k.id]; }).map(function (k) {
+      var e = pr[k.id], s = e[e.length - 1], f = e[e.length - 2], pct = Math.round(100 * s.r / s.n), fp = f ? Math.round(100 * f.r / f.n) : null, niv = niveau(pct);
+      var pil = fp == null || fp === pct ? "" : pct > fp ? ' <span class="op" title="Bedre end sidst">▲</span>' : ' <span class="ned" title="Dårligere end sidst">▼</span>';
+      return '<div class="katraekke"><span>' + esc(katNavn(k.id)) + '</span><div class="bar ' + niv[1] + '"><i style="width:' + pct + '%"></i></div><span class="tal">' + pct + " %" + pil + " <small>(" + s.r + "/" + s.n + ")</small></span></div>";
+    }).join("");
+    var mangler = (KX.liste || []).filter(function (k) { return !pr[k.id]; }).map(function (k) { return esc(k.navn); });
+    var html = '<div class="kort mt"><h2>Sådan står du</h2>' + (raekker ? '<p class="lille svag">Dit seneste resultat i hvert emne. ▲ og ▼ viser, om det er gået op eller ned siden sidst. Tallet i parentes er rigtige / spørgsmål.</p>' + raekker +
+      (mangler.length ? '<p class="lille svag mt">Ikke testet endnu: ' + mangler.join(", ") + ".</p>" : "") : '<p class="svag">Du har kun taget tests med Forklar med egne ord. Tag en test med spørgsmål, siden retter, for at se point pr. emne her.</p>') + "</div>";
+    html += '<div class="kort mt"><h2>Dine tests</h2><div class="lekliste">' + S.test.slice().reverse().slice(0, 15).map(function (t) {
+      var n = (t.svar || []).length, r = (t.svar || []).filter(function (s) { return s[1]; }).length, pct = n ? Math.round(100 * r / n) : 0;
+      return '<a class="lek" href="#/test/' + t.id + '"><span class="nr">' + (t.slags === "forklar" ? "🗣️" : "🎯") + '</span><span><div class="t">' + esc(testEmne(t)) + (t.slags === "forklar" ? " · forklar med egne ord" : "") + '</div><div class="d">' + datoKort(t.d) + " · " + n + ' spørgsmål</div></span><span class="hoejre"><b>' + r + " / " + n + "</b> · " + pct + " %</span></a>";
+    }).join("") + "</div></div>";
+    return html;
+  }
+  function startTest(v) {
+    var pulje = testPulje(v.slags, v.fra === "lavet");
+    if (v.emne !== "alle") pulje = pulje.filter(function (p) { return p.kat === v.emne; });
+    var valgte = vaelgSpm(pulje, v.antal, v.emne === "alle");
+    if (!valgte.length) return testside("Ingen spørgsmål passer til dit valg. Vælg Hele kurset eller et andet emne.");
+    P = { type: "test", v: v, koe: valgte, i: 0, rigtige: 0, tjekbare: 0, foerste: {} };
+    visTrin();
+  }
+  function testSlut() {
+    var t = { id: Date.now(), d: dato(), emne: P.v.emne, slags: P.v.slags, fra: P.v.fra, svar: P.koe.map(function (p) { return [p.id, P.foerste[p.id] ? 1 : 0, p.kat]; }) };
+    S.test.push(t); if (S.test.length > 100) S.test = S.test.slice(-100);
+    gem(); P = null;
+    gaa("#/test/" + t.id);
+  }
+  function testResultat(id) {
+    var t = S.test.filter(function (x) { return String(x.id) === String(id); })[0];
+    if (!t) return testside();
+    var kat = {}, rigtige = 0, n = t.svar.length, forklar = t.slags === "forklar", orden = (KX.liste || []).map(function (k) { return k.id; });
+    t.svar.forEach(function (s) { var k = kat[s[2]] = kat[s[2]] || { r: 0, n: 0, forkert: [] }; k.n++; if (s[1]) { k.r++; rigtige++; } else k.forkert.push(s[0]); });
+    var pct = n ? Math.round(100 * rigtige / n) : 0, niv = niveau(pct);
+    var ids = Object.keys(kat).sort(function (a, b) { return (orden.indexOf(a) + 1 || 99) - (orden.indexOf(b) + 1 || 99); });
+    function findSpm(tid) { var d = tid.split("#"), o = LEK[d[0]], st = o && o.l.trin[+d[1]]; return st ? { o: o, i: +d[1], st: st } : null; }
+    var html = '<p><a href="#/test">← Test</a></p><div class="kort fest testres"><div class="stor-tal">' + rigtige + " / " + n + '</div><p><span class="niv ' + niv[1] + '">' + niv[0] + "</span></p><p>" +
+      (forklar ? "Du kunne forklare " + rigtige + " af " + n + " spørgsmål (" + pct + " %)." : "Du svarede rigtigt på " + rigtige + " af " + n + " spørgsmål i første forsøg (" + pct + " %).") +
+      '</p><p class="lille svag">' + esc(testEmne(t)) + (forklar ? " · forklar med egne ord" : "") + " · " + datoKort(t.d) + (t.fra === "lavet" ? " · kun lektioner, du har lavet" : "") + "</p></div>";
+    html += '<div class="kort mt"><h2>Point pr. emne</h2>' + ids.map(function (id) {
+      var k = kat[id], p = Math.round(100 * k.r / k.n), nv = niveau(p);
+      return '<div class="katraekke"><span>' + esc(katNavn(id)) + '</span><div class="bar ' + nv[1] + '"><i style="width:' + p + '%"></i></div><span class="tal">' + k.r + " / " + k.n + " · " + p + " %</span></div>";
+    }).join("") + (ids.some(function (id) { return kat[id].n < 3; }) ? '<p class="lille svag mt">Et emne med færre end 3 spørgsmål siger ikke meget alene. Tag en test i netop det emne for at se, hvor du står.</p>' : "") + "</div>";
+    var god = ids.filter(function (id) { return kat[id].n >= 2 && kat[id].r / kat[id].n >= 0.75; });
+    html += '<div class="kort mt"><h2>Det er du god til</h2>' + (god.length ? "<ul>" + god.map(function (id) { return "<li><b>" + esc(katNavn(id)) + "</b>: " + kat[id].r + " af " + kat[id].n + " rigtige.</li>"; }).join("") + "</ul>" :
+      '<p class="svag">Når du får mindst 75 % i et emne med mindst 2 spørgsmål, står det her.</p>') + "</div>";
+    var svage = ids.filter(function (id) { return kat[id].forkert.length; }).sort(function (a, b) { return kat[a].r / kat[a].n - kat[b].r / kat[b].n; });
+    html += '<div class="kort mt"><h2>Det skal du studere</h2>';
+    if (!svage.length) html += "<p>Du svarede rigtigt på alt. Tag en længere test, eller vælg et emne, du ikke har prøvet endnu.</p>";
+    else {
+      html += '<p class="lille svag">De lektioner, hvor du svarede forkert' + (forklar ? " eller ikke kunne forklare det" : "") + ". Det svageste emne står først. Læs lektionen igen, og tag testen igen om et par dage.</p>";
+      svage.forEach(function (id) {
+        var lek = {}, raekke = [], ord = [];
+        kat[id].forkert.forEach(function (tid) { var f = findSpm(tid); if (!f) return; if (!lek[f.o.l.id]) { lek[f.o.l.id] = { o: f.o, n: 0 }; raekke.push(f.o.l.id); } lek[f.o.l.id].n++; });
+        raekke.sort(function (a, b) { return LEKNR[a] - LEKNR[b]; });
+        raekke.forEach(function (lid) { (LEK[lid].l.ord || []).forEach(function (x) { if (ord.length < 8 && ord.indexOf(x[0]) < 0) ord.push(x[0]); }); });
+        html += "<h3>" + esc(katNavn(id)) + ' <span class="lille svag">' + kat[id].forkert.length + (kat[id].forkert.length === 1 ? " forkert" : " forkerte") + "</span></h3>" +
+          '<div class="lekliste">' + raekke.map(function (lid) { var x = lek[lid]; return '<a class="lek" href="#/l/' + lid + '"><span class="nr">' + (x.o.m.ikon || "📘") + '</span><span><div class="t">' + esc(x.o.l.titel) + '</div><div class="d">' + esc(x.o.m.titel) + " · " + x.n + ' spørgsmål</div></span><span class="hoejre">Læs →</span></a>'; }).join("") + "</div>" +
+          (ord.length ? '<p class="lille ordslaa">Ord at slå op: ' + ord.map(function (w) { return '<a class="ordchip" href="' + ordHref(w) + '">' + esc(w) + "</a>"; }).join(" ") + "</p>" : "");
+      });
+    }
+    html += "</div>";
+    html += '<details class="kort mt"><summary><b>Se alle ' + n + " spørgsmål</b></summary>" + '<div class="lekliste">' + t.svar.map(function (s) {
+      var f = findSpm(s[0]); if (!f) return "";
+      return '<a class="lek" href="#/l/' + f.o.l.id + "/" + (f.i + 1) + '"><span class="nr ' + (s[1] ? "ok" : "nej") + '">' + (s[1] ? "✓" : "✗") + '</span><span><div class="t">' + esc(kortTitel(f.st)) + '</div><div class="d">' + esc(katNavn(s[2]) + " · " + lekNavn(f.o)) + "</div></span></a>";
+    }).join("") + "</div></details>";
+    var forkerte = t.svar.filter(function (s) { return !s[1] && findTrin(s[0]); });
+    html += '<div class="rk mt" style="justify-content:center">' + (forkerte.length && !t.rep ? '<button type="button" class="knap" id="tilrep">Læg de ' + forkerte.length + " forkerte i Repetition</button>" : t.rep ? '<span class="svag">✓ De forkerte ligger i Repetition.</span>' : "") +
+      '<a class="knap pri" href="#/test">Tag en ny test</a><a class="knap" href="#/">Til forsiden</a></div>';
+    ramme(html, "mellem");
+    if ($("#tilrep")) $("#tilrep").onclick = function () { forkerte.forEach(function (s) { S.rep[s[0]] = { box: 1, due: dato() }; }); t.rep = true; gem(); testResultat(id); };
   }
 
   function indstillinger() {
@@ -855,7 +1233,8 @@
     else if (dele[0] === "plan") planside();
     else if (dele[0] === "soeg") soeg();
     else if (dele[0] === "rep") startRep();
-    else if (dele[0] === "ord") ordbog();
+    else if (dele[0] === "ord") { if (dele[1]) ordPost(dekod(dele.slice(1).join("/"))); else ordbog(); }
+    else if (dele[0] === "test") { if (dele[1]) testResultat(dele[1]); else testside(); }
     else if (dele[0] === "set") indstillinger();
     else forside();
   }
@@ -868,6 +1247,7 @@
     if (!a || e.defaultPrevented || e.ctrlKey || e.metaKey || e.shiftKey) return;
     e.preventDefault(); gaa(a.getAttribute("href"));
   });
+  window.kode12Nu = function () { return P && P.koe && P.koe[P.i] ? P.koe[P.i].id : null; };   // hvilket trin der vises (bruges af _udvikling/spil_test.js)
   brugSet();
   rute();
   skyStart();
